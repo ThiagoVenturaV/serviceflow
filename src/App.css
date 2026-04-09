@@ -1,0 +1,18 @@
+/* ─────────────────────────────────────────
+   App.css – Root layout & chat shell
+   ───────────────────────────────────────── */
+
+.app-root {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.chat-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  margin: 0 auto;
+  width: 100%;
+}

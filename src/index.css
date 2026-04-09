@@ -1,0 +1,167 @@
+/* ─────────────────────────────────────────
+   Design System: The Ethereal Conduit
+   ServiceFlow White Label UX
+   ───────────────────────────────────────── */
+
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
+
+/* ── Design Tokens ── */
+:root {
+  /* Colors */
+  --background: #060e20;
+  --surface: #060e20;
+  --surface-bright: #1f2b49;
+  --surface-container: #0f1930;
+  --surface-container-high: #141f38;
+  --surface-container-highest: #192540;
+  --surface-container-low: #091328;
+  --surface-container-lowest: #000000;
+  --surface-dim: #060e20;
+  --surface-tint: #ba9eff;
+  --surface-variant: #192540;
+
+  --primary: #ba9eff;
+  --primary-container: #ae8dff;
+  --primary-dim: #8455ef;
+  --primary-fixed: #ae8dff;
+  --primary-fixed-dim: #a27cff;
+
+  --secondary: #c7c3fe;
+  --secondary-container: #444173;
+  --secondary-dim: #b9b6ef;
+
+  --tertiary: #8ce7ff;
+  --tertiary-container: #53ddfc;
+  --tertiary-dim: #40ceed;
+
+  --on-background: #dee5ff;
+  --on-surface: #dee5ff;
+  --on-surface-variant: #a3aac4;
+  --on-primary: #39008c;
+  --on-primary-container: #2b006e;
+  --on-primary-fixed: #ffffff;
+  --on-secondary: #3f3c6e;
+  --on-secondary-container: #cfcbff;
+  --on-tertiary: #005464;
+  --on-tertiary-container: #004b58;
+
+  --outline: #6d758c;
+  --outline-variant: #40485d;
+
+  --error: #ff6e84;
+  --on-error: #490013;
+
+  /* Typography */
+  --font-headline: 'Manrope', sans-serif;
+  --font-body: 'Inter', sans-serif;
+
+  /* Spacing */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+
+  /* Radius */
+  --radius-sm: 0.5rem;
+  --radius-md: 1rem;
+  --radius-lg: 1.5rem;
+  --radius-xl: 3rem;
+  --radius-full: 9999px;
+
+  /* Brand injection points (white-label) */
+  --brand-primary: #8B5CF6;
+  --brand-radius: var(--radius-full);
+  --ai-name: "Sofia";
+}
+
+/* ── Reset & Base ── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--background);
+  color: var(--on-surface);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-headline);
+  line-height: 1.2;
+  color: var(--on-surface);
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Scrollbar ── */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--outline-variant) transparent;
+}
+*::-webkit-scrollbar { width: 6px; height: 6px; }
+*::-webkit-scrollbar-track { background: transparent; }
+*::-webkit-scrollbar-thumb { background: var(--outline-variant); border-radius: 3px; }
+*::-webkit-scrollbar-thumb:hover { background: var(--outline); }
+
+/* ── Selection ── */
+::selection {
+  background: var(--primary);
+  color: var(--on-primary);
+}
+
+/* ── Focus visible ── */
+:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* ── Utility classes ── */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* ── Global animations ── */
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 20px rgba(139,92,246,0.2); }
+  50% { box-shadow: 0 0 40px rgba(139,92,246,0.4); }
+}
