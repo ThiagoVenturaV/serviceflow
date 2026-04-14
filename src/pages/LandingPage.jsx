@@ -150,7 +150,7 @@ export default function LandingPage({ onStartChat }) {
               <span>Powered by ServiceFlow</span>
             </div>
             <h1 className="hero-title">
-              Atendimento ao Cliente,<br />
+              Atendimento,<br />
               <span className="gradient-text">Reimaginado</span><br />
               para a sua marca.
             </h1>
