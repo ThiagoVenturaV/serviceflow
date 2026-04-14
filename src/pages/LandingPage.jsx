@@ -1,6 +1,10 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useLayoutEffect, useRef } from 'react';
 import { CONFIG } from '../config.js';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import './LandingPage.css';
+
+gsap.registerPlugin(ScrollTrigger);
 
 const features = [
   {
@@ -119,8 +123,201 @@ export default function LandingPage({ onStartChat }) {
     setBrand((b) => ({ ...b, colorMode: b.colorMode === 'dark' ? 'light' : 'dark' }));
   };
 
+  // ── GSAP Animations ───────────────────────────────────────────────────────
+  const landingRef = useRef(null);
+
+  useLayoutEffect(() => {
+    const ctx = gsap.context(() => {
+
+      // Helper: animate elements only when they scroll into view
+      const reveal = (selector, vars, triggerEl) => {
+        ScrollTrigger.create({
+          trigger: triggerEl || selector,
+          start: 'top 85%',
+          once: true,
+          onEnter: () => {
+            gsap.fromTo(selector,
+              { opacity: 0, ...vars.from },
+              { opacity: 1, duration: 0.7, ease: 'power3.out', ...vars.to }
+            );
+          },
+        });
+      };
+
+      // ─── Hero entrance cascade (immediate, no scroll trigger) ──────────
+      const heroTl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+
+      heroTl
+        .fromTo('.hero-badge',
+          { opacity: 0, y: -20, scale: 0.9 },
+          { opacity: 1, y: 0, scale: 1, duration: 0.6 }
+        )
+        .fromTo('.hero-title',
+          { opacity: 0, y: 40, rotationX: 15 },
+          { opacity: 1, y: 0, rotationX: 0, duration: 0.8, transformOrigin: 'center bottom' },
+          '-=0.3'
+        )
+        .fromTo('.hero-subtitle',
+          { opacity: 0, y: 30 },
+          { opacity: 1, y: 0, duration: 0.6 },
+          '-=0.4'
+        )
+        .fromTo('.hero-actions',
+          { opacity: 0, y: 25 },
+          { opacity: 1, y: 0, duration: 0.5 },
+          '-=0.3'
+        )
+        .fromTo('.hero-stats .stat, .hero-stats .stat-divider',
+          { opacity: 0, y: 20 },
+          { opacity: 1, y: 0, stagger: 0.08, duration: 0.4 },
+          '-=0.2'
+        );
+
+      // Chat preview — slides in from the right
+      heroTl.fromTo('.hero-visual',
+        { opacity: 0, x: 80, rotationY: -8, scale: 0.92 },
+        { opacity: 1, x: 0, rotationY: 0, scale: 1, duration: 1, ease: 'power2.out' },
+        0.3
+      );
+
+      // Hero glow
+      gsap.fromTo('.hero-glow',
+        { opacity: 0, scale: 0.5 },
+        { opacity: 1, scale: 1, duration: 1.5, ease: 'power2.out' }
+      );
+
+      // ─── Features section ──────────────────────────────────────────────
+      ScrollTrigger.create({
+        trigger: '#features',
+        start: 'top 80%',
+        once: true,
+        onEnter: () => {
+          gsap.fromTo(
+            '#features .section-label, #features .section-title, #features .section-subtitle',
+            { opacity: 0, y: 30 },
+            { opacity: 1, y: 0, stagger: 0.12, duration: 0.7, ease: 'power3.out' }
+          );
+        },
+      });
+
+      ScrollTrigger.create({
+        trigger: '.features-grid',
+        start: 'top 88%',
+        once: true,
+        onEnter: () => {
+          gsap.fromTo('.feature-card',
+            { opacity: 0, y: 50, scale: 0.95 },
+            { opacity: 1, y: 0, scale: 1, stagger: 0.12, duration: 0.6, ease: 'back.out(1.4)' }
+          );
+        },
+      });
+
+      // ─── How it works section ──────────────────────────────────────────
+      ScrollTrigger.create({
+        trigger: '#how-it-works',
+        start: 'top 80%',
+        once: true,
+        onEnter: () => {
+          gsap.fromTo(
+            '#how-it-works .section-label, #how-it-works .section-title, #how-it-works .section-subtitle',
+            { opacity: 0, y: 30 },
+            { opacity: 1, y: 0, stagger: 0.12, duration: 0.7, ease: 'power3.out' }
+          );
+        },
+      });
+
+      ScrollTrigger.create({
+        trigger: '.steps-track',
+        start: 'top 88%',
+        once: true,
+        onEnter: () => {
+          gsap.fromTo('.step-item',
+            { opacity: 0, y: 40, scale: 0.9 },
+            { opacity: 1, y: 0, scale: 1, stagger: 0.15, duration: 0.6, ease: 'back.out(1.6)' }
+          );
+        },
+      });
+
+      ScrollTrigger.create({
+        trigger: '.code-block',
+        start: 'top 88%',
+        once: true,
+        onEnter: () => {
+          gsap.fromTo('.code-block',
+            { opacity: 0, y: 40, scale: 0.96 },
+            { opacity: 1, y: 0, scale: 1, duration: 0.8, ease: 'power3.out' }
+          );
+        },
+      });
+
+      // ─── Brand / White-label section ───────────────────────────────────
+      ScrollTrigger.create({
+        trigger: '#about',
+        start: 'top 78%',
+        once: true,
+        onEnter: () => {
+          gsap.fromTo('.brand-content',
+            { opacity: 0, x: -60 },
+            { opacity: 1, x: 0, duration: 0.8, ease: 'power3.out' }
+          );
+          gsap.fromTo('.brand-tokens .token-card',
+            { opacity: 0, x: 60 },
+            { opacity: 1, x: 0, stagger: 0.1, duration: 0.6, ease: 'power3.out', delay: 0.2 }
+          );
+        },
+      });
+
+      // ─── CTA Final section ─────────────────────────────────────────────
+      ScrollTrigger.create({
+        trigger: '.cta-section',
+        start: 'top 80%',
+        once: true,
+        onEnter: () => {
+          const ctaTl = gsap.timeline();
+          ctaTl
+            .fromTo('.cta-glow',
+              { opacity: 0, scale: 0.3 },
+              { opacity: 1, scale: 1, duration: 1, ease: 'power2.out' }
+            )
+            .fromTo('.cta-title',
+              { opacity: 0, y: 40 },
+              { opacity: 1, y: 0, duration: 0.7, ease: 'power3.out' },
+              '-=0.6'
+            )
+            .fromTo('.cta-subtitle',
+              { opacity: 0, y: 25 },
+              { opacity: 1, y: 0, duration: 0.5, ease: 'power3.out' },
+              '-=0.3'
+            )
+            .fromTo('.cta-section .btn-primary',
+              { opacity: 0, y: 20, scale: 0.9 },
+              { opacity: 1, y: 0, scale: 1, duration: 0.5, ease: 'back.out(2)' },
+              '-=0.2'
+            );
+        },
+      });
+
+      // ─── Footer ────────────────────────────────────────────────────────
+      ScrollTrigger.create({
+        trigger: '.landing-footer',
+        start: 'top 95%',
+        once: true,
+        onEnter: () => {
+          gsap.fromTo('.footer-inner > *',
+            { opacity: 0, y: 15 },
+            { opacity: 1, y: 0, stagger: 0.1, duration: 0.5, ease: 'power3.out' }
+          );
+        },
+      });
+
+    }, landingRef);
+
+    return () => ctx.revert();
+  }, []);
+
+
   return (
-    <div className="landing">
+    <div className="landing" ref={landingRef}>
       {/* Nav */}
       <nav className="landing-nav">
         <div className="nav-inner">
