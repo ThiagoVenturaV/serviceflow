@@ -36,7 +36,7 @@ const steps = [
 export default function LandingPage({ onStartChat }) {
   const [brand, setBrand] = useState({
     primary: '#8B5CF6',
-    secondary: '#67e8f9',
+    secondary: '#e8e8e8ff',
     aiName: 'Sofia',
     colorMode: 'dark',
   });
