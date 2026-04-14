@@ -495,7 +495,6 @@ const { protocolo } = await response.json();
             <div
               className="token-card token-card--interactive"
               title="Clique para alterar a cor primária"
-              onClick={() => colorInputRef.current?.click()}
             >
               <span className="token-key">Cor Primária</span>
               <div className="token-color-wrap">
@@ -504,7 +503,7 @@ const { protocolo } = await response.json();
                   className="token-value token-swatch"
                   style={{ background: brand.primary }}
                 />
-                {/* Hidden native color input */}
+                {/* Overlay native color input */}
                 <input
                   ref={colorInputRef}
                   type="color"
@@ -543,7 +542,6 @@ const { protocolo } = await response.json();
             <div
               className="token-card token-card--interactive"
               title="Clique para alterar a cor secundária"
-              onClick={() => secondaryInputRef.current?.click()}
             >
               <span className="token-key">Cor Secundária</span>
               <div className="token-color-wrap">
