@@ -25,6 +25,7 @@
   --primary-dim: #8455ef;
   --primary-fixed: #ae8dff;
   --primary-fixed-dim: #a27cff;
+  --primary-rgb: 139, 92, 246;
 
   --secondary: #c7c3fe;
   --secondary-container: #444173;
@@ -162,6 +163,6 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 @keyframes glow-pulse {
-  0%, 100% { box-shadow: 0 0 20px rgba(139,92,246,0.2); }
-  50% { box-shadow: 0 0 40px rgba(139,92,246,0.4); }
+  0%, 100% { box-shadow: 0 0 20px rgba(var(--primary-rgb),0.2); }
+  50% { box-shadow: 0 0 40px rgba(var(--primary-rgb),0.4); }
 }
