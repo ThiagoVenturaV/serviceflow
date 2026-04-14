@@ -255,7 +255,7 @@
 }
 
 .ai-avatar-icon {
-  color: var(--on-primary);
+  color: var(--tertiary);
   font-size: 1.1rem;
   font-weight: 700;
 }
@@ -369,7 +369,7 @@
   align-items: center;
   justify-content: center;
   font-size: 0.75rem;
-  color: var(--on-primary);
+  color: var(--tertiary);
   flex-shrink: 0;
 }
 
@@ -382,7 +382,7 @@
 
 .user-bubble {
   background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dim) 100%);
-  color: var(--on-primary);
+  color: var(--tertiary);
   border-bottom-right-radius: 0.25rem;
 }
 
@@ -525,7 +525,7 @@
   border-radius: 9999px;
   background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dim) 100%);
   border: none;
-  color: var(--on-primary);
+  color: var(--tertiary);
   font-size: 0.875rem;
   font-weight: 700;
   cursor: pointer;
@@ -587,7 +587,7 @@
   border-radius: 50%;
   background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dim) 100%);
   border: none;
-  color: var(--on-primary);
+  color: var(--tertiary);
   display: flex;
   align-items: center;
   justify-content: center;
