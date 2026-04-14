@@ -67,6 +67,7 @@ export default function LandingPage({ onStartChat }) {
 
     // Color mode: swap surface tokens
     if (brand.colorMode === 'light') {
+      root.style.setProperty('--nav-bg', 'rgba(255, 255, 255, 0.85)');
       root.style.setProperty('--surface', '#f4f4f8');
       root.style.setProperty('--surface-container-low', '#e8e8f0');
       root.style.setProperty('--surface-container', '#dcdce8');
@@ -75,6 +76,7 @@ export default function LandingPage({ onStartChat }) {
       root.style.setProperty('--on-surface-variant', '#44445a');
       root.style.setProperty('--outline-variant', '#c0c0d0');
     } else {
+      root.style.setProperty('--nav-bg', 'rgba(6, 14, 32, 0.85)');
       root.style.setProperty('--surface', '#060e20');
       root.style.setProperty('--surface-container-low', '#0a1428');
       root.style.setProperty('--surface-container', '#0f1c35');
