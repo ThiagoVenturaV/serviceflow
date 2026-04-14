@@ -177,16 +177,16 @@ export default function ChatPage({ onBack }) {
         
         <nav className="sidebar-nav">
            <button className={`nav-item ${activeTab === 'overview' ? 'active' : ''}`} onClick={() => setActiveTab('overview')}>
-             <span className="material-symbols-outlined nav-icon">dashboard</span> Overview
+             <span className="material-symbols-outlined nav-icon">dashboard</span> Visão Geral
            </button>
            <button className={`nav-item ${activeTab === 'chat' ? 'active' : ''}`} onClick={() => setActiveTab('chat')}>
-             <span className="material-symbols-outlined nav-icon">smart_toy</span> AI Assistant
+             <span className="material-symbols-outlined nav-icon">smart_toy</span> Assistente de IA
            </button>
            <button className="nav-item">
-             <span className="material-symbols-outlined nav-icon">confirmation_number</span> My Cases
+             <span className="material-symbols-outlined nav-icon">confirmation_number</span> Meus Casos
            </button>
            <button className="nav-item">
-             <span className="material-symbols-outlined nav-icon">auto_stories</span> Knowledge Base
+             <span className="material-symbols-outlined nav-icon">auto_stories</span> Base de Conhecimento
            </button>
            <button className="nav-item">
              <span className="material-symbols-outlined nav-icon">star</span> Feedback
@@ -194,8 +194,8 @@ export default function ChatPage({ onBack }) {
         </nav>
 
         <div className="sidebar-footer">
-           <button className="nav-item"><span className="material-symbols-outlined nav-icon">help</span> Help</button>
-           <button className="nav-item btn-logout" onClick={onBack} title="Voltar (Sair)"><span className="material-symbols-outlined nav-icon">logout</span> Logout</button>
+           <button className="nav-item"><span className="material-symbols-outlined nav-icon">help</span> Ajuda</button>
+           <button className="nav-item btn-logout" onClick={onBack} title="Voltar (Sair)"><span className="material-symbols-outlined nav-icon">logout</span> Sair</button>
         </div>
       </aside>
 
@@ -386,7 +386,7 @@ export default function ChatPage({ onBack }) {
       <nav className="mobile-bottom-nav">
          <button className={`bottom-nav-item ${activeTab === 'overview' ? 'active' : ''}`} onClick={() => setActiveTab('overview')}>
            <span className="material-symbols-outlined">dashboard</span>
-           <span>Overview</span>
+           <span>Visão Geral</span>
          </button>
          <button className={`bottom-nav-item ${activeTab === 'chat' ? 'active' : ''}`} onClick={() => setActiveTab('chat')}>
            <span className="material-symbols-outlined">smart_toy</span>
@@ -394,7 +394,7 @@ export default function ChatPage({ onBack }) {
          </button>
          <button className="bottom-nav-item">
            <span className="material-symbols-outlined">confirmation_number</span>
-           <span>Tickets</span>
+           <span>Meus Casos</span>
          </button>
          <button className="bottom-nav-item" onClick={onBack}>
            <span className="material-symbols-outlined">logout</span>

@@ -129,7 +129,7 @@ export default function LandingPage({ onStartChat }) {
             <span className="logo-text">{CONFIG.brand.name}</span>
           </div>
           <div className="nav-links">
-            <a href="#features">Features</a>
+            <a href="#features">Funcionalidades</a>
             <a href="#how-it-works">Como funciona</a>
             <a href="#about">Sobre</a>
           </div>
@@ -147,15 +147,15 @@ export default function LandingPage({ onStartChat }) {
           <div className="hero-content">
             <div className="hero-badge">
               <span className="badge-dot" />
-              <span>Powered by Groq + ServiceNow</span>
+              <span>Powered by ServiceFlow</span>
             </div>
             <h1 className="hero-title">
-              Customer Support,<br />
-              <span className="gradient-text">Reimagined</span><br />
-              for Your Brand.
+              Atendimento ao Cliente,<br />
+              <span className="gradient-text">Reimaginado</span><br />
+              para a sua marca.
             </h1>
             <p className="hero-subtitle">
-              O Ethereal Conduit para o seu fluxo de atendimento. Uma interface de alto desempenho
+              O ServiceFlow para o seu fluxo de atendimento. Uma interface de alto desempenho
               que conecta a visão da sua marca às necessidades dos seus clientes via ServiceNow.
             </p>
             <div className="hero-actions">
@@ -208,7 +208,7 @@ export default function LandingPage({ onStartChat }) {
       <section id="features" className="features-section">
         <div className="section-inner">
           <div className="section-label">Recursos</div>
-          <h2 className="section-title">Advanced Ecosystem</h2>
+          <h2 className="section-title">Ecossistema Avançado</h2>
           <p className="section-subtitle">
             Features de precisão projetadas para escalar com a complexidade da sua marca.
           </p>
@@ -232,7 +232,7 @@ export default function LandingPage({ onStartChat }) {
           <div className="section-label">Integração</div>
           <h2 className="section-title">Fluxo Completo</h2>
           <p className="section-subtitle">
-            Frontend React → Groq AI → ServiceNow REST API. Simples assim.
+            Frontend React → IA → ServiceNow API. Simples assim.
           </p>
           <div className="steps-track">
             {steps.map((s, i) => (
@@ -275,16 +275,16 @@ const { protocolo } = await response.json();
         <div className="section-inner brand-inner">
           <div className="brand-content">
             <div className="section-label">White-Label</div>
-            <h2 className="section-title">Sua Marca.<br />Nosso Engine.</h2>
+            <h2 className="section-title">Sua Marca.<br />Nosso Sistema.</h2>
             <p className="section-subtitle">
-              Injete logos, fontes e cores com nossa API de transformação.
+              Injete logos, fontes e cores com nossa função de transformação.
               Cada pixel é uma extensão da sua identidade visual.
             </p>
             <ul className="brand-list">
-              <li><span className="material-symbols-outlined check">check</span> CSS variables dinamicamente injetáveis</li>
+              <li><span className="material-symbols-outlined check">check</span> CSS variáveis dinamicamente injetáveis</li>
               <li><span className="material-symbols-outlined check">check</span> Nome e avatar da IA customizáveis</li>
-              <li><span className="material-symbols-outlined check">check</span> Dark/Light mode com tokens bespoke</li>
-              <li><span className="material-symbols-outlined check">check</span> Multi-tenant ready</li>
+              <li><span className="material-symbols-outlined check">check</span> Dark/Light mode com tokens customizáveis</li>
+              <li><span className="material-symbols-outlined check">check</span> Segurança de dados</li>
             </ul>
             <button id="brand-cta" className="btn-primary" onClick={onStartChat}>
               Testar agora →
@@ -300,7 +300,7 @@ const { protocolo } = await response.json();
               title="Clique para alterar a cor primária"
               onClick={() => colorInputRef.current?.click()}
             >
-              <span className="token-key">--brand-primary</span>
+              <span className="token-key">Cor Primária</span>
               <div className="token-color-wrap">
                 <span className="token-hex">{brand.primary}</span>
                 <span
@@ -325,7 +325,7 @@ const { protocolo } = await response.json();
               title="Clique para editar o nome da IA"
               onClick={() => !editingName && setEditingName(true)}
             >
-              <span className="token-key">--ai-name</span>
+              <span className="token-key">Nome da IA</span>
               {editingName ? (
                 <input
                   ref={nameInputRef}
@@ -348,7 +348,7 @@ const { protocolo } = await response.json();
               title="Clique para alterar a cor secundária"
               onClick={() => secondaryInputRef.current?.click()}
             >
-              <span className="token-key">--brand-secondary</span>
+              <span className="token-key">Cor Secundária</span>
               <div className="token-color-wrap">
                 <span className="token-hex">{brand.secondary}</span>
                 <span
@@ -372,7 +372,7 @@ const { protocolo } = await response.json();
               title="Clique para alternar o modo de cor"
               onClick={toggleColorMode}
             >
-              <span className="token-key">--color-mode</span>
+              <span className="token-key">Modo de Cor</span>
               <div className="token-mode-wrap">
                 <span className="token-str">{brand.colorMode}</span>
                 <div className={`token-mode-toggle ${brand.colorMode === 'light' ? 'token-mode-toggle--light' : ''}`}>
@@ -409,12 +409,12 @@ const { protocolo } = await response.json();
             <span className="logo-text">{CONFIG.brand.name}</span>
           </div>
           <div className="footer-links">
-            <a href="#">Privacy Policy</a>
-            <a href="#">Terms of Service</a>
+            <a href="#">Política de Privacidade</a>
+            <a href="#">Termos de Serviço</a>
             <a href="#">Status</a>
-            <a href="#">Contact</a>
+            <a href="#">Contato</a>
           </div>
-          <p className="footer-copy">© 2026 {CONFIG.brand.name}. All rights reserved.</p>
+          <p className="footer-copy">© 2026 {CONFIG.brand.name}. Todos os direitos reservados.</p>
         </div>
       </footer>
     </div>
