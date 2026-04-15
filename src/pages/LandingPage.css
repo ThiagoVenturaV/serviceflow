@@ -40,10 +40,10 @@
 }
 
 .logo-mark {
-  font-size: 1.25rem;
-  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dim) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  height: 24px;
+  width: auto;
+  object-fit: contain;
+  /* Caso a imagem tenha fundo sólido incorreto e quisermos remover em backgrounds escuros, mix-blend-mode: screen; mas vou assumir apenas tamanho */
 }
 
 .logo-text {

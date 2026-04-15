@@ -322,7 +322,7 @@ export default function LandingPage({ onStartChat }) {
       <nav className="landing-nav">
         <div className="nav-inner">
           <div className="nav-logo">
-            <span className="material-symbols-outlined logo-mark">auto_awesome</span>
+            <img src="public/logoServiceFlow.png" alt="ServiceFlow Logo" className="logo-mark" />
             <span className="logo-text">{CONFIG.brand.name}</span>
           </div>
           <div className="nav-links">
@@ -600,7 +600,7 @@ const { protocolo } = await response.json();
       <footer className="landing-footer">
         <div className="footer-inner">
           <div className="footer-logo">
-            <span className="material-symbols-outlined logo-mark">auto_awesome</span>
+            <img src="public/logoServiceFlow.png" alt="ServiceFlow Logo" className="logo-mark" />
             <span className="logo-text">{CONFIG.brand.name}</span>
           </div>
           <div className="footer-links">
