@@ -37,7 +37,7 @@ const steps = [
 ];
 
 
-export default function LandingPage({ onStartChat }) {
+export default function LandingPage({ onStartChat, onNavigate }) {
   const [brand, setBrand] = useState({
     primary: '#8B5CF6',
     secondary: '#e8e8e8ff',
@@ -604,10 +604,10 @@ const { protocolo } = await response.json();
             <span className="logo-text">{CONFIG.brand.name}</span>
           </div>
           <div className="footer-links">
-            <a href="#">Política de Privacidade</a>
-            <a href="#">Termos de Serviço</a>
+            <a href="#" onClick={(e) => { e.preventDefault(); onNavigate('privacy'); }}>Política de Privacidade</a>
+            <a href="#" onClick={(e) => { e.preventDefault(); onNavigate('terms'); }}>Termos de Uso</a>
             <a href="#">Status</a>
-            <a href="#">Contato</a>
+            <a href="mailto:contato@serviceflow.com.br">Contato</a>
           </div>
           <p className="footer-copy">© 2026 {CONFIG.brand.name}. Todos os direitos reservados.</p>
         </div>
