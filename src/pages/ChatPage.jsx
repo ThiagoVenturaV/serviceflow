@@ -171,7 +171,7 @@ export default function ChatPage({ onBack }) {
       {/* Sidebar (Desktop Only) */}
       <aside className="dashboard-sidebar">
         <div className="sidebar-header">
-           <span className="material-symbols-outlined sidebar-logo-icon">auto_awesome</span>
+           <img src="/logoServiceFlow.png" alt="ServiceFlow Logo" className="logo-mark" />
            <span className="sidebar-logo-text">{CONFIG.brand.name}</span>
         </div>
         
