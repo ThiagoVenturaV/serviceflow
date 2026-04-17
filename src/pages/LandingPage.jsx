@@ -321,10 +321,10 @@ export default function LandingPage({ onStartChat, onNavigate }) {
       {/* Nav */}
       <nav className="landing-nav">
         <div className="nav-inner">
-          <div className="nav-logo">
+          <a className="nav-logo" href="#" onClick={(e) => { e.preventDefault(); onNavigate('landing'); }} style={{ textDecoration: 'none', color: 'inherit', cursor: 'pointer' }}>
             <img src="/logoServiceFlow.png" alt="ServiceFlow Logo" className="logo-mark" />
             <span className="logo-text">{CONFIG.brand.name}</span>
-          </div>
+          </a>
           <div className="nav-links">
             <a href="#features">Funcionalidades</a>
             <a href="#how-it-works">Como funciona</a>
