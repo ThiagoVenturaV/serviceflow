@@ -328,7 +328,7 @@ export default function LandingPage({ onStartChat, onNavigate }) {
           <div className="nav-links">
             <a href="#features">Funcionalidades</a>
             <a href="#how-it-works">Como funciona</a>
-            <a href="#about">Sobre</a>
+            <a href="#about">White-Label</a>
           </div>
           <button id="nav-cta" className="btn-primary nav-cta" onClick={onStartChat}>
             Iniciar Atendimento
@@ -606,7 +606,6 @@ const { protocolo } = await response.json();
           <div className="footer-links">
             <a href="#" onClick={(e) => { e.preventDefault(); onNavigate('privacy'); }}>Política de Privacidade</a>
             <a href="#" onClick={(e) => { e.preventDefault(); onNavigate('terms'); }}>Termos de Uso</a>
-            <a href="#">Status</a>
             <a href="mailto:contato@serviceflow.com.br">Contato</a>
           </div>
           <p className="footer-copy">© 2026 {CONFIG.brand.name}. Todos os direitos reservados.</p>
