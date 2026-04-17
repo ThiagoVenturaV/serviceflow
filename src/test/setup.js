@@ -61,3 +61,35 @@ vi.mock('gsap/ScrollTrigger', () => ({
 vi.mock('@vercel/speed-insights/react', () => ({
   SpeedInsights: () => null,
 }));
+
+// ── Mock: Web Speech API (SpeechRecognition) ────────────────────────────────
+// Must be a proper class so it can be called with `new`.
+class MockSpeechRecognition {
+  constructor() {
+    this.lang = '';
+    this.continuous = false;
+    this.interimResults = false;
+    this.onresult = null;
+    this.onend = null;
+    this.onerror = null;
+    MockSpeechRecognition._lastInstance = this;
+  }
+  start = vi.fn();
+  stop = vi.fn();
+  abort = vi.fn();
+}
+
+MockSpeechRecognition._lastInstance = null;
+
+Object.defineProperty(window, 'SpeechRecognition', {
+  writable: true,
+  value: MockSpeechRecognition,
+});
+
+Object.defineProperty(window, 'webkitSpeechRecognition', {
+  writable: true,
+  value: MockSpeechRecognition,
+});
+
+// Expose for assertions in tests
+globalThis.MockSpeechRecognition = MockSpeechRecognition;

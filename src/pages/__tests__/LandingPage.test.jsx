@@ -136,7 +136,9 @@ describe('LandingPage', () => {
       const comoFuncionaElements = screen.getAllByText('Como funciona');
       const comoFuncionaLink = comoFuncionaElements.find(el => el.closest('a'));
       expect(comoFuncionaLink.closest('a')).toHaveAttribute('href', '#how-it-works');
-      expect(screen.getByText('Sobre').closest('a')).toHaveAttribute('href', '#about');
+      const whiteLabelElements = screen.getAllByText('White-Label');
+      const whiteLabelLink = whiteLabelElements.find(el => el.closest('a'));
+      expect(whiteLabelLink.closest('a')).toHaveAttribute('href', '#about');
     });
   });
 

@@ -53,7 +53,6 @@ describe('ChatPage', () => {
       expect(screen.getAllByText('Visão Geral').length).toBeGreaterThanOrEqual(1);
       expect(screen.getAllByText(/Assistente de IA/).length).toBeGreaterThanOrEqual(1);
       expect(screen.getAllByText('Meus Casos').length).toBeGreaterThanOrEqual(1);
-      expect(screen.getByText('Base de Conhecimento')).toBeInTheDocument();
     });
   });
 

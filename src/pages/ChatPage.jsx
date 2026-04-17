@@ -30,9 +30,58 @@ export default function ChatPage({ onBack }) {
   const [showConfirm, setShowConfirm] = useState(false);
   const [pendingData, setPendingData] = useState(null);
   const [placeholderIndex, setPlaceholderIndex] = useState(0);
+  const [isListening, setIsListening] = useState(false);
+  const [hasSpeechSupport, setHasSpeechSupport] = useState(false);
+  const [activeTab, setActiveTab] = useState('overview');
+  const [portalInput, setPortalInput] = useState('');
+  
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
+  const recognitionRef = useRef(null);
+  const activeTabRef = useRef(activeTab);
+  activeTabRef.current = activeTab;
 
+  // ── Speech Recognition Initialization ──────────────────────────────────────
+  useEffect(() => {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) return;
+
+    setHasSpeechSupport(true);
+    const recognition = new SpeechRecognition();
+    recognition.lang = 'pt-BR';
+    recognition.continuous = false;
+    recognition.interimResults = false;
+
+    recognition.onresult = (event) => {
+      const transcript = event.results[0][0].transcript;
+      if (activeTabRef.current === 'overview') {
+        setPortalInput(prev => prev ? `${prev} ${transcript}` : transcript);
+      } else {
+        setInput(prev => prev ? `${prev} ${transcript}` : transcript);
+      }
+    };
+
+    recognition.onend = () => setIsListening(false);
+    recognition.onerror = (e) => {
+      console.error('SpeechRecognition error:', e.error);
+      setIsListening(false);
+    };
+
+    recognitionRef.current = recognition;
+    return () => { recognition.abort(); };
+  }, []);
+
+  const toggleListening = () => {
+    if (!recognitionRef.current) return;
+    if (isListening) {
+      recognitionRef.current.stop();
+    } else {
+      recognitionRef.current.start();
+      setIsListening(true);
+    }
+  };
+
+  // ── Placeholder rotation ─────────────────────────────────────────────────
   useEffect(() => {
     let interval;
     if (!input && !isLoading) {
@@ -118,10 +167,6 @@ export default function ChatPage({ onBack }) {
     }
   };
 
-  const [activeTab, setActiveTab] = useState('overview');
-  const [portalInput, setPortalInput] = useState('');
-
-  // Handle switching to chat from portal
   const startChatWithMessage = (initialMsg) => {
     setActiveTab('chat');
     if (initialMsg) {
@@ -186,9 +231,6 @@ export default function ChatPage({ onBack }) {
              <span className="material-symbols-outlined nav-icon">confirmation_number</span> Meus Casos
            </button>
            <button className="nav-item">
-             <span className="material-symbols-outlined nav-icon">auto_stories</span> Base de Conhecimento
-           </button>
-           <button className="nav-item">
              <span className="material-symbols-outlined nav-icon">star</span> Feedback
            </button>
         </nav>
@@ -241,9 +283,20 @@ export default function ChatPage({ onBack }) {
                  <h3>Fale com nossa Inteligência Artificial</h3>
                  <p className="portal-ai-desc">Dúvidas rápidas sobre prazos, entregas ou políticas? Nossa IA resolve em segundos.</p>
                  
-                 {/* This is the Input Box the user mentioned, living in the Portal */}
                  <div className="chat-input-area portal-chat-input">
                     <div className="input-wrapper">
+                      {hasSpeechSupport && (
+                        <button
+                          className={`mic-btn ${isListening ? 'mic-active' : ''}`}
+                          onClick={toggleListening}
+                          title={isListening ? 'Parar gravação' : 'Falar por voz'}
+                          type="button"
+                        >
+                          <span className="material-symbols-outlined">
+                            {isListening ? 'mic' : 'mic_none'}
+                          </span>
+                        </button>
+                      )}
                       <textarea
                         className="chat-input"
                         placeholder="Digite sua mensagem para a Sofia..."
@@ -354,6 +407,20 @@ export default function ChatPage({ onBack }) {
             {/* Input */}
             <div className="chat-input-area">
               <div className="input-wrapper">
+                {hasSpeechSupport && (
+                  <button
+                    id="mic-btn"
+                    className={`mic-btn ${isListening ? 'mic-active' : ''}`}
+                    onClick={toggleListening}
+                    title={isListening ? 'Parar gravação' : 'Falar por voz'}
+                    type="button"
+                    disabled={isLoading || ticketStatus === 'pending'}
+                  >
+                    <span className="material-symbols-outlined">
+                      {isListening ? 'mic' : 'mic_none'}
+                    </span>
+                  </button>
+                )}
                 <textarea
                   ref={inputRef}
                   id="chat-input"
