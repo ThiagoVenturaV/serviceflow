@@ -148,14 +148,9 @@ export default function LandingPage({ onStartChat, onNavigate }) {
       const heroTl = gsap.timeline({ defaults: { ease: 'power3.out' } });
 
       heroTl
-        .fromTo('.hero-badge',
-          { opacity: 0, y: -20, scale: 0.9 },
-          { opacity: 1, y: 0, scale: 1, duration: 0.6 }
-        )
         .fromTo('.hero-title',
           { opacity: 0, y: 40, rotationX: 15 },
-          { opacity: 1, y: 0, rotationX: 0, duration: 0.8, transformOrigin: 'center bottom' },
-          '-=0.3'
+          { opacity: 1, y: 0, rotationX: 0, duration: 0.8, transformOrigin: 'center bottom' }
         )
         .fromTo('.hero-subtitle',
           { opacity: 0, y: 30 },
@@ -342,10 +337,6 @@ export default function LandingPage({ onStartChat, onNavigate }) {
         <div className="hero-glow" />
         <div className="hero-inner">
           <div className="hero-content">
-            <div className="hero-badge">
-              <span className="badge-dot" />
-              <span>Powered by ServiceFlow</span>
-            </div>
             <h1 className="hero-title">
               Atendimento,<br />
               <span className="gradient-text">Reimaginado</span><br />
