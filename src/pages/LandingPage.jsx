@@ -207,6 +207,23 @@ export default function LandingPage({ onStartChat, onNavigate }) {
         },
       });
 
+      // ─── Brand / White-label section ───────────────────────────────────
+      ScrollTrigger.create({
+        trigger: '#about',
+        start: 'top 78%',
+        once: true,
+        onEnter: () => {
+          gsap.fromTo('.brand-content',
+            { opacity: 0, x: -60 },
+            { opacity: 1, x: 0, duration: 0.8, ease: 'power3.out' }
+          );
+          gsap.fromTo('.brand-tokens .token-card',
+            { opacity: 0, x: 60 },
+            { opacity: 1, x: 0, stagger: 0.1, duration: 0.6, ease: 'power3.out', delay: 0.2 }
+          );
+        },
+      });
+
       // ─── How it works section ──────────────────────────────────────────
       ScrollTrigger.create({
         trigger: '#how-it-works',
@@ -241,23 +258,6 @@ export default function LandingPage({ onStartChat, onNavigate }) {
           gsap.fromTo('.code-block',
             { opacity: 0, y: 40, scale: 0.96 },
             { opacity: 1, y: 0, scale: 1, duration: 0.8, ease: 'power3.out' }
-          );
-        },
-      });
-
-      // ─── Brand / White-label section ───────────────────────────────────
-      ScrollTrigger.create({
-        trigger: '#about',
-        start: 'top 78%',
-        once: true,
-        onEnter: () => {
-          gsap.fromTo('.brand-content',
-            { opacity: 0, x: -60 },
-            { opacity: 1, x: 0, duration: 0.8, ease: 'power3.out' }
-          );
-          gsap.fromTo('.brand-tokens .token-card',
-            { opacity: 0, x: 60 },
-            { opacity: 1, x: 0, stagger: 0.1, duration: 0.6, ease: 'power3.out', delay: 0.2 }
           );
         },
       });
@@ -322,8 +322,8 @@ export default function LandingPage({ onStartChat, onNavigate }) {
           </a>
           <div className="nav-links">
             <a href="#features">Funcionalidades</a>
-            <a href="#how-it-works">Como funciona</a>
             <a href="#about">White-Label</a>
+            <a href="#how-it-works">Como funciona</a>
           </div>
           <button id="nav-cta" className="btn-primary nav-cta" onClick={onStartChat}>
             Iniciar Atendimento
@@ -410,50 +410,6 @@ export default function LandingPage({ onStartChat, onNavigate }) {
                 <p className="feature-desc">{f.desc}</p>
               </div>
             ))}
-          </div>
-        </div>
-      </section>
-
-      {/* How it works */}
-      <section id="how-it-works" className="howto-section">
-        <div className="section-inner">
-          <div className="section-label">Integração</div>
-          <h2 className="section-title">Fluxo Completo</h2>
-          <p className="section-subtitle">
-            Frontend React → IA → ServiceNow API. Simples assim.
-          </p>
-          <div className="steps-track">
-            {steps.map((s, i) => (
-              <div key={i} className="step-item">
-                <div className="step-num">{s.num}</div>
-                <div className="step-label">{s.label}</div>
-                {i < steps.length - 1 && <div className="step-connector" />}
-              </div>
-            ))}
-          </div>
-          <div className="code-block">
-            <div className="code-header">
-              <span className="code-dot red" />
-              <span className="code-dot yellow" />
-              <span className="code-dot green" />
-              <span className="code-filename">serviceNowService.js</span>
-            </div>
-            <pre className="code-body">
-{`const response = await fetch(
-  'https://SUA_INSTANCIA.service-now.com/api/serviceflow/chamados',
-  {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Basic ' + btoa('usuario:senha')
-    },
-    body: JSON.stringify({ nome, email, numero_pedido, tipo })
-  }
-);
-
-const { protocolo } = await response.json();
-// → SF-2026-00847`}
-            </pre>
           </div>
         </div>
       </section>
@@ -569,6 +525,50 @@ const { protocolo } = await response.json();
               </div>
             </div>
 
+          </div>
+        </div>
+      </section>
+
+      {/* How it works */}
+      <section id="how-it-works" className="howto-section">
+        <div className="section-inner">
+          <div className="section-label">Integração</div>
+          <h2 className="section-title">Fluxo Completo</h2>
+          <p className="section-subtitle">
+            Frontend React → IA → ServiceNow API. Simples assim.
+          </p>
+          <div className="steps-track">
+            {steps.map((s, i) => (
+              <div key={i} className="step-item">
+                <div className="step-num">{s.num}</div>
+                <div className="step-label">{s.label}</div>
+                {i < steps.length - 1 && <div className="step-connector" />}
+              </div>
+            ))}
+          </div>
+          <div className="code-block">
+            <div className="code-header">
+              <span className="code-dot red" />
+              <span className="code-dot yellow" />
+              <span className="code-dot green" />
+              <span className="code-filename">serviceNowService.js</span>
+            </div>
+            <pre className="code-body">
+{`const response = await fetch(
+  'https://SUA_INSTANCIA.service-now.com/api/serviceflow/chamados',
+  {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Basic ' + btoa('usuario:senha')
+    },
+    body: JSON.stringify({ nome, email, numero_pedido, tipo })
+  }
+);
+
+const { protocolo } = await response.json();
+// → SF-2026-00847`}
+            </pre>
           </div>
         </div>
       </section>
