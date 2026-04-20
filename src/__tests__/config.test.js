@@ -15,20 +15,12 @@ describe('CONFIG', () => {
     expect(typeof CONFIG.brand.aiName).toBe('string');
   });
 
-  it('deve ter a seção "groq" configurada', () => {
-    expect(CONFIG).toHaveProperty('groq');
-    expect(CONFIG.groq).toHaveProperty('apiKey');
-    expect(CONFIG.groq).toHaveProperty('model');
-    expect(typeof CONFIG.groq.model).toBe('string');
-  });
-
-  it('deve ter a seção "serviceNow" com instância e endpoint', () => {
-    expect(CONFIG).toHaveProperty('serviceNow');
-    expect(CONFIG.serviceNow).toHaveProperty('instance');
-    expect(CONFIG.serviceNow).toHaveProperty('endpoint');
-    expect(CONFIG.serviceNow).toHaveProperty('user');
-    expect(CONFIG.serviceNow).toHaveProperty('password');
-    expect(CONFIG.serviceNow.endpoint).toContain('/api/');
+  it('deve ter a seção "api" configurada com os endpoints locais', () => {
+    expect(CONFIG).toHaveProperty('api');
+    expect(CONFIG.api).toHaveProperty('chat');
+    expect(CONFIG.api).toHaveProperty('chamados');
+    expect(CONFIG.api.chat).toBe('/api/chat');
+    expect(CONFIG.api.chamados).toBe('/api/chamados');
   });
 
   it('o brand.name não deve estar vazio', () => {

@@ -17,6 +17,8 @@ const MOCK_TICKET_DATA = {
   produto: 'Monitor 27"',
   tipo: 'Troca',
   descricao: 'Pixel morto no centro da tela',
+  foto: 'https://exemplo.com/foto.jpg',
+  nps: '10',
 };
 
 describe('createTicket', () => {
@@ -38,13 +40,13 @@ describe('createTicket', () => {
     const [url, options] = mockFetch.mock.calls[0];
 
     // URL e método
-    expect(url).toContain('service-now.com');
-    expect(url).toContain('/api/serviceflow/chamados');
+    expect(url).toBe('/api/chamados');
     expect(options.method).toBe('POST');
 
     // Headers
     expect(options.headers['Content-Type']).toBe('application/json');
-    expect(options.headers['Authorization']).toMatch(/^Basic /);
+    // Auth is no longer on the frontend!
+    expect(options.headers['Authorization']).toBeUndefined();
 
     // Body
     const body = JSON.parse(options.body);
@@ -54,45 +56,32 @@ describe('createTicket', () => {
     expect(body.produto).toBe(MOCK_TICKET_DATA.produto);
     expect(body.tipo).toBe(MOCK_TICKET_DATA.tipo);
     expect(body.descricao).toBe(MOCK_TICKET_DATA.descricao);
+    expect(body.foto).toBe(MOCK_TICKET_DATA.foto);
+    expect(body.nps).toBe(MOCK_TICKET_DATA.nps);
 
     // Resultado
     expect(result).toEqual(mockResponse);
     expect(result.protocolo).toBe('SF-2026-00123');
   });
 
-  it('deve usar autenticação Basic (base64)', async () => {
-    mockFetch.mockResolvedValueOnce({
-      ok: true,
-      json: async () => ({ protocolo: 'SF-TEST' }),
-    });
-
-    await createTicket(MOCK_TICKET_DATA);
-
-    const [, options] = mockFetch.mock.calls[0];
-    const authHeader = options.headers['Authorization'];
-
-    // Deve ser "Basic <base64>"
-    expect(authHeader).toMatch(/^Basic [A-Za-z0-9+/=]+$/);
-  });
-
-  it('deve lançar erro quando a API retorna status não-OK', async () => {
+  it('deve lançar erro devolvido pelo nosso servidor Vercel API', async () => {
     mockFetch.mockResolvedValueOnce({
       ok: false,
       status: 500,
-      text: async () => 'Internal Server Error',
+      json: async () => ({ error: 'ServiceNow error 500' }),
     });
 
     await expect(createTicket(MOCK_TICKET_DATA)).rejects.toThrow('ServiceNow error 500');
   });
 
-  it('deve lançar erro quando a API retorna 401 (não autorizado)', async () => {
+  it('deve lançar erro de servidor genérico se a resposta não tiver json de erro', async () => {
     mockFetch.mockResolvedValueOnce({
       ok: false,
       status: 401,
-      text: async () => 'Unauthorized',
+      json: async () => { throw new Error('not json'); },
     });
 
-    await expect(createTicket(MOCK_TICKET_DATA)).rejects.toThrow('ServiceNow error 401');
+    await expect(createTicket(MOCK_TICKET_DATA)).rejects.toThrow('Erro interno no servidor: 401');
   });
 
   it('deve lançar erro quando fetch rejeita (rede)', async () => {
