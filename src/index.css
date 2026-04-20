@@ -7,7 +7,7 @@
 
 /* ── Design Tokens ── */
 :root {
-  /* Colors */
+  /* Colors. */
   --background: #060e20;
   --surface: #060e20;
   --surface-bright: #1f2b49;
@@ -76,13 +76,15 @@
   --radius-full: 9999px;
 
   /* Brand injection points (white-label) */
-  --brand-primary: #8B5CF6;
+  --brand-primary: #8b5cf6;
   --brand-radius: var(--radius-full);
-  --ai-name: "Sofia";
+  --ai-name: 'Sofia';
 }
 
 /* ── Reset & Base ── */
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
@@ -103,7 +105,12 @@ body {
   overflow-x: hidden;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: var(--font-headline);
   line-height: 1.2;
   color: var(--on-surface);
@@ -120,10 +127,20 @@ h1, h2, h3, h4, h5, h6 {
   scrollbar-width: thin;
   scrollbar-color: var(--outline-variant) transparent;
 }
-*::-webkit-scrollbar { width: 6px; height: 6px; }
-*::-webkit-scrollbar-track { background: transparent; }
-*::-webkit-scrollbar-thumb { background: var(--outline-variant); border-radius: 3px; }
-*::-webkit-scrollbar-thumb:hover { background: var(--outline); }
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+*::-webkit-scrollbar-thumb {
+  background: var(--outline-variant);
+  border-radius: 3px;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: var(--outline);
+}
 
 /* ── Selection ── */
 ::selection {
@@ -146,23 +163,38 @@ h1, h2, h3, h4, h5, h6 {
   padding: 0;
   margin: -1px;
   overflow: hidden;
-  clip: rect(0,0,0,0);
+  clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border-width: 0;
 }
 
 /* ── Global animations ── */
 @keyframes fade-in {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes slide-up {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes glow-pulse {
-  0%, 100% { box-shadow: 0 0 20px rgba(var(--primary-rgb),0.2); }
-  50% { box-shadow: 0 0 40px rgba(var(--primary-rgb),0.4); }
+  0%,
+  100% {
+    box-shadow: 0 0 20px rgba(var(--primary-rgb), 0.2);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(var(--primary-rgb), 0.4);
+  }
 }
