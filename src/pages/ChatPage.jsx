@@ -34,9 +34,11 @@ export default function ChatPage({ onBack }) {
   const [hasSpeechSupport, setHasSpeechSupport] = useState(false);
   const [activeTab, setActiveTab] = useState('overview');
   const [portalInput, setPortalInput] = useState('');
+  const [attachments, setAttachments] = useState([]); // Array of { id, name, type, base64 }
   
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
+  const fileInputRef = useRef(null);
   const recognitionRef = useRef(null);
   const activeTabRef = useRef(activeTab);
   activeTabRef.current = activeTab;
@@ -94,6 +96,52 @@ export default function ChatPage({ onBack }) {
     return () => clearInterval(interval);
   }, [input, isLoading]);
 
+  // ── File Handlers ─────────────────────────────────────────────────────────
+  const handleFileChange = async (e) => {
+    const files = Array.from(e.target.files);
+    if (!files.length) return;
+
+    if (attachments.length + files.length > 3) {
+      alert("Você pode anexar no máximo 3 imagens.");
+      return;
+    }
+
+    const newAttachments = [];
+    for (const file of files) {
+      if (!file.type.startsWith('image/')) {
+        alert(`O arquivo ${file.name} não é uma imagem válida.`);
+        continue;
+      }
+      
+      // Basic size check (roughly 2MB per file to stay safe with Vercel 4.5MB limit)
+      if (file.size > 2 * 1024 * 1024) {
+        alert(`A imagem ${file.name} é muito grande. Limite de 2MB por arquivo.`);
+        continue;
+      }
+
+      const base64 = await new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = (event) => resolve(event.target.result);
+        reader.readAsDataURL(file);
+      });
+
+      newAttachments.push({
+        id: Date.now() + Math.random(),
+        name: file.name,
+        type: file.type,
+        base64: base64
+      });
+    }
+
+    setAttachments(prev => [...prev, ...newAttachments]);
+    // Clear input so same file can be selected again
+    e.target.value = '';
+  };
+
+  const removeAttachment = (id) => {
+    setAttachments(prev => prev.filter(a => a.id !== id));
+  };
+
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
@@ -108,7 +156,10 @@ export default function ChatPage({ onBack }) {
     if (!input.trim() || isLoading) return;
     const userText = input.trim();
     setInput('');
-    addMessage('user', userText);
+    const currentAttachments = [...attachments];
+    setAttachments([]);
+    
+    addMessage('user', userText, { attachments: currentAttachments });
     setIsLoading(true);
 
     try {
@@ -140,7 +191,14 @@ export default function ChatPage({ onBack }) {
     addMessage('assistant', '⏳ Aguarde um momento, estou abrindo seu chamado...');
 
     try {
-      const result = await createTicket(pendingData);
+      const result = await createTicket({
+        ...pendingData,
+        arquivos: attachments.map(a => ({
+          name: a.name,
+          contentType: a.type,
+          base64: a.base64.split(',')[1] // Extract just the base64 part
+        }))
+      });
       const proto = result?.protocolo || result?.result?.protocolo || `SF-${Date.now()}`;
       setProtocol(proto);
       setTicketStatus('success');
@@ -364,6 +422,13 @@ export default function ChatPage({ onBack }) {
                     <div className="msg-avatar"><span className="material-symbols-outlined" style={{ fontSize: '1rem' }}>auto_awesome</span></div>
                   )}
                   <div className={`message-bubble ${msg.role === 'user' ? 'user-bubble' : 'assistant-bubble'} ${msg.isProtocol ? 'protocol-bubble' : ''}`}>
+                    {msg.attachments && msg.attachments.length > 0 && (
+                      <div className="message-attachments">
+                        {msg.attachments.map((att, i) => (
+                          <img key={i} src={att.base64} alt={att.name} className="bubble-attachment" onClick={() => window.open(att.base64, '_blank')} />
+                        ))}
+                      </div>
+                    )}
                     <div className="message-text">{renderText(msg.text)}</div>
                     <span className="message-time">{formatTime(msg.timestamp)}</span>
                   </div>
@@ -406,7 +471,35 @@ export default function ChatPage({ onBack }) {
 
             {/* Input */}
             <div className="chat-input-area">
+              {attachments.length > 0 && (
+                <div className="attachments-preview">
+                  {attachments.map((att) => (
+                    <div key={att.id} className="attachment-card">
+                      <img src={att.base64} alt="preview" />
+                      <button className="remove-att" onClick={() => removeAttachment(att.id)}>
+                        <span className="material-symbols-outlined">close</span>
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
               <div className="input-wrapper">
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={handleFileChange}
+                  multiple
+                  accept="image/*"
+                  style={{ display: 'none' }}
+                />
+                <button
+                  className="attach-btn"
+                  onClick={() => fileInputRef.current?.click()}
+                  title="Anexar imagem (máx 3)"
+                  disabled={isLoading || ticketStatus === 'pending' || attachments.length >= 3}
+                >
+                  <span className="material-symbols-outlined">attach_file</span>
+                </button>
                 {hasSpeechSupport && (
                   <button
                     id="mic-btn"
@@ -436,7 +529,7 @@ export default function ChatPage({ onBack }) {
                   id="send-btn"
                   className="send-btn"
                   onClick={handleSend}
-                  disabled={!input.trim() || isLoading}
+                  disabled={(!input.trim() && attachments.length === 0) || isLoading}
                 >
                   <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                     <line x1="22" y1="2" x2="11" y2="13" /><polygon points="22 2 15 22 11 13 2 9 22 2" />

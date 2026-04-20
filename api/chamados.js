@@ -27,6 +27,7 @@ export default async function handler(req, res) {
         descricao: data.descricao,
         nps: data.nps || '',
         foto: data.foto || '',
+        arquivos: data.arquivos || []
       }),
     });
 
