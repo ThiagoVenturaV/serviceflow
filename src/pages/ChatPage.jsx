@@ -42,6 +42,7 @@ export default function ChatPage({ onBack }) {
 
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
+  const portalInputRef = useRef(null);
   const fileInputRef = useRef(null);
   const recognitionRef = useRef(null);
   const inputValueRef = useRef('');
@@ -56,6 +57,21 @@ export default function ChatPage({ onBack }) {
 
   useEffect(() => {
     portalInputValueRef.current = portalInput;
+  }, [portalInput]);
+
+  const resizeTextarea = (textarea) => {
+    if (!textarea) return;
+
+    textarea.style.height = 'auto';
+    textarea.style.height = `${Math.min(textarea.scrollHeight, 120)}px`;
+  };
+
+  useEffect(() => {
+    resizeTextarea(inputRef.current);
+  }, [input]);
+
+  useEffect(() => {
+    resizeTextarea(portalInputRef.current);
   }, [portalInput]);
 
   const getTranscriptFromEvent = (event) => {
@@ -499,10 +515,14 @@ export default function ChatPage({ onBack }) {
                       </button>
                     )}
                     <textarea
+                      ref={portalInputRef}
                       className="chat-input"
                       placeholder="Digite sua mensagem para a Sofia..."
                       value={portalInput}
-                      onChange={(e) => setPortalInput(e.target.value)}
+                      onChange={(e) => {
+                        setPortalInput(e.target.value);
+                        resizeTextarea(e.target);
+                      }}
                       onKeyDown={(e) => {
                         if (e.key === 'Enter' && !e.shiftKey) {
                           e.preventDefault();
@@ -756,7 +776,10 @@ export default function ChatPage({ onBack }) {
                   className="chat-input"
                   placeholder={PLACEHOLDER_SUGGESTIONS[placeholderIndex]}
                   value={input}
-                  onChange={(e) => setInput(e.target.value)}
+                  onChange={(e) => {
+                    setInput(e.target.value);
+                    resizeTextarea(e.target);
+                  }}
                   onKeyDown={handleKeyDown}
                   disabled={isLoading || ticketStatus === 'pending'}
                   rows={1}
