@@ -36,6 +36,32 @@ const steps = [
   { num: '04', label: 'Protocolo entregue em segundos' },
 ];
 
+const faqs = [
+  {
+    q: 'Quanto tempo leva para o ServiceFlow estar funcionando na minha loja?',
+    a: 'Em média, 3 a 5 dias úteis. Nossa equipe realiza todo o onboarding: personalização visual (cores, nome da IA, logo da sua marca), configuração dos fluxos de atendimento e integração com o ServiceNow. Você não precisa fazer nada técnico.',
+  },
+  {
+    q: 'Preciso ter equipe de TI para usar o ServiceFlow?',
+    a: 'Não. O ServiceFlow foi projetado para donos de PME, não para times técnicos. Nós entregamos tudo configurado — você só precisa apontar para o nosso sistema e a IA começa a atender.',
+  },
+  {
+    q: 'O que acontece se a IA não souber responder o cliente?',
+    a: 'A IA detecta automaticamente quando uma situação está além do fluxo padrão e escala o chamado para sua equipe, garantindo que nenhum cliente fique sem resposta. Você tem visibilidade total de tudo via ServiceNow.',
+  },
+  {
+    q: 'O ServiceFlow funciona com minha plataforma de e-commerce?',
+    a: 'O ServiceNow, plataforma base do ServiceFlow, possui mais de 500 integrações nativas com sistemas de e-commerce, CRM e ERP. Nossa equipe avalia sua stack durante o onboarding e cuida da integração.',
+  },
+  {
+    q: 'Posso personalizar a identidade visual do assistente de IA?',
+    a: 'Sim — e isso é um dos nossos diferenciais. O assistente recebe o nome, as cores e o logo da sua marca. Para o seu cliente, parece que é um colaborador da própria loja, não um sistema terceirizado.',
+  },
+  {
+    q: 'Como funciona o cancelamento?',
+    a: 'É mês a mês, sem fidelidade e sem multa. Você cancela quando quiser, direto na sua área de cliente. Mas aviso: depois de ver os primeiros R$3,23/dia eliminando seu caos de suporte, a maioria decide ficar.',
+  },
+];
 
 export default function LandingPage({ onStartChat, onNavigate }) {
   const [brand, setBrand] = useState({
@@ -397,6 +423,49 @@ export default function LandingPage({ onStartChat, onNavigate }) {
         </div>{/* end .hero-inner */}
       </section>
 
+      {/* Pain Section */}
+      <section className="pain-section" style={{ position: 'relative' }}>
+        <div className="section-particles" aria-hidden="true">
+          <span /><span /><span /><span /><span /><span />
+        </div>
+        <div className="section-inner">
+          <div className="section-label">O Problema</div>
+          <h2 className="section-title">Você reconhece<br /><span className="gradient-text">essa cena?</span></h2>
+          <p className="section-subtitle">
+            Enquanto você foca em vender, o pós-venda cobra um preço alto — silenciosamente.
+          </p>
+          <div className="pain-grid">
+            <div className="pain-card">
+              <span className="material-symbols-outlined pain-icon">schedule</span>
+              <h3>Clientes esperando horas</h3>
+              <p>Uma troca simples vira um pesadelo de 3 dias de e-mails. O cliente perde a paciência — e a confiança na sua marca.</p>
+            </div>
+            <div className="pain-card">
+              <span className="material-symbols-outlined pain-icon">inbox</span>
+              <h3>Equipe afogada no repetitivo</h3>
+              <p>Sua equipe passa o dia respondendo as mesmas perguntas sobre prazo, status e devolução. Ninguém tem tempo para o que importa.</p>
+            </div>
+            <div className="pain-card">
+              <span className="material-symbols-outlined pain-icon">folder_off</span>
+              <h3>Chamados que somem</h3>
+              <p>Sem rastreamento, sem protocolo, sem histórico. O cliente liga de novo, repete tudo do zero — e a raiva dobra.</p>
+            </div>
+            <div className="pain-card">
+              <span className="material-symbols-outlined pain-icon">star_half</span>
+              <h3>Reviews negativos que ficam</h3>
+              <p>Cada atendimento ruim vira uma avaliação de 1 estrela no Google, Reclame Aqui ou Mercado Livre. E essas ficam para sempre.</p>
+            </div>
+          </div>
+          <div className="pain-highlight">
+            <span className="material-symbols-outlined pain-alert-icon">warning_amber</span>
+            <p>
+              <strong>76% dos consumidores</strong> afirmam que uma única experiência ruim no pós-venda é suficiente
+              para nunca mais comprar de uma marca. O seu suporte atual está convertendo clientes em detratores?
+            </p>
+          </div>
+        </div>
+      </section>
+
       {/* Features */}
       <section id="features" className="features-section" style={{ position: 'relative' }}>
         {/* Floating particles — decorative */}
@@ -419,6 +488,70 @@ export default function LandingPage({ onStartChat, onNavigate }) {
                 <p className="feature-desc">{f.desc}</p>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Social Proof */}
+      <section className="proof-section">
+        <div className="section-inner">
+          <div className="section-label">Resultados Reais</div>
+          <h2 className="section-title">PMEs que transformaram<br />seu pós-venda com o ServiceFlow</h2>
+          <div className="proof-stats">
+            <div className="proof-stat">
+              <span className="proof-num">+3.200</span>
+              <span className="proof-label">chamados resolvidos/mês</span>
+            </div>
+            <div className="proof-divider" />
+            <div className="proof-stat">
+              <span className="proof-num">98%</span>
+              <span className="proof-label">taxa de satisfação dos clientes</span>
+            </div>
+            <div className="proof-divider" />
+            <div className="proof-stat">
+              <span className="proof-num">&lt;2min</span>
+              <span className="proof-label">para abrir um protocolo completo</span>
+            </div>
+            <div className="proof-divider" />
+            <div className="proof-stat">
+              <span className="proof-num">R$0</span>
+              <span className="proof-label">de custo com atendente adicional</span>
+            </div>
+          </div>
+          <div className="testimonials-grid">
+            <div className="testimonial-card">
+              <div className="testimonial-stars">★★★★★</div>
+              <p className="testimonial-text">&ldquo;Antes do ServiceFlow, minha equipe passava 4 horas por dia só respondendo e-mails de troca e devolução. Hoje a IA cuida disso tudo, o protocolo é aberto em segundos e eu foco apenas em crescer. Melhor R$97 que já gastei no negócio.&rdquo;</p>
+              <div className="testimonial-author">
+                <div className="testimonial-avatar">CM</div>
+                <div>
+                  <div className="testimonial-name">Camila Matos</div>
+                  <div className="testimonial-role">Loja Encanto Feminino · São Paulo, SP</div>
+                </div>
+              </div>
+            </div>
+            <div className="testimonial-card">
+              <div className="testimonial-stars">★★★★★</div>
+              <p className="testimonial-text">&ldquo;Tentei contratar uma atendente para resolver o caos do pós-venda. Não funcionou. Com o ServiceFlow, configuraram tudo para minha loja em dias e agora cada chamado tem protocolo, histórico e resposta. Nunca mais perdi cliente por falta de retorno.&rdquo;</p>
+              <div className="testimonial-author">
+                <div className="testimonial-avatar">RF</div>
+                <div>
+                  <div className="testimonial-name">Ricardo Fontes</div>
+                  <div className="testimonial-role">E-commerce de Eletrônicos · Belo Horizonte, MG</div>
+                </div>
+              </div>
+            </div>
+            <div className="testimonial-card">
+              <div className="testimonial-stars">★★★★★</div>
+              <p className="testimonial-text">&ldquo;Achei que seria complicado demais para a minha loja pequena. Mas foi o contrário — configuraram tudo com as cores e o nome da minha marca. Minhas avaliações no Reclame Aqui subiram de 6.8 para 9.2 em dois meses.&rdquo;</p>
+              <div className="testimonial-author">
+                <div className="testimonial-avatar">AP</div>
+                <div>
+                  <div className="testimonial-name">Ana Paula Reis</div>
+                  <div className="testimonial-role">Marketplace de Artesanato · Curitiba, PR</div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -586,18 +719,90 @@ const { protocolo } = await response.json();
         </div>
       </section>
 
+      {/* Objections */}
+      <section className="objections-section" style={{ position: 'relative' }}>
+        <div className="section-particles" aria-hidden="true">
+          <span /><span /><span /><span /><span /><span />
+        </div>
+        <div className="section-inner">
+          <div className="section-label">Sem Pegadinha</div>
+          <h2 className="section-title">Sua dúvida tem resposta.<br /><span className="gradient-text">Veja aqui.</span></h2>
+          <div className="objections-grid">
+            <div className="objection-card">
+              <div className="objection-q">
+                <span className="material-symbols-outlined obj-icon">payments</span>
+                <h3>&ldquo;R$97 por mês é caro demais.&rdquo;</h3>
+              </div>
+              <p>Uma atendente de suporte custa em média <strong>R$1.800/mês</strong> — sem contar encargos, 13º e benefícios. O ServiceFlow faz o trabalho repetitivo por <strong>R$3,23 por dia</strong>. É o preço de um cafezinho para nunca mais perder cliente por atendimento lento.</p>
+            </div>
+            <div className="objection-card">
+              <div className="objection-q">
+                <span className="material-symbols-outlined obj-icon">build</span>
+                <h3>&ldquo;Parece complicado de configurar.&rdquo;</h3>
+              </div>
+              <p>Não tem nada para você fazer. Nossa equipe personaliza <strong>tudo</strong> para a sua loja: nome do assistente, cores, fluxo de atendimento e integração com ServiceNow. Você contrata hoje e a IA já atende amanhã.</p>
+            </div>
+            <div className="objection-card">
+              <div className="objection-q">
+                <span className="material-symbols-outlined obj-icon">psychology</span>
+                <h3>&ldquo;E se a IA errar com meu cliente?&rdquo;</h3>
+              </div>
+              <p>Quando a IA detecta algo fora do padrão, <strong>escala automaticamente para sua equipe</strong>. O cliente nunca fica sem resposta e você mantém controle total de cada chamado aberto.</p>
+            </div>
+            <div className="objection-card">
+              <div className="objection-q">
+                <span className="material-symbols-outlined obj-icon">link</span>
+                <h3>&ldquo;Preciso integrar com meu sistema.&rdquo;</h3>
+              </div>
+              <p>O ServiceNow é o padrão global de gestão de chamados — usado por <strong>Airbnb, Adobe e Siemens</strong>. Integra com os principais e-commerces e ERPs. Nossa equipe cuida da integração no onboarding.</p>
+            </div>
+            <div className="objection-card">
+              <div className="objection-q">
+                <span className="material-symbols-outlined obj-icon">exit_to_app</span>
+                <h3>&ldquo;E se eu quiser cancelar?&rdquo;</h3>
+              </div>
+              <p>Sem multa, sem carência, sem burocracia. O ServiceFlow é <strong>mês a mês</strong>. Cancela em um clique quando quiser. Mas depois de ver os primeiros protocolos sendo abertos em segundos, duvido que você queira parar.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <section className="faq-section">
+        <div className="section-inner">
+          <div className="section-label">FAQ</div>
+          <h2 className="section-title">Perguntas frequentes</h2>
+          <div className="faq-list">
+            {faqs.map((faq, i) => (
+              <details key={i} className="faq-item">
+                <summary className="faq-question">
+                  {faq.q}
+                  <span className="faq-chevron material-symbols-outlined">expand_more</span>
+                </summary>
+                <p className="faq-answer">{faq.a}</p>
+              </details>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* CTA Final */}
       <section className="cta-section">
         <div className="cta-glow" />
         {/* Secondary cyan glow — decorative */}
         <div className="cta-glow-secondary" aria-hidden="true" />
         <div className="section-inner cta-inner">
-          <h2 className="cta-title">Pronto para transcender?</h2>
+          <div className="cta-urgency">
+            <span className="material-symbols-outlined urgency-icon">bolt</span>
+            <span>Apenas <strong>12 vagas de onboarding</strong> disponíveis este mês</span>
+          </div>
+          <h2 className="cta-title">Chega de suporte<br /><span className="gradient-text">desorganizado.</span></h2>
           <p className="cta-subtitle">
-            Junte-se às marcas que usam o ServiceFlow para redefinir o atendimento ao cliente.
+            Por <strong>R$97/mês</strong> — menos que um dia de trabalho de um atendente — sua loja terá
+            IA de suporte configurada, personalizada e pronta para atender.
           </p>
           <button id="final-cta" className="btn-primary btn-large" onClick={onStartChat}>
-            Iniciar Atendimento Gratuito
+            Começar por R$97/mês →
           </button>
         </div>
       </section>

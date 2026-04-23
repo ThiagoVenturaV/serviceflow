@@ -80,7 +80,7 @@ describe('LandingPage', () => {
 
     it('o botão CTA final deve chamar onStartChat', () => {
       render(<LandingPage onStartChat={onStartChat} />);
-      const finalBtn = screen.getByText('Iniciar Atendimento Gratuito');
+      const finalBtn = screen.getByRole('button', { name: /Começar por R\$97\/mês/i });
       fireEvent.click(finalBtn);
       expect(onStartChat).toHaveBeenCalledTimes(1);
     });
