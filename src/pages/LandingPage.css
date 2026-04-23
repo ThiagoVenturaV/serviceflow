@@ -686,7 +686,7 @@
   height: 400px;
   top: 40%;
   right: -100px;
-  background: radial-gradient(circle, rgba(140, 231, 255, 0.10) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(var(--tertiary-rgb), 0.10) 0%, transparent 70%);
   animation: orb-drift-b 24s ease-in-out infinite;
 }
 .hero-orb-c {
@@ -694,7 +694,7 @@
   height: 300px;
   bottom: -60px;
   left: 30%;
-  background: radial-gradient(circle, rgba(199, 195, 254, 0.09) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(var(--secondary-rgb), 0.09) 0%, transparent 70%);
   animation: orb-drift-c 32s ease-in-out infinite;
 }
 
@@ -763,7 +763,7 @@
   width: 400px;
   height: 300px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(140, 231, 255, 0.08) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(var(--tertiary-rgb), 0.08) 0%, transparent 70%);
   pointer-events: none;
   animation: cta-pulse-secondary 8s ease-in-out infinite;
 }

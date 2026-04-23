@@ -68,6 +68,7 @@ export default function LandingPage({ onStartChat, onNavigate }) {
     root.style.setProperty('--primary-dim', brand.primary + 'cc');
     root.style.setProperty('--primary-rgb', hexToRgb(brand.primary));
     root.style.setProperty('--tertiary', brand.secondary);
+    root.style.setProperty('--tertiary-rgb', hexToRgb(brand.secondary));
 
     // Color mode: swap surface tokens
     if (brand.colorMode === 'light') {
