@@ -335,6 +335,10 @@ export default function LandingPage({ onStartChat, onNavigate }) {
       <section className="hero-section">
         <div className="hero-grid-bg" />
         <div className="hero-glow" />
+        {/* Animated orbs — decorative, pointer-events:none */}
+        <div className="hero-orb hero-orb-a" aria-hidden="true" />
+        <div className="hero-orb hero-orb-b" aria-hidden="true" />
+        <div className="hero-orb hero-orb-c" aria-hidden="true" />
         <div className="hero-inner">
           <div className="hero-content">
             <h1 className="hero-title">
@@ -393,7 +397,11 @@ export default function LandingPage({ onStartChat, onNavigate }) {
       </section>
 
       {/* Features */}
-      <section id="features" className="features-section">
+      <section id="features" className="features-section" style={{ position: 'relative' }}>
+        {/* Floating particles — decorative */}
+        <div className="section-particles" aria-hidden="true">
+          <span /><span /><span /><span /><span /><span />
+        </div>
         <div className="section-inner">
           <div className="section-label">Recursos</div>
           <h2 className="section-title">Ecossistema Avançado</h2>
@@ -530,7 +538,11 @@ export default function LandingPage({ onStartChat, onNavigate }) {
       </section>
 
       {/* How it works */}
-      <section id="how-it-works" className="howto-section">
+      <section id="how-it-works" className="howto-section" style={{ position: 'relative' }}>
+        {/* Floating particles — decorative */}
+        <div className="section-particles" aria-hidden="true">
+          <span /><span /><span /><span /><span /><span />
+        </div>
         <div className="section-inner">
           <div className="section-label">Integração</div>
           <h2 className="section-title">Fluxo Completo</h2>
@@ -576,6 +588,8 @@ const { protocolo } = await response.json();
       {/* CTA Final */}
       <section className="cta-section">
         <div className="cta-glow" />
+        {/* Secondary cyan glow — decorative */}
+        <div className="cta-glow-secondary" aria-hidden="true" />
         <div className="section-inner cta-inner">
           <h2 className="cta-title">Pronto para transcender?</h2>
           <p className="cta-subtitle">

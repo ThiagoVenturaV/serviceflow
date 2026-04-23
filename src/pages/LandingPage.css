@@ -642,6 +642,153 @@
   .btn-ghost { width: 100%; justify-content: center; }
 }
 
+/* ── Animated Backgrounds ──────────────────────────────────────
+   Rules: position:absolute | z-index:0 | pointer-events:none
+   No existing layout or logic is affected.
+   ──────────────────────────────────────────────────────────── */
+
+/* Hero orbs */
+@keyframes orb-drift-a {
+  0%   { transform: translate(0, 0) scale(1); }
+  33%  { transform: translate(60px, -40px) scale(1.08); }
+  66%  { transform: translate(-30px, 50px) scale(0.95); }
+  100% { transform: translate(0, 0) scale(1); }
+}
+@keyframes orb-drift-b {
+  0%   { transform: translate(0, 0) scale(1); }
+  33%  { transform: translate(-50px, 30px) scale(1.06); }
+  66%  { transform: translate(40px, -60px) scale(0.97); }
+  100% { transform: translate(0, 0) scale(1); }
+}
+@keyframes orb-drift-c {
+  0%   { transform: translate(0, 0) scale(1); }
+  50%  { transform: translate(30px, 40px) scale(1.04); }
+  100% { transform: translate(0, 0) scale(1); }
+}
+
+.hero-orb {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  filter: blur(80px);
+  will-change: transform;
+}
+.hero-orb-a {
+  width: 550px;
+  height: 550px;
+  top: -120px;
+  left: -80px;
+  background: radial-gradient(circle, rgba(var(--primary-rgb), 0.18) 0%, transparent 70%);
+  animation: orb-drift-a 28s ease-in-out infinite;
+}
+.hero-orb-b {
+  width: 400px;
+  height: 400px;
+  top: 40%;
+  right: -100px;
+  background: radial-gradient(circle, rgba(140, 231, 255, 0.10) 0%, transparent 70%);
+  animation: orb-drift-b 24s ease-in-out infinite;
+}
+.hero-orb-c {
+  width: 300px;
+  height: 300px;
+  bottom: -60px;
+  left: 30%;
+  background: radial-gradient(circle, rgba(199, 195, 254, 0.09) 0%, transparent 70%);
+  animation: orb-drift-c 32s ease-in-out infinite;
+}
+
+/* Floating particles for features & how-it-works sections */
+@keyframes particle-float {
+  0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0; }
+  10%       { opacity: 1; }
+  90%       { opacity: 1; }
+  50%       { transform: translateY(-40px) rotate(180deg); }
+}
+
+.section-particles {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.section-particles span {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--primary);
+  animation: particle-float linear infinite;
+  will-change: transform, opacity;
+}
+.section-particles span:nth-child(1)  { left: 8%;  top: 20%; animation-duration: 14s; animation-delay: 0s;    opacity: 0.18; }
+.section-particles span:nth-child(2)  { left: 22%; top: 70%; animation-duration: 18s; animation-delay: 2s;    opacity: 0.12; background: var(--tertiary); }
+.section-particles span:nth-child(3)  { left: 38%; top: 35%; animation-duration: 22s; animation-delay: 4s;    opacity: 0.15; }
+.section-particles span:nth-child(4)  { left: 55%; top: 80%; animation-duration: 16s; animation-delay: 1s;    opacity: 0.10; background: var(--secondary); }
+.section-particles span:nth-child(5)  { left: 72%; top: 15%; animation-duration: 20s; animation-delay: 3s;    opacity: 0.14; }
+.section-particles span:nth-child(6)  { left: 88%; top: 55%; animation-duration: 12s; animation-delay: 5s;    opacity: 0.12; background: var(--tertiary); }
+
+/* CTA glow pulse */
+@keyframes cta-pulse {
+  0%, 100% {
+    opacity: 0.12;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    opacity: 0.22;
+    transform: translate(-50%, -50%) scale(1.15);
+  }
+}
+@keyframes cta-pulse-secondary {
+  0%, 100% {
+    opacity: 0.07;
+    transform: translate(-50%, -50%) scale(1.2);
+  }
+  50% {
+    opacity: 0.14;
+    transform: translate(-50%, -50%) scale(0.9);
+  }
+}
+
+.cta-glow {
+  animation: cta-pulse 6s ease-in-out infinite;
+}
+.cta-glow-secondary {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 400px;
+  height: 300px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(140, 231, 255, 0.08) 0%, transparent 70%);
+  pointer-events: none;
+  animation: cta-pulse-secondary 8s ease-in-out infinite;
+}
+
+/* Sidebar shimmer (ChatPage) */
+@keyframes sidebar-shimmer {
+  0%   { background-position: 0% 0%; }
+  100% { background-position: 0% 200%; }
+}
+.sidebar-animated-bg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(var(--primary-rgb), 0.04) 40%,
+    rgba(140, 231, 255, 0.03) 80%,
+    transparent 100%
+  );
+  background-size: 100% 200%;
+  animation: sidebar-shimmer 12s linear infinite;
+}
+
 /* ── Interactive Token Cards ─────────────────────────────────── */
 .token-card--interactive {
   cursor: pointer;

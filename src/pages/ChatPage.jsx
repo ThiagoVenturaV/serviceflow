@@ -371,7 +371,9 @@ export default function ChatPage({ onBack }) {
   return (
     <div className="dashboard-layout">
       {/* Sidebar (Desktop Only) */}
-      <aside className="dashboard-sidebar">
+      <aside className="dashboard-sidebar" style={{ position: 'relative' }}>
+        {/* Animated sidebar shimmer — decorative */}
+        <div className="sidebar-animated-bg" aria-hidden="true" />
         <div className="sidebar-header">
           <img
             src="/logoServiceFlow.png"
