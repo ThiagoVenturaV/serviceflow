@@ -18,7 +18,7 @@ describe('LandingPage', () => {
   describe('Renderização', () => {
     it('deve renderizar o título hero', () => {
       render(<LandingPage onStartChat={onStartChat} />);
-      expect(screen.getByText(/Reimaginado/i)).toBeInTheDocument();
+      expect(screen.getByText(/Personalizado/i)).toBeInTheDocument();
     });
 
     it('deve renderizar a navbar com o nome da marca', () => {
@@ -57,7 +57,7 @@ describe('LandingPage', () => {
     it('deve renderizar as estatísticas do hero', () => {
       render(<LandingPage onStartChat={onStartChat} />);
       expect(screen.getByText('<2s')).toBeInTheDocument();
-      expect(screen.getByText('100%')).toBeInTheDocument();
+      expect(screen.getAllByText('100%')[0]).toBeInTheDocument();
       expect(screen.getByText('99.9%')).toBeInTheDocument();
     });
   });
@@ -66,21 +66,21 @@ describe('LandingPage', () => {
   describe('CTAs', () => {
     it('o botão do hero CTA deve chamar onStartChat', () => {
       render(<LandingPage onStartChat={onStartChat} />);
-      const heroBtn = screen.getByText('Falar com a IA agora');
+      const heroBtn = screen.getAllByRole('button', { name: /Agendar Demonstração/i })[0];
       fireEvent.click(heroBtn);
       expect(onStartChat).toHaveBeenCalledTimes(1);
     });
 
     it('o botão da nav CTA deve chamar onStartChat', () => {
       render(<LandingPage onStartChat={onStartChat} />);
-      const navBtn = screen.getByText('Iniciar Atendimento');
+      const navBtn = screen.getByText('Agendar Demo');
       fireEvent.click(navBtn);
       expect(onStartChat).toHaveBeenCalledTimes(1);
     });
 
     it('o botão CTA final deve chamar onStartChat', () => {
       render(<LandingPage onStartChat={onStartChat} />);
-      const finalBtn = screen.getByRole('button', { name: /Começar por R\$97\/mês/i });
+      const finalBtn = screen.getAllByRole('button', { name: /Agendar Demonstração/i })[1];
       fireEvent.click(finalBtn);
       expect(onStartChat).toHaveBeenCalledTimes(1);
     });

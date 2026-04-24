@@ -353,7 +353,7 @@ export default function LandingPage({ onStartChat, onNavigate }) {
             <a href="#how-it-works">Como funciona</a>
           </div>
           <button id="nav-cta" className="btn-primary nav-cta" onClick={onStartChat}>
-            Iniciar Atendimento
+            Agendar Demo
           </button>
         </div>
       </nav>
@@ -369,16 +369,16 @@ export default function LandingPage({ onStartChat, onNavigate }) {
         <div className="hero-inner">
           <div className="hero-content">
             <h1 className="hero-title">
-              Pós-venda,<br />
-              <span className="gradient-text">Reimaginado</span><br />
+              Suporte de multinacional.<br />
+              <span className="gradient-text">Personalizado</span><br />
               para a sua marca.
             </h1>
             <p className="hero-subtitle">
-              Sua marca. Nossa inteligência. O ServiceFlow transforma conversas em chamados — sem formulários, sem fricção, com protocolo automático via ServiceNow.
+              Esqueça os chatbots engessados. O ServiceFlow integra o padrão global do ServiceNow à sua operação, entregando uma experiência de atendimento que converte clientes irritados em fãs leais.
             </p>
             <div className="hero-actions">
               <button id="hero-cta" className="btn-primary btn-large" onClick={onStartChat}>
-                Falar com a IA agora
+                Agendar Demonstração
                 <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                   <line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" />
                 </svg>
@@ -431,7 +431,7 @@ export default function LandingPage({ onStartChat, onNavigate }) {
           <div className="section-label">O Problema</div>
           <h2 className="section-title">Você reconhece<br /><span className="gradient-text">essa cena?</span></h2>
           <p className="section-subtitle">
-            Enquanto você foca em vender, o pós-venda cobra um preço alto — silenciosamente.
+            Enquanto você foca na expansão, falhas no suporte destroem a sua margem de lucro silenciosamente.
           </p>
           <div className="pain-grid">
             <div className="pain-card">
@@ -513,14 +513,14 @@ export default function LandingPage({ onStartChat, onNavigate }) {
             </div>
             <div className="proof-divider" />
             <div className="proof-stat">
-              <span className="proof-num">R$0</span>
-              <span className="proof-label">de custo com atendente adicional</span>
+              <span className="proof-num">100%</span>
+              <span className="proof-label">de precisão na abertura dos protocolos</span>
             </div>
           </div>
           <div className="testimonials-grid">
             <div className="testimonial-card">
               <div className="testimonial-stars">★★★★★</div>
-              <p className="testimonial-text">&ldquo;Antes do ServiceFlow, minha equipe passava 4 horas por dia só respondendo e-mails de troca e devolução. Hoje a IA cuida disso tudo, o protocolo é aberto em segundos e eu foco apenas em crescer. Melhor R$97 que já gastei no negócio.&rdquo;</p>
+              <p className="testimonial-text">&ldquo;Antes do ServiceFlow, minha equipe passava 4 horas por dia só respondendo e-mails de troca e devolução. Hoje a IA cuida disso tudo, o protocolo é aberto em segundos e eu foco apenas em crescer. O melhor investimento que já fiz no meu negócio.&rdquo;</p>
               <div className="testimonial-author">
                 <div className="testimonial-avatar">CM</div>
                 <div>
@@ -730,9 +730,9 @@ const { protocolo } = await response.json();
             <div className="objection-card">
               <div className="objection-q">
                 <span className="material-symbols-outlined obj-icon">payments</span>
-                <h3>&ldquo;R$97 por mês é caro demais.&rdquo;</h3>
+                <h3>&ldquo;A mensalidade vai pesar no orçamento?&rdquo;</h3>
               </div>
-              <p>Uma atendente de suporte custa em média <strong>R$1.800/mês</strong> — sem contar encargos, 13º e benefícios. O ServiceFlow faz o trabalho repetitivo por <strong>R$3,23 por dia</strong>. É o preço de um cafezinho para nunca mais perder cliente por atendimento lento.</p>
+              <p>O ServiceFlow não é apenas uma ferramenta, é uma <strong>operação de suporte de nível Enterprise</strong> para a sua empresa. Mais do que economizar com novas contratações, você blinda a reputação da sua marca, garante zero chamados perdidos e transforma o atendimento no seu maior diferencial competitivo.</p>
             </div>
             <div className="objection-card">
               <div className="objection-q">
@@ -797,11 +797,11 @@ const { protocolo } = await response.json();
           </div>
           <h2 className="cta-title">Chega de suporte<br /><span className="gradient-text">desorganizado.</span></h2>
           <p className="cta-subtitle">
-            Por <strong>R$97/mês</strong> — menos que um dia de trabalho de um atendente — sua loja terá
-            IA de suporte configurada, personalizada e pronta para atender.
+            Eleve sua marca com uma <strong>operação de suporte premium</strong>. Sua loja terá uma 
+            IA de alto nível, 100% configurada, personalizada e pronta para blindar sua reputação.
           </p>
           <button id="final-cta" className="btn-primary btn-large" onClick={onStartChat}>
-            Começar por R$97/mês →
+            Agendar Demonstração →
           </button>
         </div>
       </section>
