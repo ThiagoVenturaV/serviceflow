@@ -531,7 +531,7 @@ export default function LandingPage({ onStartChat, onNavigate }) {
             </div>
             <div className="testimonial-card">
               <div className="testimonial-stars">★★★★★</div>
-              <p className="testimonial-text">&ldquo;Tentei contratar uma atendente para resolver o caos do pós-venda. Não funcionou. Com o ServiceFlow, configuraram tudo para minha loja em dias e agora cada chamado tem protocolo, histórico e resposta. Nunca mais perdi cliente por falta de retorno.&rdquo;</p>
+              <p className="testimonial-text">&ldquo;Com o aumento das vendas, nosso suporte estava entrando em colapso. O ServiceFlow implementou uma operação robusta, com rastreamento e protocolos automáticos. Hoje nossa marca entrega uma experiência de pós-venda à altura da qualidade dos nossos produtos.&rdquo;</p>
               <div className="testimonial-author">
                 <div className="testimonial-avatar">RF</div>
                 <div>
@@ -542,7 +542,7 @@ export default function LandingPage({ onStartChat, onNavigate }) {
             </div>
             <div className="testimonial-card">
               <div className="testimonial-stars">★★★★★</div>
-              <p className="testimonial-text">&ldquo;Achei que seria complicado demais para a minha loja pequena. Mas foi o contrário — configuraram tudo com as cores e o nome da minha marca. Minhas avaliações no Reclame Aqui subiram de 6.8 para 9.2 em dois meses.&rdquo;</p>
+              <p className="testimonial-text">&ldquo;O onboarding do ServiceFlow é impecável. A inteligência artificial assumiu nossa operação de primeira linha mantendo perfeitamente o tom de voz da nossa marca. Nossas avaliações no Reclame Aqui subiram de 6.8 para 9.2 em apenas dois meses.&rdquo;</p>
               <div className="testimonial-author">
                 <div className="testimonial-avatar">AP</div>
                 <div>
@@ -755,13 +755,7 @@ const { protocolo } = await response.json();
               </div>
               <p>O ServiceNow é o padrão global de gestão de chamados — usado por <strong>Airbnb, Adobe e Siemens</strong>. Integra com os principais e-commerces e ERPs. Nossa equipe cuida da integração no onboarding.</p>
             </div>
-            <div className="objection-card">
-              <div className="objection-q">
-                <span className="material-symbols-outlined obj-icon">exit_to_app</span>
-                <h3>&ldquo;E se eu quiser cancelar?&rdquo;</h3>
-              </div>
-              <p>Sem multa, sem carência, sem burocracia. O ServiceFlow é <strong>mês a mês</strong>. Cancela em um clique quando quiser. Mas depois de ver os primeiros protocolos sendo abertos em segundos, duvido que você queira parar.</p>
-            </div>
+
           </div>
         </div>
       </section>
