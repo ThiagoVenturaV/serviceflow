@@ -57,10 +57,7 @@ const faqs = [
     q: 'Posso personalizar a identidade visual do assistente de IA?',
     a: 'Sim — e isso é um dos nossos diferenciais. O assistente recebe o nome, as cores e o logo da sua marca. Para o seu cliente, parece que é um colaborador da própria loja, não um sistema terceirizado.',
   },
-  {
-    q: 'Como funciona o cancelamento?',
-    a: 'É mês a mês, sem fidelidade e sem multa. Você cancela quando quiser, direto na sua área de cliente. Mas aviso: depois de ver os primeiros R$3,23/dia eliminando seu caos de suporte, a maioria decide ficar.',
-  },
+
 ];
 
 export default function LandingPage({ onStartChat, onNavigate }) {
