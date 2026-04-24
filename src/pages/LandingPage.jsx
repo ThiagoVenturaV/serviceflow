@@ -369,13 +369,12 @@ export default function LandingPage({ onStartChat, onNavigate }) {
         <div className="hero-inner">
           <div className="hero-content">
             <h1 className="hero-title">
-              Atendimento,<br />
+              Pós-venda,<br />
               <span className="gradient-text">Reimaginado</span><br />
               para a sua marca.
             </h1>
             <p className="hero-subtitle">
-              O ServiceFlow para o seu fluxo de atendimento. Uma interface de alto desempenho
-              que conecta a visão da sua marca às necessidades dos seus clientes via ServiceNow.
+              Sua marca. Nossa inteligência. O ServiceFlow transforma conversas em chamados — sem formulários, sem fricção, com protocolo automático via ServiceNow.
             </p>
             <div className="hero-actions">
               <button id="hero-cta" className="btn-primary btn-large" onClick={onStartChat}>
@@ -453,7 +452,7 @@ export default function LandingPage({ onStartChat, onNavigate }) {
             <div className="pain-card">
               <span className="material-symbols-outlined pain-icon">star_half</span>
               <h3>Reviews negativos que ficam</h3>
-              <p>Cada atendimento ruim vira uma avaliação de 1 estrela no Google, Reclame Aqui ou Mercado Livre. E essas ficam para sempre.</p>
+              <p>Cada atendimento ruim vira uma avaliação de 1 estrela no Google, Reclame Aqui ou E-commerce. E essas ficam para sempre.</p>
             </div>
           </div>
           <div className="pain-highlight">
