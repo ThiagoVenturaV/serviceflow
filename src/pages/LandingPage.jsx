@@ -568,7 +568,7 @@ export default function LandingPage({ onStartChat, onNavigate }) {
               <li><span className="material-symbols-outlined check">check</span> Dark/Light mode com tokens customizáveis</li>
               <li><span className="material-symbols-outlined check">check</span> Segurança de dados</li>
             </ul>
-            <button id="brand-cta" className="btn-primary" onClick={onStartChat}>
+            <button id="brand-cta" className="btn-primary" onClick={() => setEditingName(true)}>
               Testar agora →
             </button>
           </div>

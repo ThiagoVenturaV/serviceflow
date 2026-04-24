@@ -85,11 +85,13 @@ describe('LandingPage', () => {
       expect(onStartChat).toHaveBeenCalledTimes(1);
     });
 
-    it('o botão "Testar agora" da seção brand deve chamar onStartChat', () => {
+    it('o botão "Testar agora" da seção brand deve ativar a edição do nome da IA', () => {
       render(<LandingPage onStartChat={onStartChat} />);
       const brandBtn = screen.getByText(/Testar agora/);
       fireEvent.click(brandBtn);
-      expect(onStartChat).toHaveBeenCalledTimes(1);
+      
+      const input = screen.getByDisplayValue('Sofia');
+      expect(input).toBeInTheDocument();
     });
   });
 
