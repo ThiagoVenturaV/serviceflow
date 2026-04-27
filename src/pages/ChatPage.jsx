@@ -33,6 +33,7 @@ export default function ChatPage({ onBack }) {
   const [protocol, setProtocol] = useState(null);
   const [showConfirm, setShowConfirm] = useState(false);
   const [pendingData, setPendingData] = useState(null);
+  const [pendingAttachments, setPendingAttachments] = useState([]);
   const [placeholderIndex, setPlaceholderIndex] = useState(0);
   const [isListening, setIsListening] = useState(false);
   const [hasSpeechSupport, setHasSpeechSupport] = useState(false);
@@ -231,6 +232,7 @@ export default function ChatPage({ onBack }) {
     const userText = input.trim();
     setInput('');
     const currentAttachments = [...attachments];
+    setPendingAttachments(currentAttachments);
     setAttachments([]);
 
     addMessage('user', userText, { attachments: currentAttachments });
@@ -247,6 +249,11 @@ export default function ChatPage({ onBack }) {
       if (data) {
         setPendingData(data);
         setShowConfirm(true);
+        // Keep pendingAttachments alive for the confirm dialog
+      } else {
+        // No data collected yet — clear pending attachments since they
+        // weren't consumed (user may attach new ones in next turn)
+        setPendingAttachments([]);
       }
 
       addMessage('assistant', displayText || aiResponse);
@@ -273,7 +280,7 @@ export default function ChatPage({ onBack }) {
     try {
       const result = await createTicket({
         ...pendingData,
-        arquivos: attachments.map((a) => ({
+        arquivos: pendingAttachments.map((a) => ({
           name: a.name,
           contentType: a.type,
           base64: a.base64.split(',')[1], // Extract just the base64 part
@@ -298,15 +305,19 @@ export default function ChatPage({ onBack }) {
     }
 
     setPendingData(null);
+    setPendingAttachments([]);
   };
 
   const handleCancelTicket = () => {
     setShowConfirm(false);
+    // Restore attachments to the input area so user can re-attach or modify
+    setAttachments(pendingAttachments);
     addMessage(
       'assistant',
       'Tudo bem! Posso fazer alguma correção nos dados? Me diga o que precisar ajustar.',
     );
     setPendingData(null);
+    setPendingAttachments([]);
   };
 
   const handleKeyDown = (e) => {
@@ -702,6 +713,16 @@ export default function ChatPage({ onBack }) {
                         <span className="confirm-value">{val}</span>
                       </div>
                     ))}
+                    {pendingAttachments.length > 0 && (
+                      <div className="confirm-field">
+                        <span className="confirm-label">fotos anexadas</span>
+                        <div className="confirm-attachments-preview">
+                          {pendingAttachments.map((att, i) => (
+                            <img key={i} src={att.base64} alt={att.name} className="confirm-thumb" />
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
                   <div className="confirm-actions">
                     <button className="btn-cancel" onClick={handleCancelTicket}>
