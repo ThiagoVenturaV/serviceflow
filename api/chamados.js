@@ -26,7 +26,7 @@ export default async function handler(req, res) {
         tipo: data.tipo,
         descricao: data.descricao,
         nps: data.nps || '',
-        foto: data.foto || '',
+        foto: (data.arquivos && data.arquivos.length > 0) ? 'true' : 'false',
         arquivos: data.arquivos || []
       }),
     });
