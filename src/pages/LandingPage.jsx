@@ -371,7 +371,7 @@ export default function LandingPage({ onStartChat, onNavigate }) {
               para a sua marca.
             </h1>
             <p className="hero-subtitle">
-              Esqueça os chatbots engessados. O ServiceFlow integra o padrão global do ServiceNow à sua operação, entregando uma experiência de atendimento que converte clientes irritados em fãs leais.
+              Esqueça os chatbots engessados. O ServiceFlow integra o padrão global do ServiceNow à sua operação, entregando uma experiência de pós-venda que converte clientes irritados em fãs leais.
             </p>
             <div className="hero-actions">
               <button id="hero-cta" className="btn-primary btn-large" onClick={onStartChat}>
