@@ -492,7 +492,7 @@ export default function LandingPage({ onStartChat, onNavigate }) {
       <section className="proof-section">
         <div className="section-inner">
           <div className="section-label">Resultados Reais</div>
-          <h2 className="section-title">PMEs que transformaram<br />seu pós-venda com o ServiceFlow</h2>
+          <h2 className="section-title">Empresas que transformaram<br />seu pós-venda com o ServiceFlow</h2>
           <div className="proof-stats">
             <div className="proof-stat">
               <span className="proof-num">+3.200</span>
