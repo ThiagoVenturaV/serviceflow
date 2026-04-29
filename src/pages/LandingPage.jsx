@@ -10,7 +10,7 @@ const features = [
   {
     icon: 'auto_awesome',
     title: 'IA Conversacional',
-    desc: 'Nossa IA coleta todas as informações em linguagem natural — sem formulários chatos.',
+    desc: 'Nossa IA coleta todas as informações em linguagem natural, sem formulários chatos.',
   },
   {
     icon: 'bolt',
@@ -43,7 +43,7 @@ const faqs = [
   },
   {
     q: 'Preciso ter equipe de TI para usar o ServiceFlow?',
-    a: 'Não. O ServiceFlow foi projetado para donos de PME, não para times técnicos. Nós entregamos tudo configurado — você só precisa apontar para o nosso sistema e a IA começa a atender.',
+    a: 'Não. O ServiceFlow foi projetado para donos de PME, não para times técnicos. Nós entregamos tudo configurado - você só precisa apontar para o nosso sistema e a IA começa a atender.',
   },
   {
     q: 'O que acontece se a IA não souber responder o cliente?',
@@ -55,7 +55,7 @@ const faqs = [
   },
   {
     q: 'Posso personalizar a identidade visual do assistente de IA?',
-    a: 'Sim — e isso é um dos nossos diferenciais. O assistente recebe o nome, as cores e o logo da sua marca. Para o seu cliente, parece que é um colaborador da própria loja, não um sistema terceirizado.',
+    a: 'Sim, e isso é um dos nossos diferenciais. O assistente recebe o nome, as cores e o logo da sua marca. Para o seu cliente, parece que é um colaborador da própria loja, não um sistema terceirizado.',
   },
 
 ];
@@ -192,7 +192,7 @@ export default function LandingPage({ onStartChat, onNavigate }) {
           '-=0.2'
         );
 
-      // Chat preview — slides in from the right
+      // Chat preview - slides in from the right
       heroTl.fromTo('.hero-visual',
         { opacity: 0, x: 80, rotationY: -8, scale: 0.92 },
         { opacity: 1, x: 0, rotationY: 0, scale: 1, duration: 1, ease: 'power2.out' },
@@ -359,7 +359,7 @@ export default function LandingPage({ onStartChat, onNavigate }) {
       <section className="hero-section">
         <div className="hero-grid-bg" />
         <div className="hero-glow" />
-        {/* Animated orbs — decorative, pointer-events:none */}
+        {/* Animated orbs - decorative, pointer-events:none */}
         <div className="hero-orb hero-orb-a" aria-hidden="true" />
         <div className="hero-orb hero-orb-b" aria-hidden="true" />
         <div className="hero-orb hero-orb-c" aria-hidden="true" />
@@ -434,7 +434,7 @@ export default function LandingPage({ onStartChat, onNavigate }) {
             <div className="pain-card">
               <span className="material-symbols-outlined pain-icon">schedule</span>
               <h3>Clientes esperando horas</h3>
-              <p>Uma troca simples vira um pesadelo de 3 dias de e-mails. O cliente perde a paciência — e a confiança na sua marca.</p>
+              <p>Uma troca simples vira um pesadelo de 3 dias de e-mails. O cliente perde a paciência, e a confiança na sua marca.</p>
             </div>
             <div className="pain-card">
               <span className="material-symbols-outlined pain-icon">inbox</span>
@@ -444,7 +444,7 @@ export default function LandingPage({ onStartChat, onNavigate }) {
             <div className="pain-card">
               <span className="material-symbols-outlined pain-icon">folder_off</span>
               <h3>Chamados que somem</h3>
-              <p>Sem rastreamento, sem protocolo, sem histórico. O cliente liga de novo, repete tudo do zero — e a raiva dobra.</p>
+              <p>Sem rastreamento, sem protocolo, sem histórico. O cliente liga de novo, repete tudo do zero, e a raiva dobra.</p>
             </div>
             <div className="pain-card">
               <span className="material-symbols-outlined pain-icon">star_half</span>
@@ -464,7 +464,7 @@ export default function LandingPage({ onStartChat, onNavigate }) {
 
       {/* Features */}
       <section id="features" className="features-section" style={{ position: 'relative' }}>
-        {/* Floating particles — decorative */}
+        {/* Floating particles - decorative */}
         <div className="section-particles" aria-hidden="true">
           <span /><span /><span /><span /><span /><span />
         </div>
@@ -669,7 +669,7 @@ export default function LandingPage({ onStartChat, onNavigate }) {
 
       {/* How it works */}
       <section id="how-it-works" className="howto-section" style={{ position: 'relative' }}>
-        {/* Floating particles — decorative */}
+        {/* Floating particles - decorative */}
         <div className="section-particles" aria-hidden="true">
           <span /><span /><span /><span /><span /><span />
         </div>
@@ -750,7 +750,7 @@ const { protocolo } = await response.json();
                 <span className="material-symbols-outlined obj-icon">link</span>
                 <h3>&ldquo;Preciso integrar com meu sistema.&rdquo;</h3>
               </div>
-              <p>O ServiceNow é o padrão global de gestão de chamados — usado por <strong>Airbnb, Adobe e Siemens</strong>. Integra com os principais e-commerces e ERPs. Nossa equipe cuida da integração no onboarding.</p>
+              <p>O ServiceNow é o padrão global de gestão de chamados - usado por <strong>Airbnb, Adobe e Siemens</strong>. Integra com os principais e-commerces e ERPs. Nossa equipe cuida da integração no onboarding.</p>
             </div>
 
           </div>
@@ -779,7 +779,7 @@ const { protocolo } = await response.json();
       {/* CTA Final */}
       <section className="cta-section">
         <div className="cta-glow" />
-        {/* Secondary cyan glow — decorative */}
+        {/* Secondary cyan glow - decorative */}
         <div className="cta-glow-secondary" aria-hidden="true" />
         <div className="section-inner cta-inner">
           <div className="cta-urgency">
