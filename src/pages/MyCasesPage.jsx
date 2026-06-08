@@ -38,7 +38,7 @@ export default function MyCasesPage({ userEmail, onNewChat }) {
     }
 
     setLoading(true);
-    fetch(`/api/meus-chamados?email=${encodeURIComponent(userEmail)}`)
+    fetch(`/api/meus_chamados?email=${encodeURIComponent(userEmail)}`)
       .then((r) => {
         if (!r.ok) throw new Error(`Erro ${r.status}`);
         return r.json();

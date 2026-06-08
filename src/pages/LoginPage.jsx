@@ -18,7 +18,7 @@ export default function LoginPage({ onLogin, onContinueAsGuest }) {
 
     try {
       // Tenta buscar chamados desse email para verificar se é cliente
-      const res = await fetch(`/api/meus-chamados?email=${encodeURIComponent(trimmed)}`);
+      const res = await fetch(`/api/meus_chamados?email=${encodeURIComponent(trimmed)}`);
       const data = await res.json();
       // Se retornou sem erro critico, loga o usuario (com ou sem chamados)
       onLogin({ email: trimmed, chamados: data?.result || data || [] });
