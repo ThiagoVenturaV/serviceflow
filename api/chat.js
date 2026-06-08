@@ -45,7 +45,7 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { messages } = req.body;
+  const { messages, variables = {} } = req.body;
 
   const groq = new Groq({
     apiKey: process.env.GROQ_API_KEY || process.env.VITE_GROQ_API_KEY || 'YOUR_GROQ_API_KEY',
@@ -152,9 +152,17 @@ CONSULTA DE CHAMADOS EXISTENTES (TICKET LOOKUP):
         let toolResult;
 
         if (functionName === 'listar_chamados_por_email') {
-          toolResult = await callListarChamados(functionArgs.email);
+          let email = functionArgs.email;
+          if (email && (email === '{email}' || email.includes('{email}'))) {
+            email = variables.email || email;
+          }
+          toolResult = await callListarChamados(email);
         } else if (functionName === 'buscar_chamado_por_protocolo') {
-          toolResult = await callBuscarChamado(functionArgs.protocolo);
+          let protocolo = functionArgs.protocolo;
+          if (protocolo && (protocolo === '{protocolo}' || protocolo.includes('{protocolo}'))) {
+            protocolo = variables.protocolo || protocolo;
+          }
+          toolResult = await callBuscarChamado(protocolo);
         }
 
         formattedMessages.push({

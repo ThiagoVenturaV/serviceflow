@@ -1,10 +1,10 @@
-export async function sendMessage(messages) {
+export async function sendMessage(messages, variables = {}) {
   const response = await fetch('/api/chat', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ messages }),
+    body: JSON.stringify({ messages, variables }),
   });
 
   if (!response.ok) {

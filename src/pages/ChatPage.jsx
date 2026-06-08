@@ -45,6 +45,12 @@ export default function ChatPage({ onBack, user }) {
   const [attachments, setAttachments] = useState([]); // Array of { id, name, type, base64 }
   const [showNPS, setShowNPS] = useState(false);
   const [showHelp, setShowHelp] = useState(false);
+  const [clientVars, setClientVars] = useState({
+    nome: '',
+    email: user?.email || '',
+    numero_pedido: '',
+    protocolo: ''
+  });
 
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
@@ -240,24 +246,32 @@ export default function ChatPage({ onBack, user }) {
     setPendingAttachments(currentAttachments);
     setAttachments([]);
 
+    // Extrai e salva as variáveis antes da chamada
+    const currentVars = extractAndSaveVars(userText);
+
+    // Mostra o texto original no chat do usuário para boa experiência visual
     addMessage('user', userText, { attachments: currentAttachments });
     setIsLoading(true);
 
     try {
-      const history = messages.map((m) => ({ role: m.role, content: m.text }));
-      history.push({ role: 'user', content: userText });
+      // Cria histórico com mensagens de usuário ofuscadas (redacted)
+      const history = messages.map((m) => ({
+        role: m.role,
+        content: m.role === 'user' ? redactTextWithVars(m.text, currentVars) : m.text,
+      }));
+      history.push({ role: 'user', content: redactTextWithVars(userText, currentVars) });
 
-      const aiResponse = await sendMessage(history);
+      // Envia histórico ofuscado + dicionário de variáveis para o back-end
+      const aiResponse = await sendMessage(history, currentVars);
       const data = extractCollectedData(aiResponse);
       const displayText = cleanMessageText(aiResponse);
 
       if (data) {
-        setPendingData(data);
+        // Resolve placeholders no JSON mapeado antes de abrir a confirmação
+        const resolvedData = resolveDataPlaceholders(data, currentVars);
+        setPendingData(resolvedData);
         setShowConfirm(true);
-        // Keep pendingAttachments alive for the confirm dialog
       } else {
-        // No data collected yet — clear pending attachments since they
-        // weren't consumed (user may attach new ones in next turn)
         setPendingAttachments([]);
       }
 
@@ -386,14 +400,133 @@ export default function ChatPage({ onBack, user }) {
   const formatTime = (date) =>
     date.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
 
+  const rehydrateText = (text) => {
+    if (!text) return '';
+    let res = text;
+    res = res.replace(/\{(?:variables\.)?nome\}/g, clientVars.nome || '{nome}');
+    res = res.replace(/\{(?:variables\.)?email\}/g, clientVars.email || '{email}');
+    res = res.replace(/\{(?:variables\.)?numero_pedido\}/g, clientVars.numero_pedido || '{numero_pedido}');
+    res = res.replace(/\{(?:variables\.)?protocolo\}/g, clientVars.protocolo || '{protocolo}');
+    return res;
+  };
+
   const renderText = (text) => {
-    return text.split('\n').map((line, i) => {
+    const rehydrated = rehydrateText(text);
+    return rehydrated.split('\n').map((line, i) => {
       const boldLine = line.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
       return (
         <p key={i} dangerouslySetInnerHTML={{ __html: boldLine || '&nbsp;' }} />
       );
     });
   };
+
+  const extractAndSaveVars = (text) => {
+    const updatedVars = { ...clientVars };
+    let normalized = text;
+
+    // 1. Normalizador de e-mail conversacional (th arroba gmail . com -> th@gmail.com)
+    normalized = normalized
+      .replace(/\s*(?:arroba|@)\s*/gi, '@')
+      .replace(/\s*(?:ponto|\.)\s*/gi, '.')
+      .replace(/\s+/g, ' ');
+
+    // 2. Extração de Email por Regex
+    const emailRegex = /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b/gi;
+    const emailMatch = normalized.match(emailRegex);
+    if (emailMatch) {
+      updatedVars.email = emailMatch[0].toLowerCase();
+    }
+
+    // 3. Extração de Número de Pedido por Regex (ex: #12345 ou similar)
+    const pedidoRegex = /#\d+/gi;
+    const pedidoMatch = normalized.match(pedidoRegex);
+    if (pedidoMatch) {
+      updatedVars.numero_pedido = pedidoMatch[0];
+    }
+
+    // 4. Extração de Protocolo por Regex (ex: SF-XXXXXXXXXX ou similar)
+    const protoRegex = /\bSF-\d+\b/gi;
+    const protoMatch = normalized.match(protoRegex);
+    if (protoMatch) {
+      updatedVars.protocolo = protoMatch[0];
+    }
+
+    // 5. Extração baseada no contexto da última pergunta do Assistente (IA)
+    const assistantMessages = messages.filter(m => m.role === 'assistant');
+    if (assistantMessages.length > 0) {
+      const lastAssistantMsg = assistantMessages[assistantMessages.length - 1].text.toLowerCase();
+
+      // Se a IA perguntou o nome completo do cliente
+      if (lastAssistantMsg.includes('nome completo') || lastAssistantMsg.includes('seu nome')) {
+        let nameCandidate = text;
+        const cleanupPrefixes = [
+          /meu\s+nome\s+é\s+/gi,
+          /meu\s+nome\s+eh\s+/gi,
+          /eu\s+sou\s+/gi,
+          /chamo-me\s+/gi,
+          /me\s+chamo\s+/gi
+        ];
+        for (const regex of cleanupPrefixes) {
+          nameCandidate = nameCandidate.replace(regex, '');
+        }
+        nameCandidate = nameCandidate.trim();
+        // Evita salvar strings muito longas ou com muitas palavras como nome
+        if (nameCandidate.length > 0 && nameCandidate.split(/\s+/).length <= 5) {
+          updatedVars.nome = nameCandidate;
+        }
+      }
+    }
+
+    setClientVars(updatedVars);
+    return updatedVars;
+  };
+
+  const redactTextWithVars = (text, vars) => {
+    if (!text) return '';
+    let res = text;
+
+    // Normalizador de e-mail conversacional antes de aplicar redação
+    res = res
+      .replace(/\s*(?:arroba|@)\s*/gi, '@')
+      .replace(/\s*(?:ponto|\.)\s*/gi, '.')
+      .replace(/\s+/g, ' ');
+
+    if (vars.email) {
+      const escapedEmail = vars.email.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+      res = res.replace(new RegExp(escapedEmail, 'gi'), '{email}');
+    }
+    if (vars.nome) {
+      const escapedNome = vars.nome.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+      res = res.replace(new RegExp(escapedNome, 'gi'), '{nome}');
+    }
+    if (vars.numero_pedido) {
+      const escapedPedido = vars.numero_pedido.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+      res = res.replace(new RegExp(escapedPedido, 'gi'), '{numero_pedido}');
+    }
+    if (vars.protocolo) {
+      const escapedProto = vars.protocolo.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+      res = res.replace(new RegExp(escapedProto, 'gi'), '{protocolo}');
+    }
+    return res;
+  };
+
+  const resolveDataPlaceholders = (dataObj, vars) => {
+    if (!dataObj) return null;
+    const resolved = { ...dataObj };
+    for (const key in resolved) {
+      if (typeof resolved[key] === 'string') {
+        let val = resolved[key];
+        val = val.replace(/\{(?:variables\.)?nome\}/gi, vars.nome || '');
+        val = val.replace(/\{(?:variables\.)?email\}/gi, vars.email || '');
+        val = val.replace(/\{(?:variables\.)?numero_pedido\}/gi, vars.numero_pedido || '');
+        val = val.replace(/\{(?:variables\.)?protocolo\}/gi, vars.protocolo || '');
+        resolved[key] = val;
+      }
+    }
+    return resolved;
+  };
+
+
 
   return (
     <div className="dashboard-layout">
