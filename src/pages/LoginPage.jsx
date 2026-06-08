@@ -20,8 +20,21 @@ export default function LoginPage({ onLogin, onContinueAsGuest }) {
       // Tenta buscar chamados desse email para verificar se é cliente
       const res = await fetch(`/api/meus_chamados?email=${encodeURIComponent(trimmed)}`);
       const data = await res.json();
+      
+      let list = [];
+      if (data) {
+        if (Array.isArray(data)) {
+          list = data;
+        } else if (data.result) {
+          if (Array.isArray(data.result)) {
+            list = data.result;
+          } else if (data.result.result && Array.isArray(data.result.result)) {
+            list = data.result.result;
+          }
+        }
+      }
       // Se retornou sem erro critico, loga o usuario (com ou sem chamados)
-      onLogin({ email: trimmed, chamados: data?.result || data || [] });
+      onLogin({ email: trimmed, chamados: list });
     } catch {
       // Mesmo sem chamados anteriores, permite entrar
       onLogin({ email: trimmed, chamados: [] });

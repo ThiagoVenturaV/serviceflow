@@ -44,8 +44,18 @@ export default function MyCasesPage({ userEmail, onNewChat }) {
         return r.json();
       })
       .then((data) => {
-        // ServiceNow retorna { result: [...] }
-        const list = Array.isArray(data) ? data : (data.result || []);
+        let list = [];
+        if (data) {
+          if (Array.isArray(data)) {
+            list = data;
+          } else if (data.result) {
+            if (Array.isArray(data.result)) {
+              list = data.result;
+            } else if (data.result.result && Array.isArray(data.result.result)) {
+              list = data.result.result;
+            }
+          }
+        }
         setCases(list);
       })
       .catch((err) => {
