@@ -18,7 +18,7 @@ export default async function handler(req, res) {
   const user     = process.env.SERVICENOW_USER     || process.env.VITE_SERVICENOW_USER;
   const password = process.env.SERVICENOW_PASSWORD || process.env.VITE_SERVICENOW_PASSWORD;
 
-  const endpoint = `/api/x_2014456_servicef/chamados/${encodeURIComponent(protocolo)}/nps`;
+  const endpoint = `/api/x_2014456_servicef/chamados/chamados/${encodeURIComponent(protocolo)}/nps`;
 
   try {
     const response = await fetch(`${instance}${endpoint}`, {
