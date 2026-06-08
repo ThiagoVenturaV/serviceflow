@@ -10,7 +10,7 @@ export default async function handler(req, res) {
   // Uses the environment variable securely. 
   // It won't be exposed to the client.
   const groq = new Groq({
-    apiKey: process.env.VITE_GROQ_API_KEY || 'YOUR_GROQ_API_KEY',
+    apiKey: process.env.GROQ_API_KEY || process.env.VITE_GROQ_API_KEY || 'YOUR_GROQ_API_KEY',
   });
 
   const SYSTEM_PROMPT = `Você é Sofia, uma assistente virtual de atendimento da ServiceFlow.

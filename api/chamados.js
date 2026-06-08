@@ -5,9 +5,9 @@ export default async function handler(req, res) {
 
   const data = req.body;
 
-  const instance = process.env.VITE_SERVICENOW_INSTANCE || 'https://sua-instancia.service-now.com';
-  const user = process.env.VITE_SERVICENOW_USER || 'usuario';
-  const password = process.env.VITE_SERVICENOW_PASSWORD || 'senha';
+  const instance = process.env.SERVICENOW_INSTANCE || process.env.VITE_SERVICENOW_INSTANCE || 'https://sua-instancia.service-now.com';
+  const user = process.env.SERVICENOW_USER || process.env.VITE_SERVICENOW_USER || 'usuario';
+  const password = process.env.SERVICENOW_PASSWORD || process.env.VITE_SERVICENOW_PASSWORD || 'senha';
 
   const customEndpoint = '/api/x_2014456_servicef/chamados';
 

@@ -91,6 +91,30 @@
   flex-shrink: 0;
 }
 
+.sidebar-user-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: var(--surface-container-high);
+  border-radius: 0.75rem;
+  border: 1px solid var(--outline-variant);
+}
+
+.sidebar-user-icon {
+  font-size: 1.1rem;
+  color: var(--primary);
+}
+
+.sidebar-user-email {
+  font-size: 0.75rem;
+  color: var(--on-surface-variant);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+}
+
 .chat-page {
   flex: 1;
   display: flex;

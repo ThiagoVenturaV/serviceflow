@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import {
   sendMessage,
   extractCollectedData,
@@ -6,6 +6,9 @@ import {
 } from '../services/groqService.js';
 import { createTicket } from '../services/serviceNowService.js';
 import { CONFIG } from '../config.js';
+import NPSModal from '../components/NPSModal.jsx';
+import HelpModal from '../components/HelpModal.jsx';
+import MyCasesPage from './MyCasesPage.jsx';
 import './ChatPage.css';
 
 const INITIAL_MESSAGE = {
@@ -24,7 +27,7 @@ const PLACEHOLDER_SUGGESTIONS = [
   'Recebi o produto errado...',
 ];
 
-export default function ChatPage({ onBack }) {
+export default function ChatPage({ onBack, user }) {
   const [messages, setMessages] = useState([INITIAL_MESSAGE]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -40,6 +43,8 @@ export default function ChatPage({ onBack }) {
   const [activeTab, setActiveTab] = useState('overview');
   const [portalInput, setPortalInput] = useState('');
   const [attachments, setAttachments] = useState([]); // Array of { id, name, type, base64 }
+  const [showNPS, setShowNPS] = useState(false);
+  const [showHelp, setShowHelp] = useState(false);
 
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
@@ -291,11 +296,22 @@ export default function ChatPage({ onBack }) {
       setProtocol(proto);
       setTicketStatus('success');
       setCollectedData(pendingData);
+
+      // Persiste protocolo no localStorage
+      try {
+        const stored = JSON.parse(localStorage.getItem('sf_protocols') || '[]');
+        stored.unshift({ protocolo: proto, email: pendingData.email, data: new Date().toISOString(), produto: pendingData.produto, tipo: pendingData.tipo });
+        localStorage.setItem('sf_protocols', JSON.stringify(stored.slice(0, 20)));
+      } catch { /* ignora erros de storage */ }
+
       addMessage(
         'assistant',
         `✅ Perfeito! Seu chamado foi aberto com sucesso!\n\n📋 **Protocolo: ${proto}**\n\nGuarde esse número — você pode usá-lo para acompanhar o status. Enviaremos atualizações no email ${pendingData.email}. Posso ajudar com mais alguma coisa?`,
         { isProtocol: true, protocol: proto },
       );
+
+      // Exibe NPS após 1.5s para não sobrepor a mensagem de sucesso
+      setTimeout(() => setShowNPS(true), 1500);
     } catch (err) {
       setTicketStatus('error');
       addMessage(
@@ -327,16 +343,14 @@ export default function ChatPage({ onBack }) {
     }
   };
 
-  const startChatWithMessage = (initialMsg) => {
+  const startChatWithMessage = useCallback((initialMsg) => {
     setActiveTab('chat');
     if (initialMsg) {
-      // Mock the user typing it
-      setTimeout(() => {
-        // This is a simplified way to trigger send.
-        setInput(initialMsg);
-      }, 50);
+      // Envia diretamente sem setTimeout hack:
+      // aguarda o estado da aba mudar via useEffect
+      setInput(initialMsg);
     }
-  };
+  }, []);
 
   // When input is set from portal, trigger send if in chat
   useEffect(() => {
@@ -348,6 +362,7 @@ export default function ChatPage({ onBack }) {
     ) {
       handleSend();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab, input]);
 
   const handlePortalSubmit = () => {
@@ -365,6 +380,7 @@ export default function ChatPage({ onBack }) {
     setProtocol(null);
     setShowConfirm(false);
     setPendingData(null);
+    setShowNPS(false);
   };
 
   const formatTime = (date) =>
@@ -381,6 +397,21 @@ export default function ChatPage({ onBack }) {
 
   return (
     <div className="dashboard-layout">
+      {/* Modals */}
+      {showNPS && protocol && (
+        <NPSModal
+          protocolo={protocol}
+          onSubmit={() => setShowNPS(false)}
+          onClose={() => setShowNPS(false)}
+        />
+      )}
+      {showHelp && (
+        <HelpModal
+          onClose={() => setShowHelp(false)}
+          onOpenChat={(msg) => { setShowHelp(false); startChatWithMessage(msg); }}
+        />
+      )}
+
       {/* Sidebar (Desktop Only) */}
       <aside className="dashboard-sidebar" style={{ position: 'relative' }}>
         {/* Animated sidebar shimmer — decorative */}
@@ -413,23 +444,31 @@ export default function ChatPage({ onBack }) {
             </span>{' '}
             Assistente de IA
           </button>
-          <button className="nav-item">
+          <button
+            className={`nav-item ${activeTab === 'mycases' ? 'active' : ''}`}
+            onClick={() => setActiveTab('mycases')}
+          >
             <span className="material-symbols-outlined nav-icon">
               confirmation_number
             </span>{' '}
             Meus Casos
           </button>
-          <button className="nav-item">
-            <span className="material-symbols-outlined nav-icon">star</span>{' '}
-            Feedback
+          <button
+            className="nav-item"
+            onClick={() => setShowHelp(true)}
+          >
+            <span className="material-symbols-outlined nav-icon">help</span>{' '}
+            Ajuda
           </button>
         </nav>
 
         <div className="sidebar-footer">
-          <button className="nav-item">
-            <span className="material-symbols-outlined nav-icon">help</span>{' '}
-            Ajuda
-          </button>
+          {user?.email && (
+            <div className="sidebar-user-info">
+              <span className="material-symbols-outlined sidebar-user-icon">account_circle</span>
+              <span className="sidebar-user-email">{user.email}</span>
+            </div>
+          )}
           <button
             className="nav-item btn-logout"
             onClick={onBack}
@@ -569,6 +608,11 @@ export default function ChatPage({ onBack }) {
               </div>
             </div>
           </div>
+        ) : activeTab === 'mycases' ? (
+          <MyCasesPage
+            userEmail={user?.email || ''}
+            onNewChat={() => startChatWithMessage('Quero abrir um novo chamado')}
+          />
         ) : (
           <div className="chat-centered-container">
             {/* Chat Header */}
@@ -852,9 +896,16 @@ export default function ChatPage({ onBack }) {
           <span className="material-symbols-outlined">smart_toy</span>
           <span>Chat</span>
         </button>
-        <button className="bottom-nav-item">
+        <button
+          className={`bottom-nav-item ${activeTab === 'mycases' ? 'active' : ''}`}
+          onClick={() => setActiveTab('mycases')}
+        >
           <span className="material-symbols-outlined">confirmation_number</span>
           <span>Meus Casos</span>
+        </button>
+        <button className="bottom-nav-item" onClick={() => setShowHelp(true)}>
+          <span className="material-symbols-outlined">help</span>
+          <span>Ajuda</span>
         </button>
         <button className="bottom-nav-item" onClick={onBack}>
           <span className="material-symbols-outlined">logout</span>
