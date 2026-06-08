@@ -451,7 +451,14 @@ export default function ChatPage({ onBack, user }) {
       updatedVars.protocolo = protoMatch[0];
     }
 
-    // 5. Extração baseada no contexto da última pergunta do Assistente (IA)
+    // 5. Extração baseada em padrões proativos de nome na mensagem do usuário
+    const nameIntroRegex = /(?:meu\s+nome\s+é|meu\s+nome\s+eh|eu\s+sou|me\s+chamo|chamo-me)\s+([A-Za-zÀ-ÖØ-öø-ÿ]+(?:\s+[A-Za-zÀ-ÖØ-öø-ÿ]+){1,4})/i;
+    const nameIntroMatch = text.match(nameIntroRegex);
+    if (nameIntroMatch && nameIntroMatch[1]) {
+      updatedVars.nome = nameIntroMatch[1].trim();
+    }
+
+    // 6. Extração baseada no contexto da última pergunta do Assistente (IA)
     const assistantMessages = messages.filter(m => m.role === 'assistant');
     if (assistantMessages.length > 0) {
       const lastAssistantMsg = assistantMessages[assistantMessages.length - 1].text.toLowerCase();
