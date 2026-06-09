@@ -83,6 +83,79 @@ export default function LandingPage({ onStartChat, onNavigate }) {
   const secondaryInputRef = useRef(null);
   const nameInputRef = useRef(null);
 
+  // Interactive Chat Preview states
+  const [previewMsgs, setPreviewMsgs] = useState([
+    { sender: 'assistant', text: 'Olá! Estou aqui para te ajudar 😊 O que aconteceu?' },
+    { sender: 'user', text: 'Meu produto chegou com defeito!' },
+    { sender: 'assistant', text: 'Que situação chata! Pode me dizer o número do seu pedido?' },
+    { sender: 'user', text: '#12345' },
+    { sender: 'assistant', text: 'Só um instante, estou buscando as informações no ServiceNow...' }
+  ]);
+  const [previewInput, setPreviewInput] = useState('');
+  const [isPreviewTyping, setIsPreviewTyping] = useState(false);
+  const [toast, setToast] = useState(null);
+
+  const previewInputRef = useRef(null);
+  const previewMsgsRef = useRef(null);
+
+  const showToast = (message) => {
+    setToast(message);
+  };
+
+  // Toast Auto-Dismiss
+  useEffect(() => {
+    if (toast) {
+      const timer = setTimeout(() => setToast(null), 4000);
+      return () => clearTimeout(timer);
+    }
+  }, [toast]);
+
+  // Initial Chat Simulation
+  useEffect(() => {
+    setIsPreviewTyping(true);
+    const timer = setTimeout(() => {
+      setIsPreviewTyping(false);
+      setPreviewMsgs(prev => [
+        ...prev,
+        { sender: 'assistant', text: `Encontrei seu pedido #12345 (Fone Bluetooth) no ServiceNow! Status: 'Em Processamento'. Gostaria de solicitar troca ou falar com atendente?` }
+      ]);
+    }, 2000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Auto scroll messages
+  useEffect(() => {
+    if (previewMsgsRef.current) {
+      previewMsgsRef.current.scrollTop = previewMsgsRef.current.scrollHeight;
+    }
+  }, [previewMsgs, isPreviewTyping]);
+
+  const handlePreviewSubmit = (e) => {
+    e.preventDefault();
+    if (!previewInput.trim() || isPreviewTyping) return;
+
+    const userText = previewInput.trim();
+    setPreviewMsgs(prev => [...prev, { sender: 'user', text: userText }]);
+    setPreviewInput('');
+    setIsPreviewTyping(true);
+
+    setTimeout(() => {
+      setIsPreviewTyping(false);
+      let reply = '';
+      const textLower = userText.toLowerCase();
+
+      if (textLower.includes('troca') || textLower.includes('devol') || textLower.includes('cancel')) {
+        reply = `Perfeito! Abri a solicitação de troca/devolução para o pedido #12345 no ServiceNow. O protocolo é SF-99882. Vou notificar seu e-mail assim que for aprovado.`;
+      } else if (textLower.includes('atendente') || textLower.includes('humano') || textLower.includes('falar com')) {
+        reply = `Sem problemas! Estou transferindo você para o suporte humano agora. Um agente estará com você em instantes.`;
+      } else {
+        reply = `Entendido! Eu sou a ${brand.aiName}, sua IA de suporte da ${CONFIG.brand.name}. Posso abrir tickets no ServiceNow, verificar status ou tirar dúvidas!`;
+      }
+
+      setPreviewMsgs(prev => [...prev, { sender: 'assistant', text: reply }]);
+    }, 1500);
+  };
+
   // ── Inject CSS variables and toggle theme classes on state change ──────────────────────────────────
   useEffect(() => {
     localStorage.setItem('sf_brand_config', JSON.stringify(brand));
@@ -355,7 +428,7 @@ export default function LandingPage({ onStartChat, onNavigate }) {
       </nav>
 
       {/* Hero */}
-      <section className="hero-section">
+      <section id="hero" className="hero-section">
         <div className="hero-grid-bg" />
         <div className="hero-glow" />
         {/* Animated orbs - decorative, pointer-events:none */}
@@ -400,19 +473,33 @@ export default function LandingPage({ onStartChat, onNavigate }) {
                   <div className="preview-status">● online</div>
                 </div>
               </div>
-              <div className="preview-messages">
-                <div className="preview-msg assistant">
-                  Olá! Estou aqui para te ajudar 😊 O que aconteceu?
-                </div>
-                <div className="preview-msg user">Meu produto chegou com defeito!</div>
-                <div className="preview-msg assistant">
-                  Que situação chata! Pode me dizer o número do seu pedido?
-                </div>
-                <div className="preview-msg user">#12345</div>
-                <div className="preview-msg assistant typing-preview">
-                  <span /><span /><span />
-                </div>
+              <div className="preview-messages" ref={previewMsgsRef}>
+                {previewMsgs.map((msg, idx) => (
+                  <div key={idx} className={`preview-msg ${msg.sender}`}>
+                    {msg.text}
+                  </div>
+                ))}
+                {isPreviewTyping && (
+                  <div className="preview-msg assistant typing-preview">
+                    <span /><span /><span />
+                  </div>
+                )}
               </div>
+              <form onSubmit={handlePreviewSubmit} className="preview-input-form">
+                <input
+                  ref={previewInputRef}
+                  type="text"
+                  value={previewInput}
+                  onChange={(e) => setPreviewInput(e.target.value)}
+                  placeholder="Simule uma conversa com a IA..."
+                  className="preview-input"
+                  disabled={isPreviewTyping}
+                  aria-label="Simular conversa"
+                />
+                <button type="submit" className="preview-send-btn" disabled={isPreviewTyping || !previewInput.trim()} aria-label="Enviar mensagem simulada">
+                  <span className="material-symbols-outlined" style={{ fontSize: 'inherit' }}>arrow_upward</span>
+                </button>
+              </form>
             </div>
           </div>
         </div>{/* end .hero-inner */}
@@ -475,7 +562,26 @@ export default function LandingPage({ onStartChat, onNavigate }) {
           </p>
           <div className="features-grid">
             {features.map((f, i) => (
-              <div key={i} className={`feature-card feature-card-${i}`}>
+              <div
+                key={i}
+                className={`feature-card feature-card-${i}`}
+                style={{ cursor: 'pointer' }}
+                onClick={() => {
+                  if (i === 0) {
+                    document.getElementById('hero').scrollIntoView({ behavior: 'smooth' });
+                    if (previewInputRef.current) previewInputRef.current.focus();
+                    showToast("Use o chat interativo no topo para testar a IA em tempo real!");
+                  } else if (i === 1) {
+                    document.getElementById('how-it-works').scrollIntoView({ behavior: 'smooth' });
+                    showToast("O ServiceFlow se comunica de forma nativa com as APIs do ServiceNow.");
+                  } else if (i === 2) {
+                    document.getElementById('about').scrollIntoView({ behavior: 'smooth' });
+                    showToast("Role até o painel abaixo para customizar as cores e nome da IA.");
+                  } else if (i === 3) {
+                    showToast("✦ Arquitetura segura em conformidade com a LGPD e criptografia ativa.");
+                  }
+                }}
+              >
                 <div className="feature-card-content">
                   <div className="feature-icon">
                     <span className="material-symbols-outlined" style={{ fontSize: 'inherit' }}>{f.icon}</span>
@@ -878,6 +984,17 @@ const { protocolo } = await response.json();
           <p className="footer-copy">© 2026 {CONFIG.brand.name}. Todos os direitos reservados.</p>
         </div>
       </footer>
+
+      {/* Premium Toast Notification */}
+      {toast && (
+        <div className="premium-toast">
+          <span className="material-symbols-outlined toast-icon">info</span>
+          <span className="toast-text">{toast}</span>
+          <button className="toast-close" onClick={() => setToast(null)} aria-label="Fechar notificação">
+            &times;
+          </button>
+        </div>
+      )}
     </div>
   );
 }
