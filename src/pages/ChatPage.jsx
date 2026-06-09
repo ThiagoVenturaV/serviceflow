@@ -28,6 +28,15 @@ const PLACEHOLDER_SUGGESTIONS = [
 ];
 
 export default function ChatPage({ onBack, user }) {
+  const permissions = user?.permissions || {
+    canRead: true,
+    canWrite: false,
+    canCreate: true,
+    canDelete: false,
+    roles: ['sf_cliente']
+  };
+  const roles = permissions.roles || ['sf_cliente'];
+
   const [messages, setMessages] = useState(() => {
     try {
       const stored = localStorage.getItem('sf_chat_messages');
@@ -79,6 +88,61 @@ export default function ChatPage({ onBack, user }) {
       protocolo: ''
     };
   });
+
+  const [queueTickets, setQueueTickets] = useState([]);
+  const [queueLoading, setQueueLoading] = useState(false);
+  const [expandedQueueId, setExpandedQueueId] = useState(null);
+  const [updatingTicketId, setUpdatingTicketId] = useState(null);
+
+  const fetchQueue = useCallback(async () => {
+    if (!user?.email) return;
+    setQueueLoading(true);
+    try {
+      const res = await fetch(`/api/meus_chamados?email=${encodeURIComponent(user.email)}`);
+      const data = await res.json();
+      let list = [];
+      if (data) {
+        if (Array.isArray(data)) list = data;
+        else if (data.result) {
+          if (Array.isArray(data.result)) list = data.result;
+          else if (data.result.result && Array.isArray(data.result.result)) list = data.result.result;
+        }
+      }
+      setQueueTickets(list);
+    } catch (err) {
+      console.error('Erro ao buscar fila de chamados:', err);
+    } finally {
+      setQueueLoading(false);
+    }
+  }, [user]);
+
+  const handleUpdateTicketStatus = async (protocolo, status) => {
+    try {
+      const res = await fetch('/api/chamados', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          protocolo,
+          status,
+          isUpdate: true,
+        }),
+      });
+      if (!res.ok) {
+        throw new Error('Falha ao atualizar o chamado.');
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Erro ao atualizar chamado: ' + err.message);
+    }
+  };
+
+  useEffect(() => {
+    if (activeTab === 'queue') {
+      fetchQueue();
+    }
+  }, [activeTab, fetchQueue]);
 
   // Salva mensagens sempre que mudarem
   useEffect(() => {
@@ -304,8 +368,17 @@ export default function ChatPage({ onBack, user }) {
       }));
       history.push({ role: 'user', content: redactTextWithVars(userText, currentVars) });
 
+      const requestVars = {
+        ...currentVars,
+        isEDX: false,
+        role: roles.includes('sf_admin') ? 'supervisor' : roles.includes('sf_atendente') ? 'atendente' : 'cliente',
+        roles: roles,
+        canRead: permissions.canRead,
+        canWrite: permissions.canWrite
+      };
+
       // Envia histórico ofuscado + dicionário de variáveis para o back-end
-      const aiResponse = await sendMessage(history, currentVars);
+      const aiResponse = await sendMessage(history, requestVars);
       const data = extractCollectedData(aiResponse);
       const displayText = cleanMessageText(aiResponse);
 
@@ -639,15 +712,43 @@ export default function ChatPage({ onBack, user }) {
             </span>{' '}
             Assistente de IA
           </button>
-          <button
-            className={`nav-item ${activeTab === 'mycases' ? 'active' : ''}`}
-            onClick={() => { setActiveTab('mycases'); setSidebarOpen(false); }}
-          >
-            <span className="material-symbols-outlined nav-icon">
-              confirmation_number
-            </span>{' '}
-            Meus Casos
-          </button>
+
+          {roles.includes('sf_cliente') && (
+            <button
+              className={`nav-item ${activeTab === 'mycases' ? 'active' : ''}`}
+              onClick={() => { setActiveTab('mycases'); setSidebarOpen(false); }}
+            >
+              <span className="material-symbols-outlined nav-icon">
+                confirmation_number
+              </span>{' '}
+              Meus Chamados
+            </button>
+          )}
+
+          {(roles.includes('sf_atendente') || roles.includes('sf_admin')) && (
+            <button
+              className={`nav-item ${activeTab === 'queue' ? 'active' : ''}`}
+              onClick={() => { setActiveTab('queue'); setSidebarOpen(false); }}
+            >
+              <span className="material-symbols-outlined nav-icon">
+                assignment
+              </span>{' '}
+              Fila de Chamados
+            </button>
+          )}
+
+          {roles.includes('sf_admin') && (
+            <button
+              className={`nav-item ${activeTab === 'dashboard' ? 'active' : ''}`}
+              onClick={() => { setActiveTab('dashboard'); setSidebarOpen(false); }}
+            >
+              <span className="material-symbols-outlined nav-icon">
+                monitoring
+              </span>{' '}
+              Dashboard
+            </button>
+          )}
+
           <button
             className={`nav-item ${activeTab === 'help' ? 'active' : ''}`}
             onClick={() => { setActiveTab('help'); setSidebarOpen(false); }}
@@ -809,8 +910,199 @@ export default function ChatPage({ onBack, user }) {
             onNewChat={() => startChatWithMessage('Quero abrir um novo chamado')}
             onOpenMenu={() => setSidebarOpen(true)}
           />
+        ) : activeTab === 'queue' ? (
+          <div className="mycases-root">
+            <div className="mycases-header">
+              <div className="mycases-header-title">
+                <button className="btn-icon mobile-menu-toggle-btn" onClick={() => setSidebarOpen(true)} style={{ marginRight: '0.75rem', background: 'none', border: 'none', color: 'var(--on-surface-variant)', cursor: 'pointer', display: 'flex', alignItems: 'center', padding: 0 }} title="Abrir menu">
+                  <span className="material-symbols-outlined">menu</span>
+                </button>
+                <span className="material-symbols-outlined mycases-header-icon">assignment</span>
+                <div>
+                  <h2>Fila Geral de Chamados</h2>
+                  <p className="mycases-email">Módulo de Atendimento — Roles: {roles.join(', ')}</p>
+                </div>
+              </div>
+              <button className="mycases-btn-new" onClick={fetchQueue} title="Atualizar Fila">
+                <span className="material-symbols-outlined">refresh</span>
+                Atualizar
+              </button>
+            </div>
+
+            {queueLoading ? (
+              <div className="mycases-loading">
+                <div className="mycases-spinner" />
+                <p>Carregando chamados da fila...</p>
+              </div>
+            ) : queueTickets.length === 0 ? (
+              <div className="mycases-empty">
+                <span className="material-symbols-outlined mycases-empty-icon" style={{ fontSize: '3rem' }}>assignment_late</span>
+                <h3>Nenhum chamado pendente na fila</h3>
+                <p>Bom trabalho! Todos os chamados do ServiceNow foram atendidos.</p>
+              </div>
+            ) : (
+              <div className="mycases-list">
+                {queueTickets.map((t) => {
+                  const id = t.protocolo || t.number || Math.random();
+                  const isExpanded = expandedQueueId === id;
+                  return (
+                    <div key={id} className={`case-card ${isExpanded ? 'case-card--expanded' : ''}`} onClick={() => setExpandedQueueId(isExpanded ? null : id)}>
+                      <div className="case-card-main">
+                        <div className="case-icon-wrap">
+                          <span className="material-symbols-outlined case-icon">support_agent</span>
+                        </div>
+                        <div className="case-info">
+                          <div className="case-info-top">
+                            <span className="case-protocol">{t.protocolo || t.number}</span>
+                            <span className={`case-status-badge ${t.status === '6' || t.status === 'Resolvido' ? 'status-resolved' : t.status === '2' || t.status === 'Em andamento' ? 'status-inprogress' : 'status-new'}`}>
+                              {t.status === '6' || t.status === 'Resolvido' ? 'Resolvido' : t.status === '2' || t.status === 'Em andamento' ? 'Em andamento' : 'Novo'}
+                            </span>
+                          </div>
+                          <p className="case-produto"><strong>Cliente:</strong> {t.nome_do_cliente || t.email} | <strong>Produto:</strong> {t.produto}</p>
+                          <p className="case-date">{t.tipo} | {t.data ? new Date(t.data).toLocaleDateString('pt-BR') : 'Sem data'}</p>
+                        </div>
+                        <span className={`material-symbols-outlined case-chevron ${isExpanded ? 'case-chevron--open' : ''}`}>expand_more</span>
+                      </div>
+
+                      {isExpanded && (
+                        <div className="case-details" onClick={(e) => e.stopPropagation()}>
+                          <div className="case-details-inner" style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', width: '100%', padding: '0 0.5rem 1rem' }}>
+                            <div className="case-detail-item case-detail-full">
+                              <span className="case-detail-label" style={{ display: 'block', fontSize: '0.75rem', color: 'var(--on-surface-variant)', marginBottom: '0.25rem' }}>Descrição do Chamado</span>
+                              <span className="case-detail-value" style={{ display: 'block', fontSize: '0.9rem', color: 'var(--on-surface)' }}>{t.descricao}</span>
+                            </div>
+                            {t.numero_serie && (
+                              <div className="case-detail-item">
+                                <span className="case-detail-label" style={{ display: 'block', fontSize: '0.75rem', color: 'var(--on-surface-variant)', marginBottom: '0.25rem' }}>Número de Série</span>
+                                <span className="case-detail-value" style={{ display: 'block', fontSize: '0.9rem', color: 'var(--on-surface)' }}>{t.numero_serie}</span>
+                              </div>
+                            )}
+                            {t.nota_fiscal && (
+                              <div className="case-detail-item">
+                                <span className="case-detail-label" style={{ display: 'block', fontSize: '0.75rem', color: 'var(--on-surface-variant)', marginBottom: '0.25rem' }}>Nota Fiscal</span>
+                                <span className="case-detail-value" style={{ display: 'block', fontSize: '0.9rem', color: 'var(--on-surface)' }}>{t.nota_fiscal}</span>
+                              </div>
+                            )}
+                            
+                            {permissions.canWrite ? (
+                              <div className="case-actions-section" style={{ marginTop: '0.75rem', borderTop: '1px dashed var(--outline-variant)', paddingTop: '0.75rem' }}>
+                                <span className="case-detail-label" style={{ display: 'block', fontSize: '0.75rem', color: 'var(--primary)', fontWeight: 'bold', marginBottom: '0.5rem' }}>Ações de Atendimento (ACL: canWrite)</span>
+                                <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                                  <button 
+                                    className="mycases-btn-new" 
+                                    style={{ background: 'var(--surface-container-high)', border: '1px solid var(--outline-variant)', color: 'var(--on-surface)', padding: '0.375rem 0.75rem', fontSize: '0.85rem' }}
+                                    onClick={async () => {
+                                      setUpdatingTicketId(id);
+                                      await handleUpdateTicketStatus(t.protocolo, '2');
+                                      await fetchQueue();
+                                      setUpdatingTicketId(null);
+                                    }}
+                                    disabled={updatingTicketId === id}
+                                  >
+                                    Marcar Em Andamento
+                                  </button>
+                                  <button 
+                                    className="mycases-btn-new"
+                                    style={{ background: 'var(--primary)', color: 'white', padding: '0.375rem 0.75rem', fontSize: '0.85rem' }}
+                                    onClick={async () => {
+                                      setUpdatingTicketId(id);
+                                      await handleUpdateTicketStatus(t.protocolo, '6');
+                                      await fetchQueue();
+                                      setUpdatingTicketId(null);
+                                    }}
+                                    disabled={updatingTicketId === id}
+                                  >
+                                    Resolver Chamado
+                                  </button>
+                                </div>
+                              </div>
+                            ) : (
+                              <div style={{ marginTop: '0.5rem', fontSize: '0.75rem', color: 'var(--on-surface-variant)', fontStyle: 'italic' }}>
+                                🔒 Apenas leitura (Permissão bloqueada pelas ACLs do ServiceNow).
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        ) : activeTab === 'dashboard' ? (
+          <div className="mycases-root">
+            <div className="mycases-header">
+              <div className="mycases-header-title">
+                <button className="btn-icon mobile-menu-toggle-btn" onClick={() => setSidebarOpen(true)} style={{ marginRight: '0.75rem', background: 'none', border: 'none', color: 'var(--on-surface-variant)', cursor: 'pointer', display: 'flex', alignItems: 'center', padding: 0 }} title="Abrir menu">
+                  <span className="material-symbols-outlined">menu</span>
+                </button>
+                <span className="material-symbols-outlined mycases-header-icon">monitoring</span>
+                <div>
+                  <h2>Painel Operacional (Supervisor)</h2>
+                  <p className="mycases-email">Dashboard Geral de SLA e Atendimento</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="portal-content" style={{ padding: '1.5rem 0 3rem' }}>
+              <div className="portal-quick-actions" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', width: '100%', margin: 0, padding: 0, overflowX: 'visible', scrollSnapType: 'none' }}>
+                <div className="quick-card" style={{ flex: 'none' }}>
+                  <span className="material-symbols-outlined card-icon">hourglass_empty</span>
+                  <h3>94.8%</h3>
+                  <p>SLA de Resolução Dentro do Prazo</p>
+                </div>
+                <div className="quick-card" style={{ flex: 'none' }}>
+                  <span className="material-symbols-outlined card-icon">bolt</span>
+                  <h3>18.4 min</h3>
+                  <p>Tempo Médio de Atendimento (TMA)</p>
+                </div>
+                <div className="quick-card" style={{ flex: 'none' }}>
+                  <span className="material-symbols-outlined card-icon">groups</span>
+                  <h3>4 Analistas</h3>
+                  <p>Equipe de Atendimento Online</p>
+                </div>
+              </div>
+
+              <div className="portal-ai-section" style={{ textAlign: 'left', marginTop: '1.5rem', padding: '1.5rem' }}>
+                <h3 style={{ marginBottom: '1rem' }}>Distribuição de Chamados por Filial Regional</h3>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                  <div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem', marginBottom: '0.25rem' }}>
+                      <span><strong>EDX-RJ (Rio de Janeiro)</strong></span>
+                      <span>12 chamados (48%)</span>
+                    </div>
+                    <div style={{ background: 'var(--surface-container-high)', borderRadius: '99px', height: '10px', overflow: 'hidden' }}>
+                      <div style={{ background: 'var(--primary)', width: '48%', height: '100%' }} />
+                    </div>
+                  </div>
+
+                  <div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem', marginBottom: '0.25rem' }}>
+                      <span><strong>EDX-PE (Recife)</strong></span>
+                      <span>8 chamados (32%)</span>
+                    </div>
+                    <div style={{ background: 'var(--surface-container-high)', borderRadius: '99px', height: '10px', overflow: 'hidden' }}>
+                      <div style={{ background: 'var(--primary-dim, var(--primary))', width: '32%', height: '100%' }} />
+                    </div>
+                  </div>
+
+                  <div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem', marginBottom: '0.25rem' }}>
+                      <span><strong>EDX-MG (Belo Horizonte)</strong></span>
+                      <span>5 chamados (20%)</span>
+                    </div>
+                    <div style={{ background: 'var(--surface-container-high)', borderRadius: '99px', height: '10px', overflow: 'hidden' }}>
+                      <div style={{ background: 'var(--outline)', width: '20%', height: '100%' }} />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         ) : activeTab === 'help' ? (
           <HelpPage
+            userRoles={roles}
             onOpenChat={startChatWithMessage}
             onOpenMenu={() => setSidebarOpen(true)}
           />

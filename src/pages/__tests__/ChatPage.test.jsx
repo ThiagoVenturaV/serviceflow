@@ -52,7 +52,7 @@ describe('ChatPage', () => {
       // Itens aparecem na sidebar E na bottom nav mobile
       expect(screen.getAllByText('Visão Geral').length).toBeGreaterThanOrEqual(1);
       expect(screen.getAllByText(/Assistente de IA/).length).toBeGreaterThanOrEqual(1);
-      expect(screen.getAllByText('Meus Casos').length).toBeGreaterThanOrEqual(1);
+      expect(screen.getAllByText('Meus Chamados').length).toBeGreaterThanOrEqual(1);
     });
   });
 

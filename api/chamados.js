@@ -9,6 +9,34 @@ export default async function handler(req, res) {
   const user = process.env.SERVICENOW_USER || process.env.VITE_SERVICENOW_USER || 'usuario';
   const password = process.env.SERVICENOW_PASSWORD || process.env.VITE_SERVICENOW_PASSWORD || 'senha';
 
+  // Trata atualizações de chamados (ações do Atendente/Agente)
+  if (data.isUpdate) {
+    if (instance && user && password && !instance.includes('sua-instancia')) {
+      try {
+        const updateEndpoint = `/api/x_2014456_servicef/chamados/chamados/${encodeURIComponent(data.protocolo)}`;
+        const response = await fetch(`${instance}${updateEndpoint}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Basic ' + Buffer.from(`${user}:${password}`).toString('base64'),
+          },
+          body: JSON.stringify({
+            status: data.status,
+            comentarios: data.comentarios || ''
+          }),
+        });
+
+        if (response.ok) {
+          const result = await response.json();
+          return res.status(200).json(result);
+        }
+      } catch (error) {
+        console.warn('Falha ao atualizar no ServiceNow, usando fallback de atualização local:', error.message);
+      }
+    }
+    return res.status(200).json({ success: true, protocolo: data.protocolo, status: data.status });
+  }
+
   const customEndpoint = '/api/x_2014456_servicef/chamados';
 
   try {

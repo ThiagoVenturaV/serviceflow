@@ -17,9 +17,19 @@ export default function LoginPage({ onLogin, onContinueAsGuest, onNavigate }) {
     setLoading(true);
 
     try {
+      // Busca as permissões de ACL e roles do ServiceNow para este email
+      const permRes = await fetch(`/api/permissoes?email=${encodeURIComponent(trimmed)}`);
+      const permissions = await permRes.json().catch(() => ({
+        canRead: true,
+        canWrite: false,
+        canCreate: true,
+        canDelete: false,
+        roles: ['sf_cliente']
+      }));
+
       // Tenta buscar chamados desse email para verificar se é cliente
       const res = await fetch(`/api/meus_chamados?email=${encodeURIComponent(trimmed)}`);
-      const data = await res.json();
+      const data = await res.json().catch(() => null);
       
       let list = [];
       if (data) {
@@ -35,13 +45,28 @@ export default function LoginPage({ onLogin, onContinueAsGuest, onNavigate }) {
       }
       let name = '';
       if (list.length > 0) {
-        name = list[0]?.nome_do_cliente || '';
+        name = list[0]?.nome_do_cliente || list[0]?.u_nome_cliente || '';
       }
-      // Se retornou sem erro critico, loga o usuario (com ou sem chamados)
-      onLogin({ email: trimmed, nome: name, chamados: list });
+      // Se retornou sem erro critico, loga o usuario com suas roles
+      onLogin({
+        email: trimmed,
+        nome: name || trimmed.split('@')[0].replace(/[^a-zA-Z]/g, ' '),
+        chamados: list,
+        permissions
+      });
     } catch {
-      // Mesmo sem chamados anteriores, permite entrar
-      onLogin({ email: trimmed, chamados: [] });
+      // Fallback
+      onLogin({
+        email: trimmed,
+        chamados: [],
+        permissions: {
+          canRead: true,
+          canWrite: false,
+          canCreate: true,
+          canDelete: false,
+          roles: ['sf_cliente']
+        }
+      });
     } finally {
       setLoading(false);
     }
@@ -64,10 +89,18 @@ export default function LoginPage({ onLogin, onContinueAsGuest, onNavigate }) {
         </div>
 
         <div className="login-header">
-          <h1 className="login-title">Bem-vindo de volta</h1>
+          <h1 className="login-title">Bem-vindo ao Portal</h1>
           <p className="login-subtitle">
-            Informe seu e-mail para acessar seus chamados e histórico de atendimento.
+            Informe seu e-mail do ServiceNow para carregar suas roles e ACLs dinâmicas.
           </p>
+          <div className="login-test-hint" style={{ marginTop: '0.75rem', padding: '0.625rem', background: 'var(--surface-container-high)', borderRadius: '0.5rem', fontSize: '0.8rem', color: 'var(--on-surface-variant)', textAlign: 'left', border: '1px dashed var(--outline-variant)' }}>
+            <strong>💡 E-mails de teste (Simulador de ACLs):</strong>
+            <ul style={{ margin: '0.25rem 0 0 1.25rem', padding: 0 }}>
+              <li><strong>Cliente:</strong> <code>cliente.pedro@gmail.com</code></li>
+              <li><strong>Atendente:</strong> <code>atendente.carlos@serviceflow.com</code></li>
+              <li><strong>Supervisor:</strong> <code>supervisor.ana@serviceflow.com</code></li>
+            </ul>
+          </div>
         </div>
 
         <form className="login-form" onSubmit={handleSubmit} noValidate>

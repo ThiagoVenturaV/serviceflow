@@ -1184,3 +1184,18 @@
     display: block !important;
   }
 }
+
+/* ── Fila de Chamados (Atendente) & Dashboard (Supervisor) ── */
+.case-details-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0 0.5rem 1rem;
+}
+
+.case-actions-section {
+  margin-top: 0.75rem;
+  border-top: 1px dashed var(--outline-variant);
+  padding-top: 0.75rem;
+}
