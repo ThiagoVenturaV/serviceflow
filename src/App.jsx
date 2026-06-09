@@ -115,6 +115,7 @@ export default function App() {
 
   return (
     <div className="app-root">
+      <div className="grain-overlay" aria-hidden="true" />
       {page === 'landing' ? (
         <LandingPage
           onStartChat={handleStartChat}
@@ -127,6 +128,7 @@ export default function App() {
             setUser(null);
             navigateTo('chat');
           }}
+          onNavigate={navigateTo}
         />
       ) : page === 'chat' ? (
         <div className="chat-container">

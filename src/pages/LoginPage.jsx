@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import './LoginPage.css';
 
-export default function LoginPage({ onLogin, onContinueAsGuest }) {
+export default function LoginPage({ onLogin, onContinueAsGuest, onNavigate }) {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -130,9 +130,9 @@ export default function LoginPage({ onLogin, onContinueAsGuest }) {
 
         <p className="login-footnote">
           Ao entrar, você concorda com nossos{' '}
-          <button className="login-link" onClick={() => {}}>Termos de Uso</button>
+          <button className="login-link" type="button" onClick={() => onNavigate('terms')}>Termos de Uso</button>
           {' '}e{' '}
-          <button className="login-link" onClick={() => {}}>Política de Privacidade</button>.
+          <button className="login-link" type="button" onClick={() => onNavigate('privacy')}>Política de Privacidade</button>.
         </p>
       </div>
     </div>

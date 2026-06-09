@@ -1031,7 +1031,7 @@ const { protocolo } = await response.json();
       {/* Footer */}
       <footer className="landing-footer">
         <div className="footer-inner">
-          <div className="footer-logo">
+          <div className="footer-logo" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} style={{ cursor: 'pointer' }} title="Voltar ao Topo">
             <img src="/logoServiceFlow.png" alt="ServiceFlow Logo" className="logo-mark" />
             <span className="logo-text">{CONFIG.brand.name}</span>
           </div>

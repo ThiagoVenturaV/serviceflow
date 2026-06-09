@@ -613,7 +613,7 @@ export default function ChatPage({ onBack, user }) {
       <aside className="dashboard-sidebar" style={{ position: 'relative' }}>
         {/* Animated sidebar shimmer — decorative */}
         <div className="sidebar-animated-bg" aria-hidden="true" />
-        <div className="sidebar-header">
+        <div className="sidebar-header" onClick={onBack} style={{ cursor: 'pointer' }} title="Voltar para a Home">
           <img
             src="/logoServiceFlow.png"
             alt="ServiceFlow Logo"
