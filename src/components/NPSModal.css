@@ -35,7 +35,7 @@
     0 0 0 1px rgba(255,255,255,0.04) inset,
     0 -20px 60px rgba(139, 92, 246, 0.12),
     0 -4px 80px rgba(0,0,0,0.4);
-  animation: sheet-up 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  animation: sheet-up 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 @keyframes sheet-up {
@@ -213,7 +213,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  animation: pop-in 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  animation: pop-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 .nps-success-icon .material-symbols-outlined {

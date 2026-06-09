@@ -76,8 +76,7 @@
     transparent 100%
   );
   color: var(--primary);
-  border-left: 3px solid var(--primary);
-  border-radius: 0 0.75rem 0.75rem 0;
+  border-radius: 0.75rem;
 }
 
 .sidebar-footer {
@@ -554,7 +553,7 @@
   height: 7px;
   border-radius: 50%;
   background: var(--primary);
-  animation: typing-bounce 1.2s infinite;
+  animation: typing-dot-float 1.2s cubic-bezier(0.25, 1, 0.5, 1) infinite;
 }
 .typing-bubble span:nth-child(2) {
   animation-delay: 0.15s;
@@ -563,7 +562,7 @@
   animation-delay: 0.3s;
 }
 
-@keyframes typing-bounce {
+@keyframes typing-dot-float {
   0%,
   60%,
   100% {
