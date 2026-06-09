@@ -139,6 +139,7 @@
 
 /* ── Portal Overview ── */
 .portal-overview {
+  width: 100%;
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -1053,10 +1054,10 @@
     overflow-x: auto !important;
     scroll-snap-type: x mandatory !important;
     gap: 1rem !important;
-    margin-left: -1.5rem !important;
-    margin-right: -1.5rem !important;
-    padding-left: 1.5rem !important;
-    padding-right: 1.5rem !important;
+    margin-left: -1rem !important;
+    margin-right: -1rem !important;
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
     scrollbar-width: none !important;
     width: auto !important;
   }
@@ -1103,6 +1104,7 @@
 
   .portal-chat-input {
     margin: 0 !important;
+    width: 100% !important;
   }
 }
 

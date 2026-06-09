@@ -8,7 +8,14 @@ export async function sendMessage(messages, variables = {}) {
   });
 
   if (!response.ok) {
-    throw new Error('Falha ao comunicar com a IA');
+    let errMsg = 'Falha ao comunicar com a IA';
+    try {
+      const errData = await response.json();
+      if (errData && errData.error) {
+        errMsg = errData.error;
+      }
+    } catch {}
+    throw new Error(errMsg);
   }
 
   const data = await response.json();
