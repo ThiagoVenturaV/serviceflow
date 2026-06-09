@@ -13,6 +13,63 @@ export default function App() {
   const [page, setPage] = useState('landing'); // 'landing' | 'login' | 'chat' | 'privacy' | 'terms'
   const [user, setUser] = useState(null); // { email, chamados[] }
 
+  const [showCookieConsent, setShowCookieConsent] = useState(false);
+  const [deferredPrompt, setDeferredPrompt] = useState(null);
+  const [showInstallPrompt, setShowInstallPrompt] = useState(false);
+
+  // Controle de Consentimento de Cookies
+  useEffect(() => {
+    try {
+      const consent = localStorage.getItem('sf_cookie_consent');
+      if (!consent) {
+        const timer = setTimeout(() => setShowCookieConsent(true), 1500);
+        return () => clearTimeout(timer);
+      }
+    } catch {}
+  }, []);
+
+  const handleCookieConsent = (accepted) => {
+    try {
+      localStorage.setItem('sf_cookie_consent', accepted ? 'accepted' : 'declined');
+    } catch {}
+    setShowCookieConsent(false);
+  };
+
+  // Ouvinte do PWA beforeinstallprompt
+  useEffect(() => {
+    const handleBeforeInstallPrompt = (e) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+      try {
+        const dismissed = sessionStorage.getItem('sf_pwa_dismissed');
+        if (!dismissed) {
+          setShowInstallPrompt(true);
+        }
+      } catch {
+        setShowInstallPrompt(true);
+      }
+    };
+
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    return () => window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+  }, []);
+
+  const handleInstallPWA = async () => {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    console.log(`Escolha do PWA: ${outcome}`);
+    setDeferredPrompt(null);
+    setShowInstallPrompt(false);
+  };
+
+  const handleDismissPWA = () => {
+    try {
+      sessionStorage.setItem('sf_pwa_dismissed', 'true');
+    } catch {}
+    setShowInstallPrompt(false);
+  };
+
   // Recupera sessão do localStorage ao iniciar
   useEffect(() => {
     try {
@@ -149,6 +206,38 @@ export default function App() {
         />
       ) : null}
       <SpeedInsights />
+
+      {showCookieConsent && (
+        <div className="cookie-banner" role="dialog" aria-label="Consentimento de Cookies">
+          <div className="banner-content">
+            <span className="material-symbols-outlined banner-icon">cookie</span>
+            <div className="banner-text">
+              <h4>Nós valorizamos sua privacidade</h4>
+              <p>Utilizamos cookies essenciais para otimizar sua navegação e integrar suas solicitações com o ServiceNow de forma segura.</p>
+            </div>
+          </div>
+          <div className="banner-actions">
+            <button className="banner-btn-secondary" onClick={() => handleCookieConsent(false)}>Recusar</button>
+            <button className="banner-btn-primary" onClick={() => handleCookieConsent(true)}>Aceitar Todos</button>
+          </div>
+        </div>
+      )}
+
+      {showInstallPrompt && deferredPrompt && (
+        <div className="pwa-banner" role="dialog" aria-label="Instalar Aplicativo">
+          <div className="banner-content">
+            <span className="material-symbols-outlined banner-icon">install_mobile</span>
+            <div className="banner-text">
+              <h4>Instalar ServiceFlow</h4>
+              <p>Adicione o portal à sua tela inicial para um acesso rápido e suporte offline nativo.</p>
+            </div>
+          </div>
+          <div className="banner-actions">
+            <button className="banner-btn-secondary" onClick={handleDismissPWA}>Agora não</button>
+            <button className="banner-btn-primary" onClick={handleInstallPWA}>Instalar App</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

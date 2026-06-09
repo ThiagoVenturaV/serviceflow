@@ -1,0 +1,21 @@
+{
+  "short_name": "ServiceFlow",
+  "name": "ServiceFlow – Atendimento IA + ServiceNow",
+  "icons": [
+    {
+      "src": "/logoServiceFlow.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "/logoServiceFlow.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#0d0d0d",
+  "theme_color": "#8B5CF6",
+  "display": "standalone",
+  "orientation": "portrait"
+}
