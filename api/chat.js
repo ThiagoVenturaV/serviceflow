@@ -135,8 +135,19 @@ CONSULTA DE CHAMADOS EXISTENTES (TICKET LOOKUP):
   ];
 
   try {
+    let finalPrompt = SYSTEM_PROMPT;
+    if (variables.nome) {
+      finalPrompt += `\n\n- DADO JÁ COLETADO: O nome do cliente já é conhecido e é "{nome}". NÃO peça o nome dele de novo!`;
+    }
+    if (variables.email) {
+      finalPrompt += `\n\n- DADO JÁ COLETADO: O e-mail do cliente já é conhecido e é "{email}". NÃO peça o e-mail dele de novo!`;
+    }
+    if (variables.nome && variables.email) {
+      finalPrompt += `\n- IMPORTANTE (USUÁRIO RECORRENTE): Como o usuário já está identificado como {nome} com e-mail {email}, dê as boas-vindas personalizadas na primeira interação dele ou quando for oportuno, e ofereça proativamente a opção de consultar o andamento das solicitações dele ou de prosseguir com uma nova abertura de chamado.`;
+    }
+
     let formattedMessages = [
-      { role: 'system', content: SYSTEM_PROMPT },
+      { role: 'system', content: finalPrompt },
       ...messages,
     ];
 

@@ -33,8 +33,12 @@ export default function LoginPage({ onLogin, onContinueAsGuest }) {
           }
         }
       }
+      let name = '';
+      if (list.length > 0) {
+        name = list[0]?.nome_do_cliente || '';
+      }
       // Se retornou sem erro critico, loga o usuario (com ou sem chamados)
-      onLogin({ email: trimmed, chamados: list });
+      onLogin({ email: trimmed, nome: name, chamados: list });
     } catch {
       // Mesmo sem chamados anteriores, permite entrar
       onLogin({ email: trimmed, chamados: [] });

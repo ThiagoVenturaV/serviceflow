@@ -28,7 +28,20 @@ const PLACEHOLDER_SUGGESTIONS = [
 ];
 
 export default function ChatPage({ onBack, user }) {
-  const [messages, setMessages] = useState([INITIAL_MESSAGE]);
+  const [messages, setMessages] = useState(() => {
+    try {
+      const stored = localStorage.getItem('sf_chat_messages');
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        return parsed.map(m => ({ ...m, timestamp: new Date(m.timestamp) }));
+      }
+    } catch {}
+    const welcomeText = user?.nome
+      ? `Olá {nome}! Que bom ver você por aqui. 😊\n\nComo posso te ajudar hoje? Você gostaria de acompanhar o andamento das suas solicitações em aberto ou prefere abrir um novo chamado?`
+      : `Olá! Sou ${CONFIG.brand.aiName}, sua assistente de atendimento. 😊\n\nEstou aqui para te ajudar com qualquer solicitação pós-venda — trocas, devoluções, garantias ou reclamações.\n\nPor onde começamos? Me conta o que está acontecendo!`;
+    return [{ id: 1, role: 'assistant', text: welcomeText, timestamp: new Date() }];
+  });
+
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [collectedData, setCollectedData] = useState(null);
@@ -45,12 +58,41 @@ export default function ChatPage({ onBack, user }) {
   const [attachments, setAttachments] = useState([]); // Array of { id, name, type, base64 }
   const [showNPS, setShowNPS] = useState(false);
   const [showHelp, setShowHelp] = useState(false);
-  const [clientVars, setClientVars] = useState({
-    nome: '',
-    email: user?.email || '',
-    numero_pedido: '',
-    protocolo: ''
+
+  const [clientVars, setClientVars] = useState(() => {
+    try {
+      const stored = localStorage.getItem('sf_client_vars');
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        return {
+          nome: parsed.nome || user?.nome || '',
+          email: user?.email || parsed.email || '',
+          numero_pedido: parsed.numero_pedido || '',
+          protocolo: parsed.protocolo || ''
+        };
+      }
+    } catch {}
+    return {
+      nome: user?.nome || '',
+      email: user?.email || '',
+      numero_pedido: '',
+      protocolo: ''
+    };
   });
+
+  // Salva mensagens sempre que mudarem
+  useEffect(() => {
+    try {
+      localStorage.setItem('sf_chat_messages', JSON.stringify(messages));
+    } catch {}
+  }, [messages]);
+
+  // Salva variáveis sempre que mudarem
+  useEffect(() => {
+    try {
+      localStorage.setItem('sf_client_vars', JSON.stringify(clientVars));
+    } catch {}
+  }, [clientVars]);
 
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
@@ -387,7 +429,11 @@ export default function ChatPage({ onBack, user }) {
   };
 
   const resetChat = () => {
-    setMessages([INITIAL_MESSAGE]);
+    const welcomeText = user?.nome
+      ? `Olá {nome}! Que bom ver você por aqui. 😊\n\nComo posso te ajudar hoje? Você gostaria de acompanhar o andamento das suas solicitações em aberto ou prefere abrir um novo chamado?`
+      : `Olá! Sou ${CONFIG.brand.aiName}, sua assistente de atendimento. 😊\n\nEstou aqui para te ajudar com qualquer solicitação pós-venda — trocas, devoluções, garantias ou reclamações.\n\nPor onde começamos? Me conta o que está acontecendo!`;
+
+    setMessages([{ id: Date.now(), role: 'assistant', text: welcomeText, timestamp: new Date() }]);
     setInput('');
     setCollectedData(null);
     setTicketStatus(null);
@@ -395,6 +441,16 @@ export default function ChatPage({ onBack, user }) {
     setShowConfirm(false);
     setPendingData(null);
     setShowNPS(false);
+    setClientVars({
+      nome: user?.nome || '',
+      email: user?.email || '',
+      numero_pedido: '',
+      protocolo: ''
+    });
+    try {
+      localStorage.removeItem('sf_chat_messages');
+      localStorage.removeItem('sf_client_vars');
+    } catch {}
   };
 
   const formatTime = (date) =>
