@@ -1759,11 +1759,13 @@
   .btn-ghost {
     width: 100%;
   }
+  .features-grid,
   .pain-grid,
   .testimonials-grid,
   .objections-grid {
     display: flex !important;
     flex-direction: row !important;
+    align-items: stretch !important;
     overflow-x: auto !important;
     scroll-snap-type: x mandatory !important;
     scroll-padding-left: 2rem !important;
@@ -1775,17 +1777,20 @@
     -webkit-overflow-scrolling: touch;
   }
 
+  .features-grid::-webkit-scrollbar,
   .pain-grid::-webkit-scrollbar,
   .testimonials-grid::-webkit-scrollbar,
   .objections-grid::-webkit-scrollbar {
     display: none !important;
   }
 
+  .feature-card,
   .pain-card,
   .testimonial-card,
   .objection-card {
     flex: 0 0 80% !important;
     max-width: 310px !important;
+    min-height: 220px !important;
     scroll-snap-align: start !important;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25) !important;
     margin: 0 !important;
