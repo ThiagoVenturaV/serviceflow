@@ -7,53 +7,6 @@
 
 /* ── Design Tokens ── */
 :root {
-  /* Colors. */
-  --background: #060e20;
-  --surface: #060e20;
-  --surface-bright: #1f2b49;
-  --surface-container: #0f1930;
-  --surface-container-high: #141f38;
-  --surface-container-highest: #192540;
-  --surface-container-low: #091328;
-  --surface-container-lowest: #000000;
-  --surface-dim: #060e20;
-  --surface-tint: #ba9eff;
-  --surface-variant: #192540;
-
-  --primary: #ba9eff;
-  --primary-container: #ae8dff;
-  --primary-dim: #8455ef;
-  --primary-fixed: #ae8dff;
-  --primary-fixed-dim: #a27cff;
-  --primary-rgb: 139, 92, 246;
-
-  --secondary: #c7c3fe;
-  --secondary-rgb: 199, 195, 254;
-  --secondary-container: #444173;
-  --secondary-dim: #b9b6ef;
-
-  --tertiary: #8ce7ff;
-  --tertiary-rgb: 140, 231, 255;
-  --tertiary-container: #53ddfc;
-  --tertiary-dim: #40ceed;
-
-  --on-background: #dee5ff;
-  --on-surface: #dee5ff;
-  --on-surface-variant: #a3aac4;
-  --on-primary: #39008c;
-  --on-primary-container: #2b006e;
-  --on-primary-fixed: #ffffff;
-  --on-secondary: #3f3c6e;
-  --on-secondary-container: #cfcbff;
-  --on-tertiary: #005464;
-  --on-tertiary-container: #004b58;
-
-  --outline: #6d758c;
-  --outline-variant: #40485d;
-
-  --error: #ff6e84;
-  --on-error: #490013;
-
   /* Typography */
   --font-headline: 'Manrope', sans-serif;
   --font-body: 'Inter', sans-serif;
@@ -78,9 +31,166 @@
   --radius-full: 9999px;
 
   /* Brand injection points (white-label) */
-  --brand-primary: #8b5cf6;
   --brand-radius: var(--radius-full);
   --ai-name: 'Sofia';
+
+  /* DEFAULT COLOR SCHEME: DARK (ChatGPT/Gemini Style) */
+  --background: #0d0d0d;
+  --surface: #0d0d0d;
+  --surface-bright: #1f1f1f;
+  --surface-container: #171717;
+  --surface-container-high: #212121;
+  --surface-container-highest: #2a2a2a;
+  --surface-container-low: #090909;
+  --surface-container-lowest: #000000;
+  --surface-dim: #0d0d0d;
+  
+  --on-background: #ececec;
+  --on-surface: #ececec;
+  --on-surface-variant: #b4b4b4;
+  --outline: #5f6368;
+  --outline-variant: #2f2f2f;
+  
+  --primary: #3b82f6;
+  --primary-dim: rgba(59, 130, 246, 0.8);
+  --primary-rgb: 59, 130, 246;
+  
+  --secondary: #e5e7eb;
+  --secondary-rgb: 229, 231, 235;
+  --secondary-container: #374151;
+  --secondary-dim: #d1d5db;
+  
+  --tertiary: #ececec;
+  --tertiary-rgb: 236, 236, 236;
+  --on-primary: #ffffff;
+  
+  --error: #ff6e84;
+  --on-error: #490013;
+
+  --chat-user-bubble: #2f2f2f;
+  --chat-user-bubble-text: #ececec;
+  --chat-assistant-bubble: transparent;
+  --chat-assistant-bubble-text: #ececec;
+
+  --nav-bg: rgba(13, 13, 13, 0.85);
+}
+
+/* ── Light Mode System Preference Fallback ── */
+@media (prefers-color-scheme: light) {
+  :root {
+    --background: #ffffff;
+    --surface: #ffffff;
+    --surface-bright: #f9f9f9;
+    --surface-container: #f9f9f9;
+    --surface-container-high: #f0f0f0;
+    --surface-container-highest: #e3e3e3;
+    --surface-container-low: #ffffff;
+    --surface-container-lowest: #f9f9f9;
+    --surface-dim: #f9f9f9;
+    
+    --on-background: #0d0d0d;
+    --on-surface: #0d0d0d;
+    --on-surface-variant: #5f6368;
+    --outline: #b4b4b4;
+    --outline-variant: #e3e3e3;
+    
+    --primary: #1a73e8;
+    --primary-dim: rgba(26, 115, 232, 0.8);
+    --primary-rgb: 26, 115, 232;
+    
+    --secondary: #374151;
+    --secondary-rgb: 55, 65, 81;
+    --secondary-container: #f3f4f6;
+    --secondary-dim: #4b5563;
+    
+    --tertiary: #0d0d0d;
+    --tertiary-rgb: 13, 13, 13;
+    --on-primary: #ffffff;
+    
+    --chat-user-bubble: #f4f4f4;
+    --chat-user-bubble-text: #0d0d0d;
+    --chat-assistant-bubble: transparent;
+    --chat-assistant-bubble-text: #0d0d0d;
+
+    --nav-bg: rgba(255, 255, 255, 0.85);
+  }
+}
+
+/* ── Explicit Class Overrides (from LandingPage configs / localStorage) ── */
+html.light-theme {
+  --background: #ffffff;
+  --surface: #ffffff;
+  --surface-bright: #f9f9f9;
+  --surface-container: #f9f9f9;
+  --surface-container-high: #f0f0f0;
+  --surface-container-highest: #e3e3e3;
+  --surface-container-low: #ffffff;
+  --surface-container-lowest: #f9f9f9;
+  --surface-dim: #f9f9f9;
+  
+  --on-background: #0d0d0d;
+  --on-surface: #0d0d0d;
+  --on-surface-variant: #5f6368;
+  --outline: #b4b4b4;
+  --outline-variant: #e3e3e3;
+  
+  --primary: #1a73e8;
+  --primary-dim: rgba(26, 115, 232, 0.8);
+  --primary-rgb: 26, 115, 232;
+  
+  --secondary: #374151;
+  --secondary-rgb: 55, 65, 81;
+  --secondary-container: #f3f4f6;
+  --secondary-dim: #4b5563;
+  
+  --tertiary: #0d0d0d;
+  --tertiary-rgb: 13, 13, 13;
+  --on-primary: #ffffff;
+  
+  --chat-user-bubble: #f4f4f4;
+  --chat-user-bubble-text: #0d0d0d;
+  --chat-assistant-bubble: transparent;
+  --chat-assistant-bubble-text: #0d0d0d;
+
+  --nav-bg: rgba(255, 255, 255, 0.85);
+}
+
+html.dark-theme {
+  --background: #0d0d0d;
+  --surface: #0d0d0d;
+  --surface-bright: #1f1f1f;
+  --surface-container: #171717;
+  --surface-container-high: #212121;
+  --surface-container-highest: #2a2a2a;
+  --surface-container-low: #090909;
+  --surface-container-lowest: #000000;
+  --surface-dim: #0d0d0d;
+  
+  --on-background: #ececec;
+  --on-surface: #ececec;
+  --on-surface-variant: #b4b4b4;
+  --outline: #5f6368;
+  --outline-variant: #2f2f2f;
+  
+  --primary: #3b82f6;
+  --primary-dim: rgba(59, 130, 246, 0.8);
+  --primary-rgb: 59, 130, 246;
+  
+  --secondary: #e5e7eb;
+  --secondary-rgb: 229, 231, 235;
+  --secondary-container: #374151;
+  --secondary-dim: #d1d5db;
+  
+  --tertiary: #ececec;
+  --tertiary-rgb: 236, 236, 236;
+  --on-primary: #ffffff;
+  
+  --chat-user-bubble: #2f2f2f;
+  --chat-user-bubble-text: #ececec;
+  --chat-assistant-bubble: transparent;
+  --chat-assistant-bubble-text: #ececec;
+
+  --nav-bg: rgba(13, 13, 13, 0.85);
 }
 
 /* ── Reset & Base ── */

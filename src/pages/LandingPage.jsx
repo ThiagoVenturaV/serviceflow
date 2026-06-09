@@ -61,11 +61,20 @@ const faqs = [
 ];
 
 export default function LandingPage({ onStartChat, onNavigate }) {
-  const [brand, setBrand] = useState({
-    primary: '#8B5CF6',
-    secondary: '#e8e8e8ff',
-    aiName: 'Sofia',
-    colorMode: 'dark',
+  const [brand, setBrand] = useState(() => {
+    try {
+      const stored = localStorage.getItem('sf_brand_config');
+      if (stored) {
+        return JSON.parse(stored);
+      }
+    } catch {}
+    const systemPrefersLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
+    return {
+      primary: '#8B5CF6',
+      secondary: '#e8e8e8ff',
+      aiName: 'Sofia',
+      colorMode: systemPrefersLight ? 'light' : 'dark',
+    };
   });
 
   const [editingName, setEditingName] = useState(false);
@@ -74,8 +83,10 @@ export default function LandingPage({ onStartChat, onNavigate }) {
   const secondaryInputRef = useRef(null);
   const nameInputRef = useRef(null);
 
-  // ── Inject CSS variables on state change ──────────────────────────────────
+  // ── Inject CSS variables and toggle theme classes on state change ──────────────────────────────────
   useEffect(() => {
+    localStorage.setItem('sf_brand_config', JSON.stringify(brand));
+
     const root = document.documentElement;
 
     // Helper: hex → "r,g,b" string for rgba() usage
@@ -93,25 +104,13 @@ export default function LandingPage({ onStartChat, onNavigate }) {
     root.style.setProperty('--tertiary', brand.secondary);
     root.style.setProperty('--tertiary-rgb', hexToRgb(brand.secondary));
 
-    // Color mode: swap surface tokens
+    // Color mode: toggle class on html element
     if (brand.colorMode === 'light') {
-      root.style.setProperty('--nav-bg', 'rgba(255, 255, 255, 0.85)');
-      root.style.setProperty('--surface', '#f4f4f8');
-      root.style.setProperty('--surface-container-low', '#e8e8f0');
-      root.style.setProperty('--surface-container', '#dcdce8');
-      root.style.setProperty('--surface-container-high', '#d0d0e0');
-      root.style.setProperty('--on-surface', '#0d0d1a');
-      root.style.setProperty('--on-surface-variant', '#44445a');
-      root.style.setProperty('--outline-variant', '#c0c0d0');
+      root.classList.add('light-theme');
+      root.classList.remove('dark-theme');
     } else {
-      root.style.setProperty('--nav-bg', 'rgba(6, 14, 32, 0.85)');
-      root.style.setProperty('--surface', '#060e20');
-      root.style.setProperty('--surface-container-low', '#0a1428');
-      root.style.setProperty('--surface-container', '#0f1c35');
-      root.style.setProperty('--surface-container-high', '#162240');
-      root.style.setProperty('--on-surface', '#e8eaf6');
-      root.style.setProperty('--on-surface-variant', '#8892b0');
-      root.style.setProperty('--outline-variant', 'rgba(136,146,176,0.15)');
+      root.classList.add('dark-theme');
+      root.classList.remove('light-theme');
     }
   }, [brand]);
 

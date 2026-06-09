@@ -23,6 +23,66 @@ export default function App() {
     } catch { /* ignora */ }
   }, []);
 
+  // Recupera e aplica configurações de tema/marca ao iniciar
+  useEffect(() => {
+    const root = document.documentElement;
+
+    const hexToRgb = (hex) => {
+      const h = hex.replace('#', '');
+      const r = parseInt(h.substring(0, 2), 16);
+      const g = parseInt(h.substring(2, 4), 16);
+      const b = parseInt(h.substring(4, 6), 16);
+      return `${r},${g},${b}`;
+    };
+
+    try {
+      const storedBrand = localStorage.getItem('sf_brand_config');
+      if (storedBrand) {
+        const brand = JSON.parse(storedBrand);
+        root.style.setProperty('--primary', brand.primary);
+        root.style.setProperty('--primary-dim', brand.primary + 'cc');
+        root.style.setProperty('--primary-rgb', hexToRgb(brand.primary));
+        root.style.setProperty('--tertiary', brand.secondary);
+        root.style.setProperty('--tertiary-rgb', hexToRgb(brand.secondary));
+
+        if (brand.colorMode === 'light') {
+          root.classList.add('light-theme');
+          root.classList.remove('dark-theme');
+        } else {
+          root.classList.add('dark-theme');
+          root.classList.remove('light-theme');
+        }
+        return;
+      }
+    } catch {}
+
+    // Fallback: usar preferência do dispositivo
+    const systemPrefersLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
+    if (systemPrefersLight) {
+      root.classList.add('light-theme');
+      root.classList.remove('dark-theme');
+    } else {
+      root.classList.add('dark-theme');
+      root.classList.remove('light-theme');
+    }
+
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: light)');
+    const handleChange = (e) => {
+      const storedBrand = localStorage.getItem('sf_brand_config');
+      if (storedBrand) return; // Não sobrescreve se houver config salva
+      if (e.matches) {
+        root.classList.add('light-theme');
+        root.classList.remove('dark-theme');
+      } else {
+        root.classList.add('dark-theme');
+        root.classList.remove('light-theme');
+      }
+    };
+
+    mediaQuery.addEventListener('change', handleChange);
+    return () => mediaQuery.removeEventListener('change', handleChange);
+  }, []);
+
   const navigateTo = (target) => {
     setPage(target);
     window.scrollTo({ top: 0, behavior: 'instant' });
