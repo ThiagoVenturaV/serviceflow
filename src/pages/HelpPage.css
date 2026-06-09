@@ -1,0 +1,220 @@
+/* ─────────────────────────────────────────
+   HelpPage Styles — ServiceFlow
+   ───────────────────────────────────────── */
+
+.help-root {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow-y: auto;
+  background: var(--surface);
+}
+
+/* Header */
+.help-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.5rem 2rem;
+  background: var(--surface-container);
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  gap: 1rem;
+  flex-shrink: 0;
+}
+
+.help-header-title {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+}
+
+.help-header-icon {
+  font-size: 1.75rem;
+  color: var(--primary);
+}
+
+.help-header-title h2 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--on-surface);
+}
+
+.help-subtitle {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--on-surface-variant);
+}
+
+/* Content Container */
+.help-content-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 1.5rem 2rem 3rem;
+  max-width: 860px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+/* FAQ List */
+.help-faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.help-faq-item {
+  background: var(--surface-container);
+  border: 1px solid var(--outline-variant);
+  border-radius: 1rem;
+  overflow: hidden;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.help-faq-item.open {
+  border-color: var(--primary);
+  box-shadow: 0 4px 20px rgba(var(--primary-rgb), 0.08);
+}
+
+.help-faq-question {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1.125rem 1.25rem;
+  width: 100%;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  color: var(--on-surface);
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: background 0.2s;
+  user-select: none;
+}
+
+.help-faq-question:hover {
+  background: var(--surface-container-high);
+}
+
+.help-faq-icon {
+  font-size: 1.25rem;
+  color: var(--primary);
+  flex-shrink: 0;
+}
+
+.help-faq-question-text {
+  flex: 1;
+  min-width: 0;
+  line-height: 1.4;
+}
+
+.help-faq-chevron {
+  font-size: 1.25rem;
+  color: var(--on-surface-variant);
+  transition: transform 0.25s;
+  flex-shrink: 0;
+}
+
+.help-faq-chevron.rotated {
+  transform: rotate(180deg);
+}
+
+/* FAQ Answer Collapse Wrapper */
+.help-faq-answer-wrapper {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.help-faq-answer-wrapper.open {
+  max-height: 250px;
+}
+
+.help-faq-answer {
+  padding: 1rem 1.25rem 1.25rem;
+  font-size: 0.85rem;
+  color: var(--on-surface-variant);
+  line-height: 1.65;
+  margin: 0;
+  background: var(--surface-container-low);
+  border-top: 1px solid var(--outline-variant);
+}
+
+/* CTA Card */
+.help-cta-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  background: var(--surface-container-low);
+  border: 1px solid var(--outline-variant);
+  border-radius: 1.25rem;
+  margin-top: 1rem;
+}
+
+.help-cta-info h3 {
+  margin: 0 0 0.25rem 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--on-surface);
+}
+
+.help-cta-info p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--on-surface-variant);
+  line-height: 1.4;
+}
+
+.help-cta-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.625rem 1.25rem;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dim) 100%);
+  border: none;
+  border-radius: 9999px;
+  color: var(--on-primary);
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 4px 16px rgba(var(--primary-rgb), 0.3);
+  white-space: nowrap;
+}
+
+.help-cta-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 24px rgba(var(--primary-rgb), 0.45);
+}
+
+/* Responsive (iPhone 12 & general mobile) */
+@media (max-width: 640px) {
+  .help-header {
+    padding: calc(1rem + env(safe-area-inset-top)) 1.25rem 1rem 1.25rem;
+  }
+  
+  .help-content-container {
+    padding: 1rem 1rem calc(80px + env(safe-area-inset-bottom));
+    gap: 1.25rem;
+  }
+  
+  .help-cta-card {
+    flex-direction: column;
+    text-align: center;
+    gap: 1rem;
+    padding: 1.25rem;
+  }
+  
+  .help-cta-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}

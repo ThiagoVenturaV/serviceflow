@@ -7,7 +7,7 @@ import {
 import { createTicket } from '../services/serviceNowService.js';
 import { CONFIG } from '../config.js';
 import NPSModal from '../components/NPSModal.jsx';
-import HelpModal from '../components/HelpModal.jsx';
+import HelpPage from './HelpPage.jsx';
 import MyCasesPage from './MyCasesPage.jsx';
 import './ChatPage.css';
 
@@ -57,7 +57,6 @@ export default function ChatPage({ onBack, user }) {
   const [portalInput, setPortalInput] = useState('');
   const [attachments, setAttachments] = useState([]); // Array of { id, name, type, base64 }
   const [showNPS, setShowNPS] = useState(false);
-  const [showHelp, setShowHelp] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const [clientVars, setClientVars] = useState(() => {
@@ -603,12 +602,7 @@ export default function ChatPage({ onBack, user }) {
           onClose={() => setShowNPS(false)}
         />
       )}
-      {showHelp && (
-        <HelpModal
-          onClose={() => setShowHelp(false)}
-          onOpenChat={(msg) => { setShowHelp(false); startChatWithMessage(msg); }}
-        />
-      )}
+
 
       {/* Sidebar Overlay (Mobile Only) */}
       <div className={`sidebar-overlay ${sidebarOpen ? 'open' : ''}`} onClick={() => setSidebarOpen(false)} />
@@ -655,8 +649,8 @@ export default function ChatPage({ onBack, user }) {
             Meus Casos
           </button>
           <button
-            className="nav-item"
-            onClick={() => { setShowHelp(true); setSidebarOpen(false); }}
+            className={`nav-item ${activeTab === 'help' ? 'active' : ''}`}
+            onClick={() => { setActiveTab('help'); setSidebarOpen(false); }}
           >
             <span className="material-symbols-outlined nav-icon">help</span>{' '}
             Ajuda
@@ -813,6 +807,11 @@ export default function ChatPage({ onBack, user }) {
           <MyCasesPage
             userEmail={user?.email || ''}
             onNewChat={() => startChatWithMessage('Quero abrir um novo chamado')}
+            onOpenMenu={() => setSidebarOpen(true)}
+          />
+        ) : activeTab === 'help' ? (
+          <HelpPage
+            onOpenChat={startChatWithMessage}
             onOpenMenu={() => setSidebarOpen(true)}
           />
         ) : (
