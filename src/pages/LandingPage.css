@@ -1760,8 +1760,36 @@
   .btn-ghost {
     width: 100%;
   }
+  .pain-grid,
+  .testimonials-grid,
   .objections-grid {
-    grid-template-columns: 1fr;
+    display: flex !important;
+    flex-direction: row !important;
+    overflow-x: auto !important;
+    scroll-snap-type: x mandatory !important;
+    scroll-padding-left: 2rem !important;
+    gap: 1.25rem !important;
+    padding: 0.5rem 2rem 2.5rem 2rem !important;
+    margin-left: -2rem !important;
+    margin-right: -2rem !important;
+    scrollbar-width: none !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .pain-grid::-webkit-scrollbar,
+  .testimonials-grid::-webkit-scrollbar,
+  .objections-grid::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  .pain-card,
+  .testimonial-card,
+  .objection-card {
+    flex: 0 0 80% !important;
+    max-width: 310px !important;
+    scroll-snap-align: start !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25) !important;
+    margin: 0 !important;
   }
 }
 
