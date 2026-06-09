@@ -631,12 +631,7 @@ export default function LandingPage({ onStartChat, onNavigate }) {
               <p>Fricções no pós-venda escalam rapidamente para avaliações negativas de 1 estrela no Google e Reclame Aqui, reduzindo a conversão de novos clientes.</p>
             </div>
           </div>
-          <div className="pain-highlight">
-            <span className="material-symbols-outlined pain-alert-icon">warning_amber</span>
-            <p>
-              <strong>Retter custa até 5x menos do que adquirir.</strong> Cerca de 76% dos consumidores afirmam que uma única experiência ruim no pós-venda é suficiente para nunca mais comprar de uma marca. O seu atendimento atual está retendo ou afastando clientes?
-            </p>
-          </div>
+
         </div>
       </section>
 
