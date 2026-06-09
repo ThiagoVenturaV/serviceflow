@@ -104,6 +104,7 @@ export default function ChatPage({ onBack, user }) {
   const speechContextRef = useRef({ tab: 'overview', baseText: '' });
   const activeTabRef = useRef(activeTab);
   activeTabRef.current = activeTab;
+  const isAutoSending = useRef(false);
 
   useEffect(() => {
     inputValueRef.current = input;
@@ -402,8 +403,7 @@ export default function ChatPage({ onBack, user }) {
   const startChatWithMessage = useCallback((initialMsg) => {
     setActiveTab('chat');
     if (initialMsg) {
-      // Envia diretamente sem setTimeout hack:
-      // aguarda o estado da aba mudar via useEffect
+      isAutoSending.current = true;
       setInput(initialMsg);
     }
   }, []);
@@ -413,9 +413,10 @@ export default function ChatPage({ onBack, user }) {
     if (
       activeTab === 'chat' &&
       input &&
-      messages.length === 1 &&
-      input !== ''
+      input !== '' &&
+      isAutoSending.current
     ) {
+      isAutoSending.current = false;
       handleSend();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

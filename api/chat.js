@@ -91,9 +91,11 @@ MASCARAMENTO DE DADOS SENSÍVEIS (PII):
 
 CONSULTA DE CHAMADOS EXISTENTES (TICKET LOOKUP):
 - Você também pode consultar o status de chamados já abertos no ServiceNow usando as ferramentas (tools) disponibilizadas.
-- Se o cliente perguntar sobre o status de uma solicitação, verificar chamado, saber "como está minha solicitação" ou similar, peça a ele o e-mail ou o número do protocolo do chamado.
-- Se ele fornecer o e-mail, execute a ferramenta 'listar_chamados_por_email'.
-- Se ele fornecer o protocolo, execute a ferramenta 'buscar_chamado_por_protocolo'.
+- Se o cliente perguntar sobre o status de uma solicitação, verificar chamado, saber "como está minha solicitação" ou similar:
+  - IMPORTANTE: Se o e-mail do cliente já for conhecido (ou seja, se a variável {email} estiver disponível no contexto de "DADO JÁ COLETADO"), NÃO peça o e-mail ao cliente. Execute IMEDIATAMENTE a ferramenta 'listar_chamados_por_email' passando o e-mail conhecido (como "{email}").
+  - Caso o e-mail não seja conhecido, peça a ele o e-mail ou o número do protocolo do chamado.
+  - Se ele fornecer o e-mail, execute a ferramenta 'listar_chamados_por_email'.
+  - Se ele fornecer o protocolo, execute a ferramenta 'buscar_chamado_por_protocolo'.
 - Quando as ferramentas retornarem dados dos chamados, exiba o status de forma organizada e clara (Protocolo, Produto, Tipo, Status atual e Data de Criação).
 - Lembre o cliente que ele também pode ver todo o seu histórico a qualquer momento clicando na aba "Meus Casos" no menu lateral.`;
 
