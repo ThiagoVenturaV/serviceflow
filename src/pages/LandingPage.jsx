@@ -360,7 +360,17 @@ export default function LandingPage({ onStartChat, onNavigate }) {
         onEnter: () => {
           gsap.fromTo('.feature-card',
             { opacity: 0, y: 50, scale: 0.95 },
-            { opacity: 1, y: 0, scale: 1, stagger: 0.12, duration: 0.6, ease: 'back.out(1.4)' }
+            { 
+              opacity: 1, 
+              y: 0, 
+              scale: 1, 
+              stagger: 0.12, 
+              duration: 0.6, 
+              ease: 'back.out(1.4)',
+              onComplete: () => {
+                gsap.set('.feature-card', { clearProps: 'transform' });
+              }
+            }
           );
         },
       });
@@ -377,7 +387,17 @@ export default function LandingPage({ onStartChat, onNavigate }) {
           );
           gsap.fromTo('.brand-tokens .token-card',
             { opacity: 0, x: 60 },
-            { opacity: 1, x: 0, stagger: 0.1, duration: 0.6, ease: 'power3.out', delay: 0.2 }
+            { 
+              opacity: 1, 
+              x: 0, 
+              stagger: 0.1, 
+              duration: 0.6, 
+              ease: 'power3.out', 
+              delay: 0.2,
+              onComplete: () => {
+                gsap.set('.brand-tokens .token-card', { clearProps: 'transform' });
+              }
+            }
           );
         },
       });
@@ -403,7 +423,17 @@ export default function LandingPage({ onStartChat, onNavigate }) {
         onEnter: () => {
           gsap.fromTo('.step-item',
             { opacity: 0, y: 40, scale: 0.9 },
-            { opacity: 1, y: 0, scale: 1, stagger: 0.15, duration: 0.6, ease: 'back.out(1.6)' }
+            { 
+              opacity: 1, 
+              y: 0, 
+              scale: 1, 
+              stagger: 0.15, 
+              duration: 0.6, 
+              ease: 'back.out(1.6)',
+              onComplete: () => {
+                gsap.set('.step-item', { clearProps: 'transform' });
+              }
+            }
           );
         },
       });
@@ -446,7 +476,8 @@ export default function LandingPage({ onStartChat, onNavigate }) {
               { opacity: 0, y: 20, scale: 0.9 },
               { opacity: 1, y: 0, scale: 1, duration: 0.5, ease: 'back.out(2)' },
               '-=0.2'
-            );
+            )
+            .set('.cta-section .btn-primary', { clearProps: 'transform' });
         },
       });
 
