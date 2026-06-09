@@ -475,12 +475,50 @@ export default function LandingPage({ onStartChat, onNavigate }) {
           </p>
           <div className="features-grid">
             {features.map((f, i) => (
-              <div key={i} className="feature-card">
-                <div className="feature-icon">
-                  <span className="material-symbols-outlined" style={{ fontSize: 'inherit' }}>{f.icon}</span>
+              <div key={i} className={`feature-card feature-card-${i}`}>
+                <div className="feature-card-content">
+                  <div className="feature-icon">
+                    <span className="material-symbols-outlined" style={{ fontSize: 'inherit' }}>{f.icon}</span>
+                  </div>
+                  <h3 className="feature-title">{f.title}</h3>
+                  <p className="feature-desc">{f.desc}</p>
                 </div>
-                <h3 className="feature-title">{f.title}</h3>
-                <p className="feature-desc">{f.desc}</p>
+                {/* Visual bento decorations */}
+                {i === 0 && (
+                  <div className="bento-decor bento-decor-chat" aria-hidden="true">
+                    <div className="decor-bubble assistant">✦ IA Ativa</div>
+                    <div className="decor-bubble user">Quero trocar meu pedido</div>
+                    <div className="decor-bubble assistant pulse">{brand.aiName} digitando...</div>
+                  </div>
+                )}
+                {i === 1 && (
+                  <div className="bento-decor bento-decor-now" aria-hidden="true">
+                    <div className="now-status-badge">REST API CONNECTED</div>
+                    <div className="now-ticket-box">
+                      <div className="ticket-line" />
+                      <div className="ticket-line short" />
+                      <div className="ticket-dot" />
+                    </div>
+                  </div>
+                )}
+                {i === 2 && (
+                  <div className="bento-decor bento-decor-palette" aria-hidden="true">
+                    <div className="palette-preview-bar">
+                      <div className="palette-swatch" style={{ background: brand.primary }} />
+                      <div className="palette-swatch" style={{ background: brand.secondary }} />
+                    </div>
+                    <div className="palette-label">{brand.aiName} Editado</div>
+                  </div>
+                )}
+                {i === 3 && (
+                  <div className="bento-decor bento-decor-secure" aria-hidden="true">
+                    <div className="secure-radar">
+                      <span className="radar-circle" />
+                      <span className="radar-circle" />
+                    </div>
+                    <span className="material-symbols-outlined secure-lock-icon">security</span>
+                  </div>
+                )}
               </div>
             ))}
           </div>
@@ -568,100 +606,129 @@ export default function LandingPage({ onStartChat, onNavigate }) {
               <li><span className="material-symbols-outlined check">check</span> Segurança de dados</li>
             </ul>
             <button id="brand-cta" className="btn-primary" onClick={() => setEditingName(true)}>
-              Testar agora →
+              Testar agora &rarr;
             </button>
           </div>
 
-          {/* ── Interactive Token Cards ── */}
-          <div className="brand-tokens">
-
-            {/* -- brand-primary: color picker */}
-            <div
-              className="token-card token-card--interactive"
-              title="Clique para alterar a cor primária"
-            >
-              <span className="token-key">Cor Primária</span>
-              <div className="token-color-wrap">
-                <span className="token-hex">{brand.primary}</span>
-                <span
-                  className="token-value token-swatch"
-                  style={{ background: brand.primary }}
-                />
-                {/* Overlay native color input */}
-                <input
-                  ref={colorInputRef}
-                  type="color"
-                  value={brand.primary}
-                  onChange={handleColorChange}
-                  className="token-color-input"
-                  aria-label="Escolher cor primária"
-                />
+          {/* ── Dynamic Design Customizer Studio Widget ── */}
+          <div className="brand-tokens-panel">
+            <div className="panel-chrome-header">
+              <div className="chrome-dots">
+                <span className="c-dot red" />
+                <span className="c-dot yellow" />
+                <span className="c-dot green" />
+              </div>
+              <div className="chrome-title">identity-studio.config</div>
+              <div className="chrome-status-badge">
+                <span className="pulse-dot" /> LIVE PREVIEW
               </div>
             </div>
-
-            {/* -- ai-name: inline text edit */}
-            <div
-              className={`token-card token-card--interactive${editingName ? ' token-card--active' : ''}`}
-              title="Clique para editar o nome da IA"
-              onClick={() => !editingName && setEditingName(true)}
-            >
-              <span className="token-key">Nome da IA</span>
-              {editingName ? (
-                <input
-                  ref={nameInputRef}
-                  className="token-inline-input"
-                  value={nameInput}
-                  maxLength={20}
-                  onChange={(e) => setNameInput(e.target.value)}
-                  onBlur={commitName}
-                  onKeyDown={handleNameKey}
-                  onClick={(e) => e.stopPropagation()}
-                />
-              ) : (
-                <span className="token-str">"{brand.aiName}"</span>
-              )}
-            </div>
-
-            {/* -- brand-secondary: second color picker */}
-            <div
-              className="token-card token-card--interactive"
-              title="Clique para alterar a cor secundária"
-            >
-              <span className="token-key">Cor Secundária</span>
-              <div className="token-color-wrap">
-                <span className="token-hex">{brand.secondary}</span>
-                <span
-                  className="token-value token-swatch"
-                  style={{ background: brand.secondary }}
-                />
-                <input
-                  ref={secondaryInputRef}
-                  type="color"
-                  value={brand.secondary}
-                  onChange={handleSecondaryChange}
-                  className="token-color-input"
-                  aria-label="Escolher cor secundária"
-                />
+            
+            <div className="brand-tokens">
+              {/* -- brand-primary: color picker */}
+              <div
+                className="token-card token-card--interactive"
+                title="Clique para alterar a cor primária"
+              >
+                <div className="token-meta">
+                  <span className="token-key">Cor Primária</span>
+                  <span className="token-desc-sub">--color-primary</span>
+                </div>
+                <div className="token-color-wrap">
+                  <span className="token-hex">{brand.primary}</span>
+                  <span
+                    className="token-value token-swatch"
+                    style={{ background: brand.primary }}
+                  />
+                  {/* Overlay native color input */}
+                  <input
+                    ref={colorInputRef}
+                    type="color"
+                    value={brand.primary}
+                    onChange={handleColorChange}
+                    className="token-color-input"
+                    aria-label="Escolher cor primária"
+                  />
+                </div>
               </div>
-            </div>
 
-            {/* -- color-mode: toggle */}
-            <div
-              className="token-card token-card--interactive"
-              title="Clique para alternar o modo de cor"
-              onClick={toggleColorMode}
-            >
-              <span className="token-key">Modo de Cor</span>
-              <div className="token-mode-wrap">
-                <span className="token-str">{brand.colorMode}</span>
-                <div className={`token-mode-toggle ${brand.colorMode === 'light' ? 'token-mode-toggle--light' : ''}`}>
-                  <span className="material-symbols-outlined token-mode-icon">
-                    {brand.colorMode === 'dark' ? 'dark_mode' : 'light_mode'}
-                  </span>
+              {/* -- ai-name: inline text edit */}
+              <div
+                className={`token-card token-card--interactive${editingName ? ' token-card--active' : ''}`}
+                title="Clique para editar o nome da IA"
+                onClick={() => !editingName && setEditingName(true)}
+              >
+                <div className="token-meta">
+                  <span className="token-key">Nome da IA</span>
+                  <span className="token-desc-sub">--ai-agent-name</span>
+                </div>
+                {editingName ? (
+                  <input
+                    ref={nameInputRef}
+                    className="token-inline-input"
+                    value={nameInput}
+                    maxLength={20}
+                    onChange={(e) => setNameInput(e.target.value)}
+                    onBlur={commitName}
+                    onKeyDown={handleNameKey}
+                    onClick={(e) => e.stopPropagation()}
+                  />
+                ) : (
+                  <span className="token-str">"{brand.aiName}"</span>
+                )}
+              </div>
+
+              {/* -- brand-secondary: second color picker */}
+              <div
+                className="token-card token-card--interactive"
+                title="Clique para alterar a cor secundária"
+              >
+                <div className="token-meta">
+                  <span className="token-key">Cor Secundária</span>
+                  <span className="token-desc-sub">--color-secondary</span>
+                </div>
+                <div className="token-color-wrap">
+                  <span className="token-hex">{brand.secondary}</span>
+                  <span
+                    className="token-value token-swatch"
+                    style={{ background: brand.secondary }}
+                  />
+                  <input
+                    ref={secondaryInputRef}
+                    type="color"
+                    value={brand.secondary}
+                    onChange={handleSecondaryChange}
+                    className="token-color-input"
+                    aria-label="Escolher cor secundária"
+                  />
+                </div>
+              </div>
+
+              {/* -- color-mode: toggle */}
+              <div
+                className="token-card token-card--interactive"
+                title="Clique para alternar o modo de cor"
+                onClick={toggleColorMode}
+              >
+                <div className="token-meta">
+                  <span className="token-key">Modo de Cor</span>
+                  <span className="token-desc-sub">--color-theme-mode</span>
+                </div>
+                <div className="token-mode-wrap">
+                  <span className="token-str">{brand.colorMode}</span>
+                  <div className={`token-mode-toggle ${brand.colorMode === 'light' ? 'token-mode-toggle--light' : ''}`}>
+                    <span className="material-symbols-outlined token-mode-icon">
+                      {brand.colorMode === 'dark' ? 'dark_mode' : 'light_mode'}
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
 
+            <div className="panel-chrome-footer">
+              <span className="material-symbols-outlined">analytics</span>
+              <span>Injetor CSS ativo &middot; localStorage sincronizado</span>
+            </div>
           </div>
         </div>
       </section>

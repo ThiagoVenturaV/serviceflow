@@ -13,7 +13,6 @@
 .dashboard-sidebar {
   width: 260px;
   background: var(--surface-container);
-  border-right: 1px solid var(--outline-variant);
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
@@ -26,7 +25,6 @@
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  border-bottom: 1px solid var(--outline-variant);
   flex-shrink: 0;
 }
 
@@ -84,7 +82,6 @@
 
 .sidebar-footer {
   padding: 1rem;
-  border-top: 1px solid var(--outline-variant);
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
@@ -131,7 +128,7 @@
   display: flex;
   flex-direction: column;
   height: 100%;
-  box-shadow: 0 0 120px rgba(0, 0, 0, 0.6);
+  box-shadow: none;
   background: var(--surface);
 }
 
@@ -274,7 +271,6 @@
   justify-content: space-between;
   padding: 1rem 1.5rem;
   background: var(--surface);
-  border-bottom: 1px solid var(--outline-variant);
   flex-shrink: 0;
   backdrop-filter: blur(12px);
   z-index: 5;
