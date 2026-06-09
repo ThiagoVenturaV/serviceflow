@@ -233,6 +233,7 @@
 .hero-content {
   flex: 1.2;
   min-width: 0;
+  width: 100%;
   z-index: 2;
 }
 
@@ -293,6 +294,8 @@
   color: var(--primary);
   letter-spacing: -0.02em;
   line-height: 1;
+  font-variant-numeric: tabular-nums;
+  display: inline-block;
 }
 
 .stat-label {
@@ -868,6 +871,8 @@
   color: var(--primary);
   letter-spacing: -0.04em;
   line-height: 1;
+  font-variant-numeric: tabular-nums;
+  display: inline-block;
 }
 
 .proof-label {
