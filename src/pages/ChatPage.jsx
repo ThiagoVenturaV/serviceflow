@@ -614,7 +614,7 @@ export default function ChatPage({ onBack, user }) {
       <div className={`sidebar-overlay ${sidebarOpen ? 'open' : ''}`} onClick={() => setSidebarOpen(false)} />
 
       {/* Sidebar (Desktop & Mobile Drawer) */}
-      <aside className={`dashboard-sidebar ${sidebarOpen ? 'open' : ''}`} style={{ position: 'relative' }}>
+      <aside className={`dashboard-sidebar ${sidebarOpen ? 'open' : ''}`}>
         {/* Animated sidebar shimmer — decorative */}
         <div className="sidebar-animated-bg" aria-hidden="true" />
         <div className="sidebar-header" onClick={onBack} style={{ cursor: 'pointer' }} title="Voltar para a Home">

@@ -12,6 +12,7 @@
 }
 
 .dashboard-sidebar {
+  position: relative;
   width: 260px;
   background: var(--surface-container);
   display: flex;
@@ -142,6 +143,7 @@
   flex-direction: column;
   height: 100%;
   overflow-y: auto;
+  overflow-x: hidden;
   align-items: center;
 }
 
@@ -1042,6 +1044,29 @@
     border: 1px solid var(--outline-variant) !important;
     border-radius: 9999px !important;
     padding: 0.375rem 0.5rem 0.375rem 1rem !important;
+  }
+
+  /* Portal Quick Actions - Horizontal Scroll Carousel on Mobile */
+  .portal-quick-actions {
+    display: flex !important;
+    flex-direction: row !important;
+    overflow-x: auto !important;
+    scroll-snap-type: x mandatory !important;
+    gap: 1rem !important;
+    margin-left: -1.5rem !important;
+    margin-right: -1.5rem !important;
+    padding-left: 1.5rem !important;
+    padding-right: 1.5rem !important;
+    scrollbar-width: none !important;
+    width: auto !important;
+  }
+  .portal-quick-actions::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  .quick-card {
+    flex: 0 0 250px !important;
+    scroll-snap-align: start !important;
   }
 }
 
