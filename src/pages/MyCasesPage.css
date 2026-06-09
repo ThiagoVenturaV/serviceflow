@@ -17,7 +17,6 @@
   justify-content: space-between;
   padding: 1.5rem 2rem;
   background: var(--surface-container);
-  border-bottom: 1px solid var(--outline-variant);
   position: sticky;
   top: 0;
   z-index: 5;
@@ -78,7 +77,6 @@
   gap: 0.75rem;
   padding: 1.25rem 2rem;
   background: var(--surface-container-low);
-  border-bottom: 1px solid var(--outline-variant);
   flex-shrink: 0;
   flex-wrap: wrap;
 }

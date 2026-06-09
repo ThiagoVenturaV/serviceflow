@@ -58,6 +58,7 @@ export default function ChatPage({ onBack, user }) {
   const [attachments, setAttachments] = useState([]); // Array of { id, name, type, base64 }
   const [showNPS, setShowNPS] = useState(false);
   const [showHelp, setShowHelp] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const [clientVars, setClientVars] = useState(() => {
     try {
@@ -609,8 +610,11 @@ export default function ChatPage({ onBack, user }) {
         />
       )}
 
-      {/* Sidebar (Desktop Only) */}
-      <aside className="dashboard-sidebar" style={{ position: 'relative' }}>
+      {/* Sidebar Overlay (Mobile Only) */}
+      <div className={`sidebar-overlay ${sidebarOpen ? 'open' : ''}`} onClick={() => setSidebarOpen(false)} />
+
+      {/* Sidebar (Desktop & Mobile Drawer) */}
+      <aside className={`dashboard-sidebar ${sidebarOpen ? 'open' : ''}`} style={{ position: 'relative' }}>
         {/* Animated sidebar shimmer — decorative */}
         <div className="sidebar-animated-bg" aria-hidden="true" />
         <div className="sidebar-header" onClick={onBack} style={{ cursor: 'pointer' }} title="Voltar para a Home">
@@ -625,7 +629,7 @@ export default function ChatPage({ onBack, user }) {
         <nav className="sidebar-nav">
           <button
             className={`nav-item ${activeTab === 'overview' ? 'active' : ''}`}
-            onClick={() => setActiveTab('overview')}
+            onClick={() => { setActiveTab('overview'); setSidebarOpen(false); }}
           >
             <span className="material-symbols-outlined nav-icon">
               dashboard
@@ -634,7 +638,7 @@ export default function ChatPage({ onBack, user }) {
           </button>
           <button
             className={`nav-item ${activeTab === 'chat' ? 'active' : ''}`}
-            onClick={() => setActiveTab('chat')}
+            onClick={() => { setActiveTab('chat'); setSidebarOpen(false); }}
           >
             <span className="material-symbols-outlined nav-icon">
               smart_toy
@@ -643,7 +647,7 @@ export default function ChatPage({ onBack, user }) {
           </button>
           <button
             className={`nav-item ${activeTab === 'mycases' ? 'active' : ''}`}
-            onClick={() => setActiveTab('mycases')}
+            onClick={() => { setActiveTab('mycases'); setSidebarOpen(false); }}
           >
             <span className="material-symbols-outlined nav-icon">
               confirmation_number
@@ -652,7 +656,7 @@ export default function ChatPage({ onBack, user }) {
           </button>
           <button
             className="nav-item"
-            onClick={() => setShowHelp(true)}
+            onClick={() => { setShowHelp(true); setSidebarOpen(false); }}
           >
             <span className="material-symbols-outlined nav-icon">help</span>{' '}
             Ajuda
@@ -668,7 +672,7 @@ export default function ChatPage({ onBack, user }) {
           )}
           <button
             className="nav-item btn-logout"
-            onClick={onBack}
+            onClick={() => { onBack(); setSidebarOpen(false); }}
             title="Voltar (Sair)"
           >
             <span className="material-symbols-outlined nav-icon">logout</span>{' '}
@@ -683,11 +687,11 @@ export default function ChatPage({ onBack, user }) {
           <div className="portal-overview">
             <div className="portal-header-top">
               <button
-                className="btn-icon mobile-back-btn"
-                onClick={onBack}
-                title="Sair"
+                className="btn-icon mobile-menu-toggle-btn"
+                onClick={() => setSidebarOpen(true)}
+                title="Abrir menu"
               >
-                <span className="material-symbols-outlined">arrow_back</span>
+                <span className="material-symbols-outlined">menu</span>
               </button>
               <h2>Portal de Entrada</h2>
             </div>
@@ -809,6 +813,7 @@ export default function ChatPage({ onBack, user }) {
           <MyCasesPage
             userEmail={user?.email || ''}
             onNewChat={() => startChatWithMessage('Quero abrir um novo chamado')}
+            onOpenMenu={() => setSidebarOpen(true)}
           />
         ) : (
           <div className="chat-centered-container">
@@ -816,11 +821,11 @@ export default function ChatPage({ onBack, user }) {
             <header className="chat-header">
               <div className="chat-header-left">
                 <button
-                  className="btn-icon mobile-back-btn"
-                  onClick={() => setActiveTab('overview')}
-                  title="Voltar ao Portal"
+                  className="btn-icon mobile-menu-toggle-btn"
+                  onClick={() => setSidebarOpen(true)}
+                  title="Abrir menu"
                 >
-                  <span className="material-symbols-outlined">arrow_back</span>
+                  <span className="material-symbols-outlined">menu</span>
                 </button>
                 <div className="ai-avatar">
                   <span
@@ -1077,38 +1082,6 @@ export default function ChatPage({ onBack, user }) {
         )}
       </div>
 
-      {/* Mobile Bottom Navbar */}
-      <nav className="mobile-bottom-nav">
-        <button
-          className={`bottom-nav-item ${activeTab === 'overview' ? 'active' : ''}`}
-          onClick={() => setActiveTab('overview')}
-        >
-          <span className="material-symbols-outlined">dashboard</span>
-          <span>Visão Geral</span>
-        </button>
-        <button
-          className={`bottom-nav-item ${activeTab === 'chat' ? 'active' : ''}`}
-          onClick={() => setActiveTab('chat')}
-        >
-          <span className="material-symbols-outlined">smart_toy</span>
-          <span>Chat</span>
-        </button>
-        <button
-          className={`bottom-nav-item ${activeTab === 'mycases' ? 'active' : ''}`}
-          onClick={() => setActiveTab('mycases')}
-        >
-          <span className="material-symbols-outlined">confirmation_number</span>
-          <span>Meus Casos</span>
-        </button>
-        <button className="bottom-nav-item" onClick={() => setShowHelp(true)}>
-          <span className="material-symbols-outlined">help</span>
-          <span>Ajuda</span>
-        </button>
-        <button className="bottom-nav-item" onClick={onBack}>
-          <span className="material-symbols-outlined">logout</span>
-          <span>Sair</span>
-        </button>
-      </nav>
     </div>
   );
 }

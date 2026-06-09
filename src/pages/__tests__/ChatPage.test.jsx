@@ -135,13 +135,13 @@ describe('ChatPage', () => {
     });
   });
 
-  // ── Mobile Bottom Nav ──────────────────────────────────────────────────
-  describe('Mobile Bottom Nav', () => {
-    it('deve renderizar a barra de navegação mobile', () => {
+  // ── Mobile Menu Toggle ──────────────────────────────────────────────────
+  describe('Mobile Menu Toggle', () => {
+    it('deve renderizar o botão do menu hambúrguer', () => {
       render(<ChatPage onBack={onBack} />);
-      // Verifica que existem itens de navegação na bottom nav mobile
-      const chatNavItems = screen.getAllByText('Chat');
-      expect(chatNavItems.length).toBeGreaterThan(0);
+      // Verifica que o botão de toggle de menu está no DOM
+      const menuToggles = screen.getAllByTitle('Abrir menu');
+      expect(menuToggles.length).toBeGreaterThan(0);
     });
   });
 });

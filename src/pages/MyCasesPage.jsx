@@ -25,7 +25,7 @@ function StatusBadge({ status }) {
   return <span className={`case-status-badge ${s.color}`}>{s.label}</span>;
 }
 
-export default function MyCasesPage({ userEmail, onNewChat }) {
+export default function MyCasesPage({ userEmail, onNewChat, onOpenMenu }) {
   const [cases, setCases] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -97,6 +97,11 @@ export default function MyCasesPage({ userEmail, onNewChat }) {
       {/* Header */}
       <div className="mycases-header">
         <div className="mycases-header-title">
+          {onOpenMenu && (
+            <button className="btn-icon mobile-menu-toggle-btn" onClick={onOpenMenu} style={{ marginRight: '0.75rem', background: 'none', border: 'none', color: 'var(--on-surface-variant)', cursor: 'pointer', display: 'flex', alignItems: 'center', padding: 0 }} title="Abrir menu">
+              <span className="material-symbols-outlined">menu</span>
+            </button>
+          )}
           <span className="material-symbols-outlined mycases-header-icon">confirmation_number</span>
           <div>
             <h2>Meus Chamados</h2>
