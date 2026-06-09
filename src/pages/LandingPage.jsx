@@ -6,58 +6,120 @@ import './LandingPage.css';
 
 gsap.registerPlugin(ScrollTrigger);
 
+// Custom premium CountUp component that animates when scrolled into view
+function CountUp({ end, start = 0, duration = 2000, prefix = '', suffix = '', decimals = 0, useThousandsSeparator = false }) {
+  const isTest = typeof window === 'undefined' || !window.IntersectionObserver || (typeof process !== 'undefined' && process.env.NODE_ENV === 'test');
+  const [count, setCount] = useState(isTest ? end : start);
+  const elementRef = useRef(null);
+  const hasAnimated = useRef(false);
+
+  useEffect(() => {
+    if (isTest) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !hasAnimated.current) {
+          hasAnimated.current = true;
+          let startTime = null;
+
+          const animate = (timestamp) => {
+            if (!startTime) startTime = timestamp;
+            const progress = timestamp - startTime;
+            const percentage = Math.min(progress / duration, 1);
+            
+            // Easing function (easeOutQuad)
+            const easeProgress = percentage * (2 - percentage);
+            
+            const currentValue = start + easeProgress * (end - start);
+            setCount(currentValue);
+
+            if (percentage < 1) {
+              requestAnimationFrame(animate);
+            } else {
+              setCount(end);
+            }
+          };
+
+          requestAnimationFrame(animate);
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (elementRef.current) {
+      observer.observe(elementRef.current);
+    }
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [end, start, duration, isTest]);
+
+  // Format count
+  const formattedCount = (() => {
+    let value = count.toFixed(decimals);
+    if (useThousandsSeparator) {
+      const parts = value.split('.');
+      parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+      value = parts.join(',');
+    }
+    return `${prefix}${value}${suffix}`;
+  })();
+
+  return <span ref={elementRef}>{formattedCount}</span>;
+}
+
 const features = [
   {
     icon: 'auto_awesome',
     title: 'IA Conversacional',
-    desc: 'Nossa IA coleta todas as informações em linguagem natural, sem formulários chatos.',
+    desc: 'Resolução autônoma de chamados via linguagem natural. Dispense formulários complexos e aumente a conversão do autoatendimento em até 40%.',
   },
   {
     icon: 'bolt',
     title: 'ServiceNow Ready',
-    desc: 'Integração nativa com ServiceNow REST API. Zero fricção, protocolo imediato.',
+    desc: 'Conexão nativa e segura com a API REST do ServiceNow. Sincronização em tempo real de filas, SLAs e triagem inteligente sem esforço de engenharia.',
   },
   {
     icon: 'palette',
     title: 'White-Label Total',
-    desc: 'Injete seu logo, cores e identidade visual. Cada pixel é uma extensão da sua marca.',
+    desc: 'Customização completa de UI. Injete a identidade visual, cores e tom de voz da sua marca, garantindo uma transição fluida e profissional para seus clientes.',
   },
   {
     icon: 'lock',
     title: 'Seguro & Escalável',
-    desc: 'Autenticação robusta e arquitetura preparada para crescer com o seu negócio.',
+    desc: 'Arquitetura corporativa em conformidade com a LGPD. Criptografia ponta a ponta e escalabilidade pronta para suportar picos de chamados com segurança.',
   },
 ];
 
 const steps = [
-  { num: '01', label: 'Cliente conversa com a IA' },
-  { num: '02', label: 'IA coleta os dados necessários' },
-  { num: '03', label: 'POST automático ao ServiceNow' },
-  { num: '04', label: 'Protocolo entregue em segundos' },
+  { num: '01', label: 'Interação inicial via linguagem natural' },
+  { num: '02', label: 'Triagem e enriquecimento de dados por IA' },
+  { num: '03', label: 'Sincronização instantânea na API ServiceNow' },
+  { num: '04', label: 'Protocolo de atendimento gerado em segundos' },
 ];
 
 const faqs = [
   {
-    q: 'Quanto tempo leva para o ServiceFlow estar funcionando na minha loja?',
-    a: 'Em média, 3 a 5 dias úteis. Nossa equipe realiza todo o onboarding: personalização visual (cores, nome da IA, logo da sua marca), configuração dos fluxos de atendimento e integração com o ServiceNow. Você não precisa fazer nada técnico.',
+    q: 'Como funciona o processo e qual o tempo de homologação?',
+    a: 'Nossa equipe realiza o setup e onboarding em até 5 dias úteis. Configuramos a identidade visual (logos, cores e paleta), calibramos as regras de atendimento e estruturamos a integração segura com sua instância ServiceNow.',
   },
   {
-    q: 'Preciso ter equipe de TI para usar o ServiceFlow?',
-    a: 'Não. O ServiceFlow foi projetado para donos de PME, não para times técnicos. Nós entregamos tudo configurado - você só precisa apontar para o nosso sistema e a IA começa a atender.',
+    q: 'Nossa empresa precisará alocar desenvolvedores para a integração?',
+    a: 'Não. O ServiceFlow é uma solução SaaS gerenciada. Cuidamos do provisionamento, infraestrutura e atualizações de segurança. Seu time só precisa apontar o widget e gerenciar os chamados no painel do ServiceNow.',
   },
   {
-    q: 'O que acontece se a IA não souber responder o cliente?',
-    a: 'A IA detecta automaticamente quando uma situação está além do fluxo padrão e escala o chamado para sua equipe, garantindo que nenhum cliente fique sem resposta. Você tem visibilidade total de tudo via ServiceNow.',
+    q: 'Como a IA processa casos complexos ou não previstos?',
+    a: 'A IA monitora o nível de confiança das respostas. Ao identificar cenários atípicos ou solicitações de transição humana, ela realiza o handoff em tempo real para a fila ativa de suporte no ServiceNow, mantendo todo o histórico.',
   },
   {
-    q: 'O ServiceFlow funciona com minha plataforma de e-commerce?',
-    a: 'O ServiceNow, plataforma base do ServiceFlow, possui mais de 500 integrações nativas com sistemas de e-commerce, CRM e ERP. Nossa equipe avalia sua stack durante o onboarding e cuida da integração.',
+    q: 'Quais plataformas de e-commerce e ERPs são compatíveis?',
+    a: 'Por possuir a espinha dorsal de governança baseada no ServiceNow, nossa arquitetura suporta integrações nativas com as principais ferramentas do mercado (como Shopify, VTEX, SAP e Salesforce). Cuidamos disso durante o onboarding.',
   },
   {
-    q: 'Posso personalizar a identidade visual do assistente de IA?',
-    a: 'Sim, e isso é um dos nossos diferenciais. O assistente recebe o nome, as cores e o logo da sua marca. Para o seu cliente, parece que é um colaborador da própria loja, não um sistema terceirizado.',
+    q: 'É possível desativar qualquer menção ao ServiceFlow (White-Label completo)?',
+    a: 'Sim. A solução é 100% white-label. Você pode customizar cores primárias, secundárias, logotipo, avatar e comportamento da IA. Para o cliente final, a experiência de suporte é totalmente proprietária da sua marca.',
   },
-
 ];
 
 export default function LandingPage({ onStartChat, onNavigate }) {
@@ -85,11 +147,11 @@ export default function LandingPage({ onStartChat, onNavigate }) {
 
   // Interactive Chat Preview states
   const [previewMsgs, setPreviewMsgs] = useState([
-    { sender: 'assistant', text: 'Olá! Estou aqui para te ajudar 😊 O que aconteceu?' },
-    { sender: 'user', text: 'Meu produto chegou com defeito!' },
-    { sender: 'assistant', text: 'Que situação chata! Pode me dizer o número do seu pedido?' },
+    { sender: 'assistant', text: 'Olá! Como posso ajudar você hoje? 😊' },
+    { sender: 'user', text: 'Gostaria de solicitar a troca do meu pedido.' },
+    { sender: 'assistant', text: 'Com certeza. Para localizar a sua compra em nossa base, poderia informar o número do pedido?' },
     { sender: 'user', text: '#12345' },
-    { sender: 'assistant', text: 'Só um instante, estou buscando as informações no ServiceNow...' }
+    { sender: 'assistant', text: 'Aguarde um momento enquanto localizo os dados no ServiceNow...' }
   ]);
   const [previewInput, setPreviewInput] = useState('');
   const [isPreviewTyping, setIsPreviewTyping] = useState(false);
@@ -117,7 +179,7 @@ export default function LandingPage({ onStartChat, onNavigate }) {
       setIsPreviewTyping(false);
       setPreviewMsgs(prev => [
         ...prev,
-        { sender: 'assistant', text: `Encontrei seu pedido #12345 (Fone Bluetooth) no ServiceNow! Status: 'Em Processamento'. Gostaria de solicitar troca ou falar com atendente?` }
+        { sender: 'assistant', text: `Localizei o pedido #12345 (Fone Bluetooth) integrado no ServiceNow. Status: 'Entregue'. Deseja abrir um protocolo de troca ou falar com um analista?` }
       ]);
     }, 2000);
     return () => clearTimeout(timer);
@@ -145,11 +207,11 @@ export default function LandingPage({ onStartChat, onNavigate }) {
       const textLower = userText.toLowerCase();
 
       if (textLower.includes('troca') || textLower.includes('devol') || textLower.includes('cancel')) {
-        reply = `Perfeito! Abri a solicitação de troca/devolução para o pedido #12345 no ServiceNow. O protocolo é SF-99882. Vou notificar seu e-mail assim que for aprovado.`;
+        reply = `Perfeito. O protocolo de troca foi aberto no ServiceNow sob o número SF-99882. O processo de devolução foi iniciado e enviaremos as instruções de postagem por e-mail.`;
       } else if (textLower.includes('atendente') || textLower.includes('humano') || textLower.includes('falar com')) {
-        reply = `Sem problemas! Estou transferindo você para o suporte humano agora. Um agente estará com você em instantes.`;
+        reply = `Compreendo. Estou transferindo o seu atendimento para a nossa equipe de suporte no ServiceNow. Um analista prosseguirá em alguns instantes.`;
       } else {
-        reply = `Entendido! Eu sou a ${brand.aiName}, sua IA de suporte da ${CONFIG.brand.name}. Posso abrir tickets no ServiceNow, verificar status ou tirar dúvidas!`;
+        reply = `Entendido. Sou a ${brand.aiName}, assistente virtual da ${CONFIG.brand.name}. Posso abrir chamados de suporte, consultar pedidos ou tirar dúvidas sobre sua entrega. Como posso ajudar?`;
       }
 
       setPreviewMsgs(prev => [...prev, { sender: 'assistant', text: reply }]);
@@ -438,12 +500,12 @@ export default function LandingPage({ onStartChat, onNavigate }) {
         <div className="hero-inner">
           <div className="hero-content">
             <h1 className="hero-title">
-              Suporte de multinacional.<br />
+              Suporte de nível Enterprise.<br />
               <span className="gradient-text">Personalizado</span><br />
               para a sua marca.
             </h1>
             <p className="hero-subtitle">
-              Esqueça os chatbots engessados. O ServiceFlow integra o padrão global do ServiceNow à sua operação, entregando uma experiência de pós-venda que converte clientes irritados em fãs leais.
+              Automatize seu pós-venda com a velocidade e segurança nativas do ServiceNow. Resolva trocas, devoluções e chamados complexos em segundos, mitigando o churn e blindando sua reputação.
             </p>
             <div className="hero-actions">
               <button id="hero-cta" className="btn-primary btn-large" onClick={onStartChat}>
@@ -457,11 +519,11 @@ export default function LandingPage({ onStartChat, onNavigate }) {
               </button>
             </div>
             <div className="hero-stats">
-              <div className="stat"><span className="stat-num">{'<2s'}</span><span className="stat-label">resposta da IA</span></div>
+              <div className="stat"><span className="stat-num"><CountUp end={2} start={10} prefix="<" suffix="s" /></span><span className="stat-label">resposta via IA</span></div>
               <div className="stat-divider" />
-              <div className="stat"><span className="stat-num">100%</span><span className="stat-label">white-label</span></div>
+              <div className="stat"><span className="stat-num"><CountUp end={100} start={0} suffix="%" /></span><span className="stat-label">white-label completo</span></div>
               <div className="stat-divider" />
-              <div className="stat"><span className="stat-num">99.9%</span><span className="stat-label">uptime</span></div>
+              <div className="stat"><span className="stat-num"><CountUp end={99.9} start={0} suffix="%" decimals={1} /></span><span className="stat-label">uptime de rede</span></div>
             </div>
           </div>
           <div className="hero-visual">
@@ -512,37 +574,36 @@ export default function LandingPage({ onStartChat, onNavigate }) {
         </div>
         <div className="section-inner">
           <div className="section-label">O Problema</div>
-          <h2 className="section-title">Você reconhece<br /><span className="gradient-text">essa cena?</span></h2>
+          <h2 className="section-title">O custo invisível de um<br /><span className="gradient-text">suporte ineficiente</span></h2>
           <p className="section-subtitle">
-            Enquanto você foca na expansão, falhas no suporte destroem a sua margem de lucro silenciosamente.
+            Enquanto você foca na expansão, falhas na experiência de pós-venda destroem a sua margem de lucro e corroem o LTV dos clientes.
           </p>
           <div className="pain-grid">
             <div className="pain-card">
               <span className="material-symbols-outlined pain-icon">schedule</span>
-              <h3>Clientes esperando horas</h3>
-              <p>Uma troca simples vira um pesadelo de 3 dias de e-mails. O cliente perde a paciência, e a confiança na sua marca.</p>
+              <h3>Tempo de Espera Crítico</h3>
+              <p>Trocas simples viram longas esperas por e-mail. A lentidão frustra o cliente, que abandona a sua marca nas próximas compras.</p>
             </div>
             <div className="pain-card">
               <span className="material-symbols-outlined pain-icon">inbox</span>
-              <h3>Equipe afogada no repetitivo</h3>
-              <p>Sua equipe passa o dia respondendo as mesmas perguntas sobre prazo, status e devolução. Ninguém tem tempo para o que importa.</p>
+              <h3>Sobrecarga Operacional</h3>
+              <p>Seu time de atendimento passa o dia respondendo chamados repetitivos de rastreamento e status. Zero tempo para focar em iniciativas estratégicas.</p>
             </div>
             <div className="pain-card">
               <span className="material-symbols-outlined pain-icon">folder_off</span>
-              <h3>Chamados que somem</h3>
-              <p>Sem rastreamento, sem protocolo, sem histórico. O cliente liga de novo, repete tudo do zero, e a raiva dobra.</p>
+              <h3>Descentralização de Dados</h3>
+              <p>Sem rastreamento unificado ou protocolo integrado. O cliente é forçado a repetir o histórico em múltiplos canais de contato.</p>
             </div>
             <div className="pain-card">
               <span className="material-symbols-outlined pain-icon">star_half</span>
-              <h3>Reviews negativos que ficam</h3>
-              <p>Cada atendimento ruim vira uma avaliação de 1 estrela no Google, Reclame Aqui ou E-commerce. E essas ficam para sempre.</p>
+              <h3>Danos à Reputação</h3>
+              <p>Fricções no pós-venda escalam rapidamente para avaliações negativas de 1 estrela no Google e Reclame Aqui, reduzindo a conversão de novos clientes.</p>
             </div>
           </div>
           <div className="pain-highlight">
             <span className="material-symbols-outlined pain-alert-icon">warning_amber</span>
             <p>
-              <strong>76% dos consumidores</strong> afirmam que uma única experiência ruim no pós-venda é suficiente
-              para nunca mais comprar de uma marca. O seu suporte atual está convertendo clientes em detratores?
+              <strong>Retter custa até 5x menos do que adquirir.</strong> Cerca de 76% dos consumidores afirmam que uma única experiência ruim no pós-venda é suficiente para nunca mais comprar de uma marca. O seu atendimento atual está retendo ou afastando clientes?
             </p>
           </div>
         </div>
@@ -635,59 +696,59 @@ export default function LandingPage({ onStartChat, onNavigate }) {
       <section className="proof-section">
         <div className="section-inner">
           <div className="section-label">Resultados Reais</div>
-          <h2 className="section-title">Empresas que transformaram<br />seu pós-venda com o ServiceFlow</h2>
+          <h2 className="section-title">Resultados que transformam a<br />eficiência operacional do pós-venda</h2>
           <div className="proof-stats">
             <div className="proof-stat">
-              <span className="proof-num">+3.200</span>
-              <span className="proof-label">chamados resolvidos/mês</span>
+              <span className="proof-num"><CountUp end={3200} start={0} prefix="+" useThousandsSeparator={true} /></span>
+              <span className="proof-label">chamados automatizados/mês</span>
             </div>
             <div className="proof-divider" />
             <div className="proof-stat">
-              <span className="proof-num">98%</span>
-              <span className="proof-label">taxa de satisfação dos clientes</span>
+              <span className="proof-num"><CountUp end={98} start={0} suffix="%" /></span>
+              <span className="proof-label">de índice de satisfação (CSAT)</span>
             </div>
             <div className="proof-divider" />
             <div className="proof-stat">
-              <span className="proof-num">&lt;2min</span>
-              <span className="proof-label">para abrir um protocolo completo</span>
+              <span className="proof-num"><CountUp end={2} start={10} prefix="<" suffix="min" /></span>
+              <span className="proof-label">tempo médio de atendimento (TMA)</span>
             </div>
             <div className="proof-divider" />
             <div className="proof-stat">
-              <span className="proof-num">100%</span>
-              <span className="proof-label">de precisão na abertura dos protocolos</span>
+              <span className="proof-num"><CountUp end={100} start={0} suffix="%" /></span>
+              <span className="proof-label">de precisão na integração de dados</span>
             </div>
           </div>
           <div className="testimonials-grid">
             <div className="testimonial-card">
               <div className="testimonial-stars">★★★★★</div>
-              <p className="testimonial-text">&ldquo;Antes do ServiceFlow, minha equipe passava 4 horas por dia só respondendo e-mails de troca e devolução. Hoje a IA cuida disso tudo, o protocolo é aberto em segundos e eu foco apenas em crescer. O melhor investimento que já fiz no meu negócio.&rdquo;</p>
+              <p className="testimonial-text">&ldquo;Antes do ServiceFlow, nosso time de suporte gastava horas processando trocas manuais via e-mail. A IA automatizou 80% das interações de primeiro nível com integração instantânea ao ServiceNow. Nosso time de CS agora foca em expansão estratégica.&rdquo;</p>
               <div className="testimonial-author">
                 <div className="testimonial-avatar">CM</div>
                 <div>
                   <div className="testimonial-name">Camila Matos</div>
-                  <div className="testimonial-role">Loja Encanto Feminino · São Paulo, SP</div>
+                  <div className="testimonial-role">VP de Customer Success na Lumina Fashion</div>
                 </div>
               </div>
             </div>
             <div className="testimonial-card">
               <div className="testimonial-stars">★★★★★</div>
-              <p className="testimonial-text">&ldquo;Com o aumento das vendas, nosso suporte estava entrando em colapso. O ServiceFlow implementou uma operação robusta, com rastreamento e protocolos automáticos. Hoje nossa marca entrega uma experiência de pós-venda à altura da qualidade dos nossos produtos.&rdquo;</p>
+              <p className="testimonial-text">&ldquo;Com o crescimento acelerado da nossa base, a operação corria o risco de colapsar. O ServiceFlow implementou fluxos estruturados de autoatendimento integrados diretamente ao ServiceNow. Uma experiência de pós-venda verdadeiramente premium.&rdquo;</p>
               <div className="testimonial-author">
                 <div className="testimonial-avatar">RF</div>
                 <div>
                   <div className="testimonial-name">Ricardo Fontes</div>
-                  <div className="testimonial-role">E-commerce de Eletrônicos · Belo Horizonte, MG</div>
+                  <div className="testimonial-role">Diretor de Operações na Vortex Tech</div>
                 </div>
               </div>
             </div>
             <div className="testimonial-card">
               <div className="testimonial-stars">★★★★★</div>
-              <p className="testimonial-text">&ldquo;O onboarding do ServiceFlow é impecável. A inteligência artificial assumiu nossa operação de primeira linha mantendo perfeitamente o tom de voz da nossa marca. Nossas avaliações no Reclame Aqui subiram de 6.8 para 9.2 em apenas dois meses.&rdquo;</p>
+              <p className="testimonial-text">&ldquo;O onboarding do ServiceFlow foi impecável. A inteligência artificial assumiu o suporte de primeira linha mantendo perfeitamente o tom de voz da nossa marca. Nosso índice de NPS subiu de 62 para 89 em menos de um trimestre.&rdquo;</p>
               <div className="testimonial-author">
                 <div className="testimonial-avatar">AP</div>
                 <div>
                   <div className="testimonial-name">Ana Paula Reis</div>
-                  <div className="testimonial-role">Marketplace de Artesanato · Curitiba, PR</div>
+                  <div className="testimonial-role">Head de Customer Experience na Artesa</div>
                 </div>
               </div>
             </div>
@@ -700,16 +761,15 @@ export default function LandingPage({ onStartChat, onNavigate }) {
         <div className="section-inner brand-inner">
           <div className="brand-content">
             <div className="section-label">White-Label</div>
-            <h2 className="section-title">Sua Marca.<br />Nosso Sistema.</h2>
+            <h2 className="section-title">Sua Identidade.<br />Nossa Tecnologia.</h2>
             <p className="section-subtitle">
-              Injete logos, fontes e cores com nossa função de transformação.
-              Cada pixel é uma extensão da sua identidade visual.
+              Mantenha a integridade da sua marca. Customize logos, fontes, cores e comportamento da IA com facilidade para criar uma experiência de suporte proprietária.
             </p>
             <ul className="brand-list">
-              <li><span className="material-symbols-outlined check">check</span> CSS variáveis dinamicamente injetáveis</li>
-              <li><span className="material-symbols-outlined check">check</span> Nome e avatar da IA customizáveis</li>
-              <li><span className="material-symbols-outlined check">check</span> Dark/Light mode com tokens customizáveis</li>
-              <li><span className="material-symbols-outlined check">check</span> Segurança de dados</li>
+              <li><span className="material-symbols-outlined check">check</span> Injeção em tempo real de CSS customizável</li>
+              <li><span className="material-symbols-outlined check">check</span> Nome, avatar e comportamento da IA parametrizáveis</li>
+              <li><span className="material-symbols-outlined check">check</span> Temas Light e Dark com persistência de preferências</li>
+              <li><span className="material-symbols-outlined check">check</span> Segurança de dados corporativos e conformidade LGPD</li>
             </ul>
             <button id="brand-cta" className="btn-primary" onClick={() => setEditingName(true)}>
               Testar agora &rarr;
@@ -847,9 +907,9 @@ export default function LandingPage({ onStartChat, onNavigate }) {
         </div>
         <div className="section-inner">
           <div className="section-label">Integração</div>
-          <h2 className="section-title">Fluxo Completo</h2>
+          <h2 className="section-title">Integração de Alto Desempenho</h2>
           <p className="section-subtitle">
-            Frontend React → IA → ServiceNow API. Simples assim.
+            Uma conexão transparente entre o seu front-end React, nossa inteligência e a API do ServiceNow.
           </p>
           <div className="steps-track">
             {steps.map((s, i) => (
@@ -893,36 +953,36 @@ const { protocolo } = await response.json();
           <span /><span /><span /><span /><span /><span />
         </div>
         <div className="section-inner">
-          <div className="section-label">Sem Pegadinha</div>
-          <h2 className="section-title">Sua dúvida tem resposta.<br /><span className="gradient-text">Veja aqui.</span></h2>
+          <div className="section-label">Transparência</div>
+          <h2 className="section-title">Pronto para escalar<br /><span className="gradient-text">com segurança.</span></h2>
           <div className="objections-grid">
             <div className="objection-card">
               <div className="objection-q">
                 <span className="material-symbols-outlined obj-icon">payments</span>
-                <h3>&ldquo;A mensalidade vai pesar no orçamento?&rdquo;</h3>
+                <h3>&ldquo;Qual o retorno sobre o investimento (ROI) da solução?&rdquo;</h3>
               </div>
-              <p>O ServiceFlow não é apenas uma ferramenta, é uma <strong>operação de suporte de nível Enterprise</strong> para a sua empresa. Mais do que economizar com novas contratações, você blinda a reputação da sua marca, garante zero chamados perdidos e transforma o atendimento no seu maior diferencial competitivo.</p>
+              <p>O ServiceFlow atua como um multiplicador de eficiência. Ao automatizar até 80% das demandas de pós-venda, você reduz drasticamente o custo por transação (CPT), mitiga estouros de SLA e retém clientes que seriam perdidos por lentidão.</p>
             </div>
             <div className="objection-card">
               <div className="objection-q">
                 <span className="material-symbols-outlined obj-icon">build</span>
-                <h3>&ldquo;Parece complicado de configurar.&rdquo;</h3>
+                <h3>&ldquo;Quanto tempo de engenharia é necessário para a integração?&rdquo;</h3>
               </div>
-              <p>Não tem nada para você fazer. Nossa equipe personaliza <strong>tudo</strong> para a sua loja: nome do assistente, cores, fluxo de atendimento e integração com ServiceNow. Você contrata hoje e a IA já atende amanhã.</p>
+              <p>Esforço técnico zero do seu time. Nossa equipe cuida de todo o processo de onboarding, configuração visual e mapeamento de fluxos. A homologação com suas instâncias do ServiceNow é realizada em tempo recorde.</p>
             </div>
             <div className="objection-card">
               <div className="objection-q">
                 <span className="material-symbols-outlined obj-icon">psychology</span>
-                <h3>&ldquo;E se a IA errar com meu cliente?&rdquo;</h3>
+                <h3>&ldquo;Como são gerenciados os casos complexos ou atípicos?&rdquo;</h3>
               </div>
-              <p>Quando a IA detecta algo fora do padrão, <strong>escala automaticamente para sua equipe</strong>. O cliente nunca fica sem resposta e você mantém controle total de cada chamado aberto.</p>
+              <p>Nossa IA possui inteligência de triagem calibrada por thresholds. Ao detectar um caso fora do escopo ou uma solicitação de transição humana, ela realiza o handoff em tempo real para a fila de suporte ativa no ServiceNow.</p>
             </div>
             <div className="objection-card">
               <div className="objection-q">
                 <span className="material-symbols-outlined obj-icon">link</span>
-                <h3>&ldquo;Preciso integrar com meu sistema.&rdquo;</h3>
+                <h3>&ldquo;Existe compatibilidade com outras ferramentas do ecossistema?&rdquo;</h3>
               </div>
-              <p>O ServiceNow é o padrão global de gestão de chamados - usado por <strong>Airbnb, Adobe e Siemens</strong>. Integra com os principais e-commerces e ERPs. Nossa equipe cuida da integração no onboarding.</p>
+              <p>O ServiceNow é o hub de governança corporativa ideal. Conectamos nativamente a ERPs, CRMs (como Salesforce e HubSpot) e principais plataformas de e-commerce, consolidando os dados com total conformidade.</p>
             </div>
 
           </div>
@@ -956,12 +1016,11 @@ const { protocolo } = await response.json();
         <div className="section-inner cta-inner">
           <div className="cta-urgency">
             <span className="material-symbols-outlined urgency-icon">bolt</span>
-            <span>Apenas <strong>12 vagas de onboarding</strong> disponíveis este mês</span>
+            <span>Vagas de onboarding limitadas para este ciclo de implantação</span>
           </div>
-          <h2 className="cta-title">Chega de suporte<br /><span className="gradient-text">desorganizado.</span></h2>
+          <h2 className="cta-title">Transforme seu pós-venda<br /><span className="gradient-text">em um canal de crescimento.</span></h2>
           <p className="cta-subtitle">
-            Eleve sua marca com uma <strong>operação de suporte premium</strong>. Sua loja terá uma 
-            IA de alto nível, 100% configurada, personalizada e pronta para blindar sua reputação.
+            Elimine gargalos operacionais, reduza o tempo médio de atendimento (TMA) e garanta a fidelidade dos seus clientes com uma operação de suporte automatizada e integrada ao ServiceNow.
           </p>
           <button id="final-cta" className="btn-primary btn-large" onClick={onStartChat}>
             Agendar Demonstração →
