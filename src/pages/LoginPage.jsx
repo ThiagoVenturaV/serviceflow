@@ -6,9 +6,8 @@ export default function LoginPage({ onLogin, onContinueAsGuest, onNavigate }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const trimmed = email.trim().toLowerCase();
+  const triggerLogin = async (targetEmail) => {
+    const trimmed = targetEmail.trim().toLowerCase();
     if (!trimmed || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)) {
       setError('Por favor, insira um e-mail válido.');
       return;
@@ -72,6 +71,11 @@ export default function LoginPage({ onLogin, onContinueAsGuest, onNavigate }) {
     }
   };
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    triggerLogin(email);
+  };
+
   return (
     <div className="login-root">
       {/* Fundo animado */}
@@ -94,12 +98,36 @@ export default function LoginPage({ onLogin, onContinueAsGuest, onNavigate }) {
             Informe seu e-mail do ServiceNow para carregar suas roles e ACLs dinâmicas.
           </p>
           <div className="login-test-hint" style={{ marginTop: '0.75rem', padding: '0.625rem', background: 'var(--surface-container-high)', borderRadius: '0.5rem', fontSize: '0.8rem', color: 'var(--on-surface-variant)', textAlign: 'left', border: '1px dashed var(--outline-variant)' }}>
-            <strong>💡 E-mails de teste (Simulador de ACLs):</strong>
-            <ul style={{ margin: '0.25rem 0 0 1.25rem', padding: 0 }}>
-              <li><strong>Cliente:</strong> <code>cliente.pedro@gmail.com</code></li>
-              <li><strong>Atendente:</strong> <code>atendente.carlos@serviceflow.com</code></li>
-              <li><strong>Supervisor:</strong> <code>supervisor.ana@serviceflow.com</code></li>
-            </ul>
+            <strong>💡 Acesso Rápido de Teste (ServiceNow):</strong>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.375rem', marginTop: '0.5rem' }}>
+              <button
+                type="button"
+                className="login-quick-btn"
+                onClick={() => { setEmail('cliente.pedro@gmail.com'); triggerLogin('cliente.pedro@gmail.com'); }}
+                disabled={loading}
+              >
+                <span><strong>Cliente:</strong> Pedro</span>
+                <code>cliente.pedro@gmail.com</code>
+              </button>
+              <button
+                type="button"
+                className="login-quick-btn"
+                onClick={() => { setEmail('atendente.carlos@serviceflow.com'); triggerLogin('atendente.carlos@serviceflow.com'); }}
+                disabled={loading}
+              >
+                <span><strong>Atendente:</strong> Carlos</span>
+                <code>atendente.carlos@serviceflow.com</code>
+              </button>
+              <button
+                type="button"
+                className="login-quick-btn"
+                onClick={() => { setEmail('supervisor.ana@serviceflow.com'); triggerLogin('supervisor.ana@serviceflow.com'); }}
+                disabled={loading}
+              >
+                <span><strong>Supervisor:</strong> Ana</span>
+                <code>supervisor.ana@serviceflow.com</code>
+              </button>
+            </div>
           </div>
         </div>
 

@@ -62,7 +62,13 @@ export default function ChatPage({ onBack, user }) {
   const [placeholderIndex, setPlaceholderIndex] = useState(0);
   const [isListening, setIsListening] = useState(false);
   const [hasSpeechSupport, setHasSpeechSupport] = useState(false);
-  const [activeTab, setActiveTab] = useState('overview');
+  const [activeTab, setActiveTab] = useState(() => {
+    if (!user || !user.email) return 'overview';
+    if (roles.includes('sf_admin')) return 'dashboard';
+    if (roles.includes('sf_atendente')) return 'queue';
+    if (roles.includes('sf_cliente')) return 'mycases';
+    return 'overview';
+  });
   const [portalInput, setPortalInput] = useState('');
   const [attachments, setAttachments] = useState([]); // Array of { id, name, type, base64 }
   const [showNPS, setShowNPS] = useState(false);

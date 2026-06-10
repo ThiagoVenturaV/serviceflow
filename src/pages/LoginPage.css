@@ -317,3 +317,53 @@
     font-size: 1.5rem;
   }
 }
+
+/* Quick test login buttons */
+.login-quick-btn {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  background: var(--surface-container-high);
+  border: 1px solid var(--outline-variant);
+  border-radius: 0.625rem;
+  padding: 0.625rem 0.75rem;
+  color: var(--on-surface);
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-family: var(--font-body);
+  text-align: left;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.login-quick-btn:hover:not(:disabled) {
+  background: var(--surface-container-highest);
+  border-color: var(--primary);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(var(--primary-rgb), 0.1);
+}
+
+.login-quick-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.login-quick-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.login-quick-btn code {
+  font-family: monospace;
+  font-size: 0.75rem;
+  background: var(--surface-container-highest);
+  padding: 0.125rem 0.25rem;
+  border-radius: 0.25rem;
+  color: var(--primary);
+  transition: all 0.2s;
+}
+
+.login-quick-btn:hover:not(:disabled) code {
+  color: var(--on-primary);
+  background: var(--primary);
+}
+
