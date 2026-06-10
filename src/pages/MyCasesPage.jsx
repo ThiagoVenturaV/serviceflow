@@ -4,7 +4,8 @@ import './MyCasesPage.css';
 const STATUS_MAP = {
   '1': { label: 'Novo', color: 'status-new' },
   '2': { label: 'Em andamento', color: 'status-inprogress' },
-  '3': { label: 'Em espera', color: 'status-onhold' },
+  '3': { label: 'Resolvido', color: 'status-resolved' },
+  '-5': { label: 'Em espera', color: 'status-onhold' },
   '6': { label: 'Resolvido', color: 'status-resolved' },
   '7': { label: 'Encerrado', color: 'status-closed' },
   'Novo': { label: 'Novo', color: 'status-new' },
@@ -15,6 +16,8 @@ const STATUS_MAP = {
   'Work in Progress': { label: 'Em andamento', color: 'status-inprogress' },
   'Resolved': { label: 'Resolvido', color: 'status-resolved' },
   'Closed': { label: 'Encerrado', color: 'status-closed' },
+  'Closed Complete': { label: 'Resolvido', color: 'status-resolved' },
+  'Pending': { label: 'Em espera', color: 'status-onhold' },
 };
 
 const TIPO_ICON = {
@@ -133,13 +136,13 @@ export default function MyCasesPage({ userEmail, onNewChat, onOpenMenu }) {
           </div>
           <div className="summary-chip">
             <span className="summary-num summary-open">
-              {cases.filter(c => !['6','7','Resolvido','Encerrado'].includes(c.status || c.state)).length}
+              {cases.filter(c => !['3','6','7','Resolvido','Encerrado','Closed Complete'].includes(c.status || c.state)).length}
             </span>
             <span>Em aberto</span>
           </div>
           <div className="summary-chip">
             <span className="summary-num summary-done">
-              {cases.filter(c => ['6','7','Resolvido','Encerrado'].includes(c.status || c.state)).length}
+              {cases.filter(c => ['3','6','7','Resolvido','Encerrado','Closed Complete'].includes(c.status || c.state)).length}
             </span>
             <span>Concluídos</span>
           </div>

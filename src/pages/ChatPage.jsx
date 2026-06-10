@@ -1038,8 +1038,8 @@ export default function ChatPage({ onBack, user }) {
                         <div className="case-info">
                           <div className="case-info-top">
                             <span className="case-protocol">{t.protocolo || t.number}</span>
-                            <span className={`case-status-badge ${['6', 'Resolvido', 'Resolved', 'Work in Progress (Resolved)'].includes(t.status) ? 'status-resolved' : ['2', 'Em andamento', 'Work in Progress'].includes(t.status) ? 'status-inprogress' : 'status-new'}`}>
-                              {['6', 'Resolvido', 'Resolved'].includes(t.status) ? 'Resolvido' : ['2', 'Em andamento', 'Work in Progress'].includes(t.status) ? 'Em andamento' : 'Novo'}
+                            <span className={`case-status-badge ${['3', '6', 'Resolvido', 'Resolved', 'Closed Complete', 'Work in Progress (Resolved)'].includes(t.status) ? 'status-resolved' : ['2', 'Em andamento', 'Work in Progress'].includes(t.status) ? 'status-inprogress' : 'status-new'}`}>
+                              {['3', '6', 'Resolvido', 'Resolved', 'Closed Complete'].includes(t.status) ? 'Resolvido' : ['2', 'Em andamento', 'Work in Progress'].includes(t.status) ? 'Em andamento' : 'Novo'}
                             </span>
                           </div>
                           <p className="case-produto"><strong>Cliente:</strong> {t.nome_do_cliente || t.email} | <strong>Produto:</strong> {t.produto}</p>
@@ -1090,7 +1090,7 @@ export default function ChatPage({ onBack, user }) {
                                     style={{ background: 'var(--primary)', color: 'white', padding: '0.375rem 0.75rem', fontSize: '0.85rem' }}
                                     onClick={async () => {
                                       setUpdatingTicketId(id);
-                                      await handleUpdateTicketStatus(t.protocolo, '6');
+                                      await handleUpdateTicketStatus(t.protocolo, '3');
                                       await fetchQueue();
                                       setUpdatingTicketId(null);
                                     }}
