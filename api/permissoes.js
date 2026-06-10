@@ -30,9 +30,12 @@ export default async function handler(req, res) {
       });
 
       if (response.ok) {
-        const result = await response.json();
-        // Espera retornar: { canRead, canWrite, canCreate, canDelete, roles }
-        return res.status(200).json(result);
+        const body = await response.json();
+        // ServiceNow wraps custom response in 'result' property
+        const permissions = body && body.result !== undefined ? body.result : body;
+        return res.status(200).json(permissions);
+      } else {
+        console.warn(`Falha na resposta do ServiceNow: ${response.status} - usando fallback.`);
       }
     } catch (error) {
       console.warn('Falha ao conectar com o ServiceNow, usando fallback de permissões locais:', error.message);

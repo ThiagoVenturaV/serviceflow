@@ -1026,10 +1026,50 @@
   .chat-page {
     background: var(--surface);
     padding-bottom: env(safe-area-inset-bottom);
+    overflow-x: hidden;
+    max-width: 100%;
   }
 
   .chat-centered-container {
     box-shadow: none;
+    overflow-x: hidden;
+    max-width: 100%;
+  }
+
+  .portal-overview {
+    overflow-x: hidden;
+    max-width: 100%;
+  }
+
+  .portal-quick-actions {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.875rem !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    overflow-x: visible !important;
+    scroll-snap-type: none !important;
+    width: 100% !important;
+  }
+
+  .quick-card {
+    flex: none !important;
+    width: 100% !important;
+  }
+
+  .portal-ai-section {
+    width: 100% !important;
+    box-sizing: border-box !important;
+    max-width: 100% !important;
+  }
+
+  .portal-chat-input {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
   }
 
   .mobile-menu-toggle-btn {
@@ -1093,6 +1133,12 @@
   }
   .protocol-badge {
     display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .portal-quick-actions {
+    grid-template-columns: 1fr !important;
   }
 }
 
