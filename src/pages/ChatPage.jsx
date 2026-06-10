@@ -1026,8 +1026,8 @@ export default function ChatPage({ onBack, user }) {
                         <div className="case-info">
                           <div className="case-info-top">
                             <span className="case-protocol">{t.protocolo || t.number}</span>
-                            <span className={`case-status-badge ${t.status === '6' || t.status === 'Resolvido' ? 'status-resolved' : t.status === '2' || t.status === 'Em andamento' ? 'status-inprogress' : 'status-new'}`}>
-                              {t.status === '6' || t.status === 'Resolvido' ? 'Resolvido' : t.status === '2' || t.status === 'Em andamento' ? 'Em andamento' : 'Novo'}
+                            <span className={`case-status-badge ${['6', 'Resolvido', 'Resolved', 'Work in Progress (Resolved)'].includes(t.status) ? 'status-resolved' : ['2', 'Em andamento', 'Work in Progress'].includes(t.status) ? 'status-inprogress' : 'status-new'}`}>
+                              {['6', 'Resolvido', 'Resolved'].includes(t.status) ? 'Resolvido' : ['2', 'Em andamento', 'Work in Progress'].includes(t.status) ? 'Em andamento' : 'Novo'}
                             </span>
                           </div>
                           <p className="case-produto"><strong>Cliente:</strong> {t.nome_do_cliente || t.email} | <strong>Produto:</strong> {t.produto}</p>

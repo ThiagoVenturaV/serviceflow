@@ -11,6 +11,10 @@ const STATUS_MAP = {
   'Em andamento': { label: 'Em andamento', color: 'status-inprogress' },
   'Resolvido': { label: 'Resolvido', color: 'status-resolved' },
   'Encerrado': { label: 'Encerrado', color: 'status-closed' },
+  'Open': { label: 'Novo', color: 'status-new' },
+  'Work in Progress': { label: 'Em andamento', color: 'status-inprogress' },
+  'Resolved': { label: 'Resolvido', color: 'status-resolved' },
+  'Closed': { label: 'Encerrado', color: 'status-closed' },
 };
 
 const TIPO_ICON = {

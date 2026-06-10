@@ -29,6 +29,7 @@
   display: flex;
   align-items: center;
   gap: 0.875rem;
+  min-width: 0;
 }
 
 .mycases-header-icon {
@@ -47,6 +48,10 @@
   margin: 0;
   font-size: 0.8rem;
   color: var(--on-surface-variant);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
 }
 
 .mycases-btn-new {
