@@ -5,6 +5,7 @@ import LandingPage from './pages/LandingPage.jsx';
 import LoginPage from './pages/LoginPage.jsx';
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage.jsx';
 import TermsOfUsePage from './pages/TermsOfUsePage.jsx';
+import { CONFIG } from './config.js';
 import './App.css';
 
 const SESSION_KEY = 'sf_user';
@@ -98,7 +99,47 @@ export default function App() {
     } catch { /* ignora */ }
   }, []);
 
-  // Recupera e aplica configurações de tema/marca ao iniciar
+  const [brand, setBrand] = useState(() => {
+    try {
+      const stored = localStorage.getItem('sf_brand_config');
+      if (stored) {
+        return JSON.parse(stored);
+      }
+    } catch {}
+    const systemPrefersLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
+    return {
+      primary: '#8B5CF6',
+      secondary: '#e8e8e8ff',
+      aiName: 'Sofia',
+      colorMode: systemPrefersLight ? 'light' : 'dark',
+    };
+  });
+
+  // Busca o branding real do ServiceNow na montagem do app
+  useEffect(() => {
+    async function loadBranding() {
+      try {
+        const response = await fetch('/api/branding');
+        if (response.ok) {
+          const data = await response.json();
+          setBrand(prev => {
+            const updated = {
+              ...prev,
+              primary: data.primaryColor || prev.primary,
+              aiName: data.aiName || prev.aiName,
+              logoUrl: data.logoUrl || ''
+            };
+            return updated;
+          });
+        }
+      } catch (err) {
+        console.warn('Falha ao carregar branding do ServiceNow:', err);
+      }
+    }
+    loadBranding();
+  }, []);
+
+  // Aplica configurações de tema/marca sempre que o estado "brand" mudar
   useEffect(() => {
     const root = document.documentElement;
 
@@ -110,30 +151,13 @@ export default function App() {
       return `${r},${g},${b}`;
     };
 
-    try {
-      const storedBrand = localStorage.getItem('sf_brand_config');
-      if (storedBrand) {
-        const brand = JSON.parse(storedBrand);
-        root.style.setProperty('--primary', brand.primary);
-        root.style.setProperty('--primary-dim', brand.primary + 'cc');
-        root.style.setProperty('--primary-rgb', hexToRgb(brand.primary));
-        root.style.setProperty('--tertiary', brand.secondary);
-        root.style.setProperty('--tertiary-rgb', hexToRgb(brand.secondary));
+    root.style.setProperty('--primary', brand.primary);
+    root.style.setProperty('--primary-dim', brand.primary + 'cc');
+    root.style.setProperty('--primary-rgb', hexToRgb(brand.primary));
+    root.style.setProperty('--tertiary', brand.secondary);
+    root.style.setProperty('--tertiary-rgb', hexToRgb(brand.secondary));
 
-        if (brand.colorMode === 'light') {
-          root.classList.add('light-theme');
-          root.classList.remove('dark-theme');
-        } else {
-          root.classList.add('dark-theme');
-          root.classList.remove('light-theme');
-        }
-        return;
-      }
-    } catch {}
-
-    // Fallback: usar preferência do dispositivo
-    const systemPrefersLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
-    if (systemPrefersLight) {
+    if (brand.colorMode === 'light') {
       root.classList.add('light-theme');
       root.classList.remove('dark-theme');
     } else {
@@ -141,22 +165,17 @@ export default function App() {
       root.classList.remove('light-theme');
     }
 
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: light)');
-    const handleChange = (e) => {
-      const storedBrand = localStorage.getItem('sf_brand_config');
-      if (storedBrand) return; // Não sobrescreve se houver config salva
-      if (e.matches) {
-        root.classList.add('light-theme');
-        root.classList.remove('dark-theme');
-      } else {
-        root.classList.add('dark-theme');
-        root.classList.remove('light-theme');
-      }
-    };
+    // Sincroniza a CONFIG global estática para os componentes que a importam
+    CONFIG.brand.aiName = brand.aiName;
+    CONFIG.brand.primaryColor = brand.primary;
+    if (brand.logoUrl) {
+      CONFIG.brand.logo = brand.logoUrl;
+    }
 
-    mediaQuery.addEventListener('change', handleChange);
-    return () => mediaQuery.removeEventListener('change', handleChange);
-  }, []);
+    try {
+      localStorage.setItem('sf_brand_config', JSON.stringify(brand));
+    } catch {}
+  }, [brand]);
 
   const navigateTo = (target) => {
     setPage(target);
@@ -195,6 +214,8 @@ export default function App() {
         <LandingPage
           onStartChat={handleStartChat}
           onNavigate={navigateTo}
+          brand={brand}
+          setBrand={setBrand}
         />
       ) : page === 'login' ? (
         <LoginPage

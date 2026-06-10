@@ -122,25 +122,14 @@ const faqs = [
   },
 ];
 
-export default function LandingPage({ onStartChat, onNavigate }) {
-  const [brand, setBrand] = useState(() => {
-    try {
-      const stored = localStorage.getItem('sf_brand_config');
-      if (stored) {
-        return JSON.parse(stored);
-      }
-    } catch {}
-    const systemPrefersLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
-    return {
-      primary: '#8B5CF6',
-      secondary: '#e8e8e8ff',
-      aiName: 'Sofia',
-      colorMode: systemPrefersLight ? 'light' : 'dark',
-    };
-  });
-
+export default function LandingPage({ onStartChat, onNavigate, brand, setBrand }) {
   const [editingName, setEditingName] = useState(false);
   const [nameInput, setNameInput] = useState(brand.aiName);
+
+  // Mantém o input de edição de nome sincronizado caso o branding mude via ServiceNow
+  useEffect(() => {
+    setNameInput(brand.aiName);
+  }, [brand.aiName]);
   const colorInputRef = useRef(null);
   const secondaryInputRef = useRef(null);
   const nameInputRef = useRef(null);
@@ -218,36 +207,7 @@ export default function LandingPage({ onStartChat, onNavigate }) {
     }, 1500);
   };
 
-  // ── Inject CSS variables and toggle theme classes on state change ──────────────────────────────────
-  useEffect(() => {
-    localStorage.setItem('sf_brand_config', JSON.stringify(brand));
 
-    const root = document.documentElement;
-
-    // Helper: hex → "r,g,b" string for rgba() usage
-    const hexToRgb = (hex) => {
-      const h = hex.replace('#', '');
-      const r = parseInt(h.substring(0, 2), 16);
-      const g = parseInt(h.substring(2, 4), 16);
-      const b = parseInt(h.substring(4, 6), 16);
-      return `${r},${g},${b}`;
-    };
-
-    root.style.setProperty('--primary', brand.primary);
-    root.style.setProperty('--primary-dim', brand.primary + 'cc');
-    root.style.setProperty('--primary-rgb', hexToRgb(brand.primary));
-    root.style.setProperty('--tertiary', brand.secondary);
-    root.style.setProperty('--tertiary-rgb', hexToRgb(brand.secondary));
-
-    // Color mode: toggle class on html element
-    if (brand.colorMode === 'light') {
-      root.classList.add('light-theme');
-      root.classList.remove('dark-theme');
-    } else {
-      root.classList.add('dark-theme');
-      root.classList.remove('light-theme');
-    }
-  }, [brand]);
 
   // Focus the name input when it appears
   useEffect(() => {

@@ -101,6 +101,21 @@ Para evitar o vazamento das credenciais administrativas (`admin` / `password` Ba
 * **`api/meus_chamados.js`**: Retorna a lista de chamados. Se for agente (`sf_atendente` ou `sf_admin`), retorna a fila geral de tickets para gerenciamento. Se for cliente (`sf_cliente`), filtra rigidamente e exibe apenas os seus próprios chamados cadastrados.
 * **`api/chamados.js`**: Trata a criação (`POST` direto para a API do ServiceNow) e a atualização de status (`PUT` enviado pelo analista para marcar o chamado como *Em Andamento* ou *Resolvido*).
 * **`api/nps.js`**: Envia a pontuação de satisfação do usuário através de um verbo `PATCH` apontado para a API de chamados.
+* **`api/branding.js`**: Rota proxy que lê dinamicamente as System Properties do ServiceNow e as repassa para o frontend, ocultando a autenticação do cliente.
+
+### 2.4 Branding Dinâmico e System Properties (White-Label)
+O ecossistema do ServiceFlow é 100% parametrizável de forma centralizada pelo ServiceNow, sem a necessidade de novos builds ou deploys no frontend:
+
+1. **System Properties no ServiceNow**:
+   * `x_2014456_servicef.sf.client.logo_url`: URL do logotipo customizado.
+   * `x_2014456_servicef.sf.client.ai_name`: Nome da assistente virtual (padrão: "Sofia").
+   * `x_2014456_servicef.sf.client.primary_color`: Cor hexadecimal primária do tema (padrão: "#8B5CF6").
+2. **Consumo no React (`App.jsx`)**:
+   * O frontend realiza uma chamada a `/api/branding` no carregamento da página.
+   * As variáveis CSS `--primary` e sub-tons do root são injetadas em tempo de execução.
+   * O objeto global `CONFIG.brand` é mutado para refletir o novo nome e logo da IA em todos os componentes.
+3. **Módulo de Configuração**:
+   * Registramos um módulo chamado **"Configurações de Marca"** diretamente no Application Menu lateral do ServiceNow sob o escopo `Serviceflow`, permitindo que os administradores editem as propriedades com um clique.
 
 ---
 
@@ -253,6 +268,22 @@ A página principal de supervisão administrativa (`activeTab === 'dashboard'`) 
 | **Fila Ativa** | `queueTickets.length` | O número total de chamados atualmente sob triagem ou resolução. |
 
 O painel exibe também a distribuição de chamados através de uma barra de progresso horizontal para as três filiais regionais ativas no ServiceNow: **EDX-RJ (Rio de Janeiro)**, **EDX-PE (Recife)** e **EDX-MG (Belo Horizonte)**.
+
+### 6.2 Relatórios e Dashboard Corporativo no ServiceNow (Visão do Gestor)
+Para complementar a visualização do frontend, a plataforma ServiceNow clássica e o Platform Analytics Workspace possuem um Dashboard dedicado chamado **"ServiceFlow — Visão do Gestor"** (sys_id: `20fd7243c3d10b14821a37cc05013145`) contendo 5 relatórios salvos (`sys_report`):
+
+1. **Volume de Chamados por Status**: Gráfico de barras agrupado por `state` (status).
+2. **Distribuição por Tipo de Chamado**: Gráfico de pizza agrupado por `tipo_de_solicita_o` (Troca, Reparo, Reembolso).
+3. **NPS Médio dos Clientes**: Indicador Single Score calculando a média aritmética (`AVG`) da coluna `nps`.
+4. **Top 5 Produtos Reclamados**: Gráfico de barras agrupado por `produto`.
+5. **Triagem Visual (Chamados com Foto)**: Gráfico de pizza que agrupa os chamados pelo campo booleano `foto_do_produto`. Isso permite que o supervisor priorize visualmente chamados com fotos de defeito anexadas de forma prioritária.
+
+### 6.3 Segurança e Controle de Acesso a Relatórios (ACL report_view)
+Por padrão, o ServiceNow restringe o acesso de visualização de tabelas e campos em relatórios e dashboards. Para permitir que os supervisores (Ana) e atendentes visualizem os relatórios operacionais sem a mensagem de *"Access Restricted"*, configuramos o seguinte controle:
+
+* **ACL criada**: `report_view` na tabela `x_2014456_servicef_solicita_o_de_p_s_venda`.
+* **Privilégio Exigido**: A criação/modificação da ACL exige a elevação de privilégios de administrador para a role **`security_admin`**.
+* **Roles Associadas**: `x_2014456_servicef.sf_atendente` e `x_2014456_servicef.sf_admin`. Isso garante conformidade de dados e proteção da informação, impedindo usuários comuns (clientes) de acessarem estatísticas de NPS ou volumetria geral de vendas.
 
 ---
 
