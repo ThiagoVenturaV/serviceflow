@@ -65,22 +65,22 @@ describe('LandingPage', () => {
   // ── CTAs (Call-to-Action) ───────────────────────────────────────────────
   describe('CTAs', () => {
     it('o botão do hero CTA deve chamar onStartChat', () => {
-      render(<LandingPage onStartChat={onStartChat} />);
-      const heroBtn = screen.getAllByRole('button', { name: /Agendar Demonstração/i })[0];
+      render(<LandingPage onStartChat={onStartChat} brand={{ primary: '#8B5CF6', secondary: '#e8e8e8ff', aiName: 'Sofia', colorMode: 'dark' }} />);
+      const heroBtn = screen.getAllByRole('button', { name: /Acessar Demonstração/i })[0];
       fireEvent.click(heroBtn);
       expect(onStartChat).toHaveBeenCalledTimes(1);
     });
 
     it('o botão da nav CTA deve chamar onStartChat', () => {
-      render(<LandingPage onStartChat={onStartChat} />);
-      const navBtn = screen.getByText('Agendar Demo');
+      render(<LandingPage onStartChat={onStartChat} brand={{ primary: '#8B5CF6', secondary: '#e8e8e8ff', aiName: 'Sofia', colorMode: 'dark' }} />);
+      const navBtn = screen.getByText('Acessar Demo');
       fireEvent.click(navBtn);
       expect(onStartChat).toHaveBeenCalledTimes(1);
     });
 
     it('o botão CTA final deve chamar onStartChat', () => {
-      render(<LandingPage onStartChat={onStartChat} />);
-      const finalBtn = screen.getAllByRole('button', { name: /Agendar Demonstração/i })[1];
+      render(<LandingPage onStartChat={onStartChat} brand={{ primary: '#8B5CF6', secondary: '#e8e8e8ff', aiName: 'Sofia', colorMode: 'dark' }} />);
+      const finalBtn = screen.getAllByRole('button', { name: /Acessar Demonstração/i })[1];
       fireEvent.click(finalBtn);
       expect(onStartChat).toHaveBeenCalledTimes(1);
     });

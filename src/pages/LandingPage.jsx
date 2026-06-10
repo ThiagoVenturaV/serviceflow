@@ -122,11 +122,51 @@ const faqs = [
   },
 ];
 
-export default function LandingPage({ onStartChat, onNavigate, brand, setBrand }) {
+export default function LandingPage({
+  onStartChat,
+  onNavigate,
+  brand: brandProp,
+  setBrand: setBrandProp
+}) {
+  const [brand, setBrand] = useState(() => {
+    if (brandProp) return brandProp;
+    try {
+      const stored = localStorage.getItem('sf_brand_config');
+      if (stored) {
+        return JSON.parse(stored);
+      }
+    } catch {}
+    const systemPrefersLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
+    return {
+      primary: '#8B5CF6',
+      secondary: '#e8e8e8ff',
+      aiName: 'Sofia',
+      colorMode: systemPrefersLight ? 'light' : 'dark',
+    };
+  });
+
+  // Sincroniza com a prop externa se ela for atualizada de fora (ex: via ServiceNow)
+  useEffect(() => {
+    if (brandProp) {
+      setBrand(brandProp);
+    }
+  }, [brandProp]);
+
+  // Função auxiliar para atualizar o estado local e notificar a prop setBrand
+  const updateBrand = (newBrandOrFn) => {
+    setBrand(prev => {
+      const next = typeof newBrandOrFn === 'function' ? newBrandOrFn(prev) : newBrandOrFn;
+      if (setBrandProp) {
+        setBrandProp(next);
+      }
+      return next;
+    });
+  };
+
   const [editingName, setEditingName] = useState(false);
   const [nameInput, setNameInput] = useState(brand.aiName);
 
-  // Mantém o input de edição de nome sincronizado caso o branding mude via ServiceNow
+  // Mantém o input de edição de nome sincronizado caso o branding mude
   useEffect(() => {
     setNameInput(brand.aiName);
   }, [brand.aiName]);
@@ -216,16 +256,16 @@ export default function LandingPage({ onStartChat, onNavigate, brand, setBrand }
 
   // ── Handlers ──────────────────────────────────────────────────────────────
   const handleColorChange = (e) => {
-    setBrand((b) => ({ ...b, primary: e.target.value }));
+    updateBrand((b) => ({ ...b, primary: e.target.value }));
   };
 
   const handleSecondaryChange = (e) => {
-    setBrand((b) => ({ ...b, secondary: e.target.value }));
+    updateBrand((b) => ({ ...b, secondary: e.target.value }));
   };
 
   const commitName = () => {
     setEditingName(false);
-    setBrand((b) => ({ ...b, aiName: nameInput.trim() || b.aiName }));
+    updateBrand((b) => ({ ...b, aiName: nameInput.trim() || b.aiName }));
     setNameInput((prev) => prev.trim() || brand.aiName);
   };
 
@@ -238,7 +278,7 @@ export default function LandingPage({ onStartChat, onNavigate, brand, setBrand }
   };
 
   const toggleColorMode = () => {
-    setBrand((b) => ({ ...b, colorMode: b.colorMode === 'dark' ? 'light' : 'dark' }));
+    updateBrand((b) => ({ ...b, colorMode: b.colorMode === 'dark' ? 'light' : 'dark' }));
   };
 
   // ── GSAP Animations ───────────────────────────────────────────────────────
@@ -475,7 +515,7 @@ export default function LandingPage({ onStartChat, onNavigate, brand, setBrand }
             <a href="#how-it-works">Como funciona</a>
           </div>
           <button id="nav-cta" className="btn-primary nav-cta" onClick={onStartChat}>
-            Agendar Demo
+            Acessar Demo
           </button>
         </div>
       </nav>
@@ -500,7 +540,7 @@ export default function LandingPage({ onStartChat, onNavigate, brand, setBrand }
             </p>
             <div className="hero-actions">
               <button id="hero-cta" className="btn-primary btn-large" onClick={onStartChat}>
-                Agendar Demonstração
+                Acessar Demonstração
                 <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                   <line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" />
                 </svg>
@@ -1009,7 +1049,7 @@ const { protocolo } = await response.json();
             Elimine gargalos operacionais, reduza o tempo médio de atendimento (TMA) e garanta a fidelidade dos seus clientes com uma operação de suporte automatizada e integrada ao ServiceNow.
           </p>
           <button id="final-cta" className="btn-primary btn-large" onClick={onStartChat}>
-            Agendar Demonstração →
+            Acessar Demonstração →
           </button>
         </div>
       </section>
