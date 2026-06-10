@@ -35,7 +35,7 @@ export default function ChatPage({ onBack, user }) {
     canDelete: false,
     roles: ['sf_cliente']
   };
-  const roles = permissions.roles || ['sf_cliente'];
+  const roles = (permissions.roles || ['sf_cliente']).map(r => r.includes('.') ? r.split('.').pop() : r);
 
   const [messages, setMessages] = useState(() => {
     try {

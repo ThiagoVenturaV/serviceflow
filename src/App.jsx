@@ -16,6 +16,7 @@ export default function App() {
   const [showCookieConsent, setShowCookieConsent] = useState(false);
   const [deferredPrompt, setDeferredPrompt] = useState(null);
   const [showInstallPrompt, setShowInstallPrompt] = useState(false);
+  const [showIOSPrompt, setShowIOSPrompt] = useState(false);
 
   // Controle de Consentimento de Cookies
   useEffect(() => {
@@ -51,7 +52,24 @@ export default function App() {
     };
 
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
-    return () => window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+  }, []);
+
+  // Detector de PWA no iOS (iPhone/iPad)
+  useEffect(() => {
+    try {
+      const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent) || 
+                    (navigator.userAgent.includes("Mac") && "ontouchend" in document);
+      const isStandalone = window.navigator.standalone === true || 
+                           window.matchMedia('(display-mode: standalone)').matches;
+      
+      if (isIOS && !isStandalone) {
+        const dismissed = sessionStorage.getItem('sf_pwa_dismissed_ios');
+        if (!dismissed) {
+          const timer = setTimeout(() => setShowIOSPrompt(true), 3000);
+          return () => clearTimeout(timer);
+        }
+      }
+    } catch {}
   }, []);
 
   const handleInstallPWA = async () => {
@@ -235,6 +253,28 @@ export default function App() {
           <div className="banner-actions">
             <button className="banner-btn-secondary" onClick={handleDismissPWA}>Agora não</button>
             <button className="banner-btn-primary" onClick={handleInstallPWA}>Instalar App</button>
+          </div>
+        </div>
+      )}
+
+      {showIOSPrompt && (
+        <div className="pwa-banner ios-banner" role="dialog" aria-label="Instalar no iOS">
+          <div className="banner-content">
+            <span className="material-symbols-outlined banner-icon">ios_share</span>
+            <div className="banner-text">
+              <h4>Instalar no iPhone / iPad</h4>
+              <p>
+                Toque no botão de compartilhar <span className="material-symbols-outlined inline-icon" style={{ fontSize: '1.1rem', verticalAlign: 'middle' }}>ios_share</span> na barra do Safari e selecione <strong>Adicionar à Tela de Início</strong>.
+              </p>
+            </div>
+          </div>
+          <div className="banner-actions">
+            <button className="banner-btn-primary" onClick={() => {
+              try {
+                sessionStorage.setItem('sf_pwa_dismissed_ios', 'true');
+              } catch {}
+              setShowIOSPrompt(false);
+            }}>Entendi</button>
           </div>
         </div>
       )}
