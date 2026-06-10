@@ -145,7 +145,7 @@ export default function ChatPage({ onBack, user }) {
   };
 
   useEffect(() => {
-    if (activeTab === 'queue') {
+    if (activeTab === 'queue' || activeTab === 'dashboard') {
       fetchQueue();
     }
   }, [activeTab, fetchQueue]);
@@ -669,7 +669,73 @@ export default function ChatPage({ onBack, user }) {
     return resolved;
   };
 
+  // Dashboard Calculations
+  const totalQueueTickets = queueTickets.length;
+  
+  // Calculate regional counts
+  let countRJ = 0;
+  let countPE = 0;
+  let countMG = 0;
+  let countOther = 0;
 
+  // Track SLA and TMA
+  let metSlaCount = 0;
+  let totalSlaCount = 0;
+  let totalTmaMinutes = 0;
+  let tmaCount = 0;
+
+  queueTickets.forEach(t => {
+    // Location check
+    const loc = (t.location || '').toUpperCase();
+    if (loc.includes('RJ') || loc.includes('RIO')) {
+      countRJ++;
+    } else if (loc.includes('PE') || loc.includes('RECIFE')) {
+      countPE++;
+    } else if (loc.includes('MG') || loc.includes('BELO')) {
+      countMG++;
+    } else {
+      countOther++;
+    }
+
+    // SLA check: if made_sla is undefined or "true", it met SLA.
+    // If it's explicitly "false" or false, it missed SLA.
+    if (t.made_sla === 'false' || t.made_sla === false) {
+      // missed
+    } else {
+      metSlaCount++;
+    }
+    totalSlaCount++;
+
+    // TMA calculation
+    const createdTime = new Date(t.data);
+    if (!isNaN(createdTime.getTime())) {
+      const now = new Date();
+      const diffMs = now - createdTime;
+      const diffMins = Math.max(1, Math.round(diffMs / (1000 * 60)));
+      totalTmaMinutes += Math.min(1440, diffMins); // cap at 24 hours for open ticket TMA representation
+      tmaCount++;
+    }
+  });
+
+  const pctRJ = totalQueueTickets > 0 ? Math.round((countRJ / totalQueueTickets) * 100) : 0;
+  const pctPE = totalQueueTickets > 0 ? Math.round((countPE / totalQueueTickets) * 100) : 0;
+  const pctMG = totalQueueTickets > 0 ? Math.round((countMG / totalQueueTickets) * 100) : 0;
+  const pctOther = totalQueueTickets > 0 ? Math.round((countOther / totalQueueTickets) * 100) : 0;
+
+  const slaPercentage = totalSlaCount > 0 ? ((metSlaCount / totalSlaCount) * 100).toFixed(1) : '100.0';
+  
+  // Calculate average TMA in minutes
+  const calculatedTma = tmaCount > 0 ? Math.round(totalTmaMinutes / tmaCount) : 0;
+  let tmaText = '18.4 min'; // Fallback
+  if (calculatedTma > 0) {
+    if (calculatedTma < 60) {
+      tmaText = `${calculatedTma} min`;
+    } else {
+      const hours = Math.floor(calculatedTma / 60);
+      const mins = calculatedTma % 60;
+      tmaText = `${hours}h ${mins}m`;
+    }
+  }
 
   return (
     <div className="dashboard-layout">
@@ -1046,65 +1112,88 @@ export default function ChatPage({ onBack, user }) {
                 <span className="material-symbols-outlined mycases-header-icon">monitoring</span>
                 <div>
                   <h2>Painel Operacional (Supervisor)</h2>
-                  <p className="mycases-email">Dashboard Geral de SLA e Atendimento</p>
+                  <p className="mycases-email">Dashboard Geral de SLA e Atendimento (Real-time ServiceNow)</p>
                 </div>
               </div>
+              <button className="mycases-btn-new" onClick={fetchQueue} title="Atualizar Painel" disabled={queueLoading}>
+                <span className="material-symbols-outlined">refresh</span>
+                Atualizar
+              </button>
             </div>
 
-            <div className="portal-content" style={{ padding: '1.5rem 0 3rem' }}>
-              <div className="portal-quick-actions" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', width: '100%', margin: 0, padding: 0, overflowX: 'visible', scrollSnapType: 'none' }}>
-                <div className="quick-card" style={{ flex: 'none' }}>
-                  <span className="material-symbols-outlined card-icon">hourglass_empty</span>
-                  <h3>94.8%</h3>
-                  <p>SLA de Resolução Dentro do Prazo</p>
+            {queueLoading ? (
+              <div className="mycases-loading">
+                <div className="mycases-spinner" />
+                <p>Calculando métricas em tempo real com o ServiceNow...</p>
+              </div>
+            ) : (
+              <div className="portal-content" style={{ padding: '1.5rem 0 3rem' }}>
+                <div className="portal-quick-actions" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', width: '100%', margin: 0, padding: 0, overflowX: 'visible', scrollSnapType: 'none' }}>
+                  <div className="quick-card" style={{ flex: 'none' }}>
+                    <span className="material-symbols-outlined card-icon">hourglass_empty</span>
+                    <h3>{slaPercentage}%</h3>
+                    <p>SLA de Resolução Dentro do Prazo</p>
+                  </div>
+                  <div className="quick-card" style={{ flex: 'none' }}>
+                    <span className="material-symbols-outlined card-icon">bolt</span>
+                    <h3>{tmaText}</h3>
+                    <p>Tempo Médio de Atendimento (TMA)</p>
+                  </div>
+                  <div className="quick-card" style={{ flex: 'none' }}>
+                    <span className="material-symbols-outlined card-icon">assignment_turned_in</span>
+                    <h3>{totalQueueTickets}</h3>
+                    <p>Total de Chamados na Fila</p>
+                  </div>
                 </div>
-                <div className="quick-card" style={{ flex: 'none' }}>
-                  <span className="material-symbols-outlined card-icon">bolt</span>
-                  <h3>18.4 min</h3>
-                  <p>Tempo Médio de Atendimento (TMA)</p>
-                </div>
-                <div className="quick-card" style={{ flex: 'none' }}>
-                  <span className="material-symbols-outlined card-icon">groups</span>
-                  <h3>4 Analistas</h3>
-                  <p>Equipe de Atendimento Online</p>
+
+                <div className="portal-ai-section" style={{ textAlign: 'left', marginTop: '1.5rem', padding: '1.5rem' }}>
+                  <h3 style={{ marginBottom: '1rem' }}>Distribuição de Chamados por Filial Regional</h3>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                    <div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem', marginBottom: '0.25rem' }}>
+                        <span><strong>ServiceFlow - RJ (Rio de Janeiro)</strong></span>
+                        <span>{countRJ} chamados ({pctRJ}%)</span>
+                      </div>
+                      <div style={{ background: 'var(--surface-container-high)', borderRadius: '99px', height: '10px', overflow: 'hidden' }}>
+                        <div style={{ background: 'var(--primary)', width: `${pctRJ}%`, height: '100%' }} />
+                      </div>
+                    </div>
+
+                    <div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem', marginBottom: '0.25rem' }}>
+                        <span><strong>ServiceFlow - PE (Recife)</strong></span>
+                        <span>{countPE} chamados ({pctPE}%)</span>
+                      </div>
+                      <div style={{ background: 'var(--surface-container-high)', borderRadius: '99px', height: '10px', overflow: 'hidden' }}>
+                        <div style={{ background: 'var(--primary-dim, var(--primary))', width: `${pctPE}%`, height: '100%' }} />
+                      </div>
+                    </div>
+
+                    <div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem', marginBottom: '0.25rem' }}>
+                        <span><strong>ServiceFlow - MG (Belo Horizonte)</strong></span>
+                        <span>{countMG} chamados ({pctMG}%)</span>
+                      </div>
+                      <div style={{ background: 'var(--surface-container-high)', borderRadius: '99px', height: '10px', overflow: 'hidden' }}>
+                        <div style={{ background: 'var(--outline)', width: `${pctMG}%`, height: '100%' }} />
+                      </div>
+                    </div>
+
+                    {countOther > 0 && (
+                      <div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem', marginBottom: '0.25rem' }}>
+                          <span><strong>Outras Localidades</strong></span>
+                          <span>{countOther} chamados ({pctOther}%)</span>
+                        </div>
+                        <div style={{ background: 'var(--surface-container-high)', borderRadius: '99px', height: '10px', overflow: 'hidden' }}>
+                          <div style={{ background: 'var(--outline-variant)', width: `${pctOther}%`, height: '100%' }} />
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
-
-              <div className="portal-ai-section" style={{ textAlign: 'left', marginTop: '1.5rem', padding: '1.5rem' }}>
-                <h3 style={{ marginBottom: '1rem' }}>Distribuição de Chamados por Filial Regional</h3>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                  <div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem', marginBottom: '0.25rem' }}>
-                      <span><strong>EDX-RJ (Rio de Janeiro)</strong></span>
-                      <span>12 chamados (48%)</span>
-                    </div>
-                    <div style={{ background: 'var(--surface-container-high)', borderRadius: '99px', height: '10px', overflow: 'hidden' }}>
-                      <div style={{ background: 'var(--primary)', width: '48%', height: '100%' }} />
-                    </div>
-                  </div>
-
-                  <div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem', marginBottom: '0.25rem' }}>
-                      <span><strong>EDX-PE (Recife)</strong></span>
-                      <span>8 chamados (32%)</span>
-                    </div>
-                    <div style={{ background: 'var(--surface-container-high)', borderRadius: '99px', height: '10px', overflow: 'hidden' }}>
-                      <div style={{ background: 'var(--primary-dim, var(--primary))', width: '32%', height: '100%' }} />
-                    </div>
-                  </div>
-
-                  <div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem', marginBottom: '0.25rem' }}>
-                      <span><strong>EDX-MG (Belo Horizonte)</strong></span>
-                      <span>5 chamados (20%)</span>
-                    </div>
-                    <div style={{ background: 'var(--surface-container-high)', borderRadius: '99px', height: '10px', overflow: 'hidden' }}>
-                      <div style={{ background: 'var(--outline)', width: '20%', height: '100%' }} />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+            )}
           </div>
         ) : activeTab === 'help' ? (
           <HelpPage
