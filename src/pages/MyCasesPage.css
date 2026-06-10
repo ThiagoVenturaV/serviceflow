@@ -383,3 +383,18 @@
     grid-template-columns: 1fr;
   }
 }
+
+@media (max-width: 480px) {
+  .mycases-btn-new .btn-text {
+    display: none;
+  }
+  .mycases-btn-new {
+    padding: 0.625rem;
+    border-radius: 50%;
+    width: 2.5rem;
+    height: 2.5rem;
+    min-width: 2.5rem;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+}

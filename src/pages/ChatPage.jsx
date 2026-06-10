@@ -678,11 +678,13 @@ export default function ChatPage({ onBack, user }) {
   let countMG = 0;
   let countOther = 0;
 
-  // Track SLA and TMA
+  // Track SLA, TMA, and NPS/CSAT
   let metSlaCount = 0;
   let totalSlaCount = 0;
   let totalTmaMinutes = 0;
   let tmaCount = 0;
+  let npsSum = 0;
+  let npsCount = 0;
 
   queueTickets.forEach(t => {
     // Location check
@@ -715,6 +717,13 @@ export default function ChatPage({ onBack, user }) {
       totalTmaMinutes += Math.min(1440, diffMins); // cap at 24 hours for open ticket TMA representation
       tmaCount++;
     }
+
+    // NPS/CSAT calculation
+    const npsVal = parseFloat(t.nps);
+    if (!isNaN(npsVal) && npsVal >= 1 && npsVal <= 5) {
+      npsSum += npsVal;
+      npsCount++;
+    }
   });
 
   const pctRJ = totalQueueTickets > 0 ? Math.round((countRJ / totalQueueTickets) * 100) : 0;
@@ -736,6 +745,9 @@ export default function ChatPage({ onBack, user }) {
       tmaText = `${hours}h ${mins}m`;
     }
   }
+
+  // Calculate average NPS
+  const avgNps = npsCount > 0 ? (npsSum / npsCount).toFixed(1) : '—';
 
   return (
     <div className="dashboard-layout">
@@ -997,7 +1009,7 @@ export default function ChatPage({ onBack, user }) {
               </div>
               <button className="mycases-btn-new" onClick={fetchQueue} title="Atualizar Fila">
                 <span className="material-symbols-outlined">refresh</span>
-                Atualizar
+                <span className="btn-text">Atualizar</span>
               </button>
             </div>
 
@@ -1071,7 +1083,7 @@ export default function ChatPage({ onBack, user }) {
                                     }}
                                     disabled={updatingTicketId === id}
                                   >
-                                    Marcar Em Andamento
+                                    <span className="btn-text">Marcar Em Andamento</span>
                                   </button>
                                   <button 
                                     className="mycases-btn-new"
@@ -1084,7 +1096,7 @@ export default function ChatPage({ onBack, user }) {
                                     }}
                                     disabled={updatingTicketId === id}
                                   >
-                                    Resolver Chamado
+                                    <span className="btn-text">Resolver Chamado</span>
                                   </button>
                                 </div>
                               </div>
@@ -1117,7 +1129,7 @@ export default function ChatPage({ onBack, user }) {
               </div>
               <button className="mycases-btn-new" onClick={fetchQueue} title="Atualizar Painel" disabled={queueLoading}>
                 <span className="material-symbols-outlined">refresh</span>
-                Atualizar
+                <span className="btn-text">Atualizar</span>
               </button>
             </div>
 
@@ -1128,7 +1140,7 @@ export default function ChatPage({ onBack, user }) {
               </div>
             ) : (
               <div className="portal-content" style={{ padding: '1.5rem 0 3rem' }}>
-                <div className="portal-quick-actions" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', width: '100%', margin: 0, padding: 0, overflowX: 'visible', scrollSnapType: 'none' }}>
+                <div className="portal-quick-actions" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1rem', width: '100%', margin: 0, padding: 0, overflowX: 'visible', scrollSnapType: 'none' }}>
                   <div className="quick-card" style={{ flex: 'none' }}>
                     <span className="material-symbols-outlined card-icon">hourglass_empty</span>
                     <h3>{slaPercentage}%</h3>
@@ -1138,6 +1150,11 @@ export default function ChatPage({ onBack, user }) {
                     <span className="material-symbols-outlined card-icon">bolt</span>
                     <h3>{tmaText}</h3>
                     <p>Tempo Médio de Atendimento (TMA)</p>
+                  </div>
+                  <div className="quick-card" style={{ flex: 'none' }}>
+                    <span className="material-symbols-outlined card-icon">star</span>
+                    <h3>{avgNps} / 5.0</h3>
+                    <p>Satisfação Média (NPS/CSAT)</p>
                   </div>
                   <div className="quick-card" style={{ flex: 'none' }}>
                     <span className="material-symbols-outlined card-icon">assignment_turned_in</span>

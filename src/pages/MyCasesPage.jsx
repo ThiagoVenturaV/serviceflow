@@ -19,9 +19,15 @@ const STATUS_MAP = {
 
 const TIPO_ICON = {
   'Troca': 'swap_horiz',
+  'troca': 'swap_horiz',
   'Devolução': 'undo',
+  'Devolucao': 'undo',
+  'devolucao': 'undo',
   'Garantia': 'verified_user',
+  'garantia': 'verified_user',
   'Reclamação': 'report',
+  'Reclamacao': 'report',
+  'reclamacao': 'report',
 };
 
 function StatusBadge({ status }) {
@@ -114,7 +120,7 @@ export default function MyCasesPage({ userEmail, onNewChat, onOpenMenu }) {
         </div>
         <button className="mycases-btn-new" onClick={onNewChat} id="new-case-btn">
           <span className="material-symbols-outlined">add</span>
-          Novo Chamado
+          <span className="btn-text">Novo Chamado</span>
         </button>
       </div>
 
