@@ -247,7 +247,7 @@ export default function App() {
             <span className="material-symbols-outlined banner-icon">install_mobile</span>
             <div className="banner-text">
               <h4>Instalar ServiceFlow</h4>
-              <p>Adicione o portal à sua tela inicial para um acesso rápido e suporte offline nativo.</p>
+              <p>Adicione o portal à sua tela inicial para receber notificações em tempo real e ter uma experiência totalmente otimizada.</p>
             </div>
           </div>
           <div className="banner-actions">

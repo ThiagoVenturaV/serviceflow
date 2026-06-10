@@ -1,4 +1,4 @@
-const CACHE_NAME = 'serviceflow-cache-v1';
+const CACHE_NAME = 'serviceflow-cache-v2';
 const ASSETS = [
   '/',
   '/index.html',
@@ -12,6 +12,7 @@ self.addEventListener('install', (e) => {
       return cache.addAll(ASSETS);
     })
   );
+  self.skipWaiting();
 });
 
 self.addEventListener('activate', (e) => {
@@ -24,6 +25,8 @@ self.addEventListener('activate', (e) => {
           }
         })
       );
+    }).then(() => {
+      return self.clients.claim();
     })
   );
 });
@@ -33,9 +36,35 @@ self.addEventListener('fetch', (e) => {
   if (e.request.url.includes('/api/')) {
     return;
   }
+
+  // Estratégia Network-First para navegação (/ ou index.html) e documentos HTML
+  if (e.request.mode === 'navigate' || e.request.url.endsWith('/') || e.request.url.endsWith('index.html')) {
+    e.respondWith(
+      fetch(e.request)
+        .then((response) => {
+          const responseClone = response.clone();
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(e.request, responseClone);
+          });
+          return response;
+        })
+        .catch(() => {
+          return caches.match(e.request);
+        })
+    );
+    return;
+  }
+
+  // Cache-First para outros assets (imagens, ícones, etc)
   e.respondWith(
     caches.match(e.request).then((cachedResponse) => {
-      return cachedResponse || fetch(e.request);
+      return cachedResponse || fetch(e.request).then((response) => {
+        const responseClone = response.clone();
+        caches.open(CACHE_NAME).then((cache) => {
+          cache.put(e.request, responseClone);
+        });
+        return response;
+      });
     })
   );
 });
