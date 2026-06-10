@@ -100,19 +100,30 @@ export default function App() {
   }, []);
 
   const [brand, setBrand] = useState(() => {
-    try {
-      const stored = localStorage.getItem('sf_brand_config');
-      if (stored) {
-        return JSON.parse(stored);
-      }
-    } catch {}
-    const systemPrefersLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
-    return {
+    const defaultBrand = {
       primary: '#8B5CF6',
       secondary: '#e8e8e8ff',
       aiName: 'Sofia',
-      colorMode: systemPrefersLight ? 'light' : 'dark',
+      colorMode: 'dark',
+      logoUrl: ''
     };
+    try {
+      const stored = localStorage.getItem('sf_brand_config');
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        // Mescla com os padrões para garantir que todas as propriedades existam
+        return { ...defaultBrand, ...parsed };
+      }
+    } catch {}
+    try {
+      const systemPrefersLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
+      return {
+        ...defaultBrand,
+        colorMode: systemPrefersLight ? 'light' : 'dark',
+      };
+    } catch {
+      return defaultBrand;
+    }
   });
 
   // Busca o branding real do ServiceNow na montagem do app
@@ -125,9 +136,9 @@ export default function App() {
           setBrand(prev => {
             const updated = {
               ...prev,
-              primary: data.primaryColor || prev.primary,
-              aiName: data.aiName || prev.aiName,
-              logoUrl: data.logoUrl || ''
+              primary: data.primaryColor || prev.primary || '#8B5CF6',
+              aiName: data.aiName || prev.aiName || 'Sofia',
+              logoUrl: data.logoUrl || prev.logoUrl || ''
             };
             return updated;
           });
@@ -144,20 +155,31 @@ export default function App() {
     const root = document.documentElement;
 
     const hexToRgb = (hex) => {
-      const h = hex.replace('#', '');
-      const r = parseInt(h.substring(0, 2), 16);
-      const g = parseInt(h.substring(2, 4), 16);
-      const b = parseInt(h.substring(4, 6), 16);
-      return `${r},${g},${b}`;
+      if (!hex || typeof hex !== 'string') return '139,92,246'; // Fallback roxo
+      try {
+        const h = hex.replace('#', '');
+        if (h.length !== 6 && h.length !== 8) return '139,92,246';
+        const r = parseInt(h.substring(0, 2), 16);
+        const g = parseInt(h.substring(2, 4), 16);
+        const b = parseInt(h.substring(4, 6), 16);
+        if (isNaN(r) || isNaN(g) || isNaN(b)) return '139,92,246';
+        return `${r},${g},${b}`;
+      } catch (err) {
+        return '139,92,246'; // Fallback roxo
+      }
     };
 
-    root.style.setProperty('--primary', brand.primary);
-    root.style.setProperty('--primary-dim', brand.primary + 'cc');
-    root.style.setProperty('--primary-rgb', hexToRgb(brand.primary));
-    root.style.setProperty('--tertiary', brand.secondary);
-    root.style.setProperty('--tertiary-rgb', hexToRgb(brand.secondary));
+    const primary = brand?.primary || '#8B5CF6';
+    const secondary = brand?.secondary || '#e8e8e8ff';
 
-    if (brand.colorMode === 'light') {
+    root.style.setProperty('--primary', primary);
+    root.style.setProperty('--primary-dim', primary + 'cc');
+    root.style.setProperty('--primary-rgb', hexToRgb(primary));
+    root.style.setProperty('--tertiary', secondary);
+    root.style.setProperty('--tertiary-rgb', hexToRgb(secondary));
+
+    const colorMode = brand?.colorMode || 'dark';
+    if (colorMode === 'light') {
       root.classList.add('light-theme');
       root.classList.remove('dark-theme');
     } else {
@@ -166,9 +188,9 @@ export default function App() {
     }
 
     // Sincroniza a CONFIG global estática para os componentes que a importam
-    CONFIG.brand.aiName = brand.aiName;
-    CONFIG.brand.primaryColor = brand.primary;
-    if (brand.logoUrl) {
+    CONFIG.brand.aiName = brand?.aiName || 'Sofia';
+    CONFIG.brand.primaryColor = primary;
+    if (brand?.logoUrl) {
       CONFIG.brand.logo = brand.logoUrl;
     }
 
