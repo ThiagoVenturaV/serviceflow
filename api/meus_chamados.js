@@ -32,12 +32,16 @@ export default async function handler(req, res) {
         const result = await response.json();
         
         let tickets = [];
-        let isWrapped = false;
+        let path = '';
         if (result && Array.isArray(result)) {
           tickets = result;
+          path = 'direct';
         } else if (result && result.result && Array.isArray(result.result)) {
           tickets = result.result;
-          isWrapped = true;
+          path = 'result';
+        } else if (result && result.result && result.result.result && Array.isArray(result.result.result)) {
+          tickets = result.result.result;
+          path = 'result.result';
         }
 
         const mappedTickets = tickets.map(t => {
@@ -51,11 +55,16 @@ export default async function handler(req, res) {
           return t;
         });
 
-        if (isWrapped) {
+        if (path === 'direct') {
+          return res.status(200).json(mappedTickets);
+        } else if (path === 'result') {
           result.result = mappedTickets;
           return res.status(200).json(result);
+        } else if (path === 'result.result') {
+          result.result.result = mappedTickets;
+          return res.status(200).json(result);
         } else {
-          return res.status(200).json(mappedTickets);
+          return res.status(200).json(result);
         }
       }
     } catch (error) {
