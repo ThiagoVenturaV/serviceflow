@@ -14,7 +14,20 @@ async function callListarChamados(email) {
       }
     });
     if (!res.ok) return { error: `ServiceNow error ${res.status}` };
-    return await res.json();
+    const data = await res.json();
+    if (data && data.result && Array.isArray(data.result)) {
+      data.result = data.result.map(t => {
+        if (t && t.tipo === 'Garantia' && t.descricao) {
+          const matchSerie = t.descricao.match(/Número de Série:\s*([^\n\r]+)/i);
+          const matchNota = t.descricao.match(/Nota Fiscal:\s*([^\n\r]+)/i);
+          if (matchSerie) t.numero_serie = matchSerie[1].trim();
+          if (matchNota) t.nota_fiscal = matchNota[1].trim();
+          t.descricao = t.descricao.split('\n\n--- Detalhes da Garantia ---')[0];
+        }
+        return t;
+      });
+    }
+    return data;
   } catch (err) {
     return { error: err.message };
   }
@@ -34,7 +47,18 @@ async function callBuscarChamado(protocolo) {
       }
     });
     if (!res.ok) return { error: `ServiceNow error ${res.status}` };
-    return await res.json();
+    const data = await res.json();
+    if (data && data.result) {
+      const t = data.result;
+      if (t && t.tipo === 'Garantia' && t.descricao) {
+        const matchSerie = t.descricao.match(/Número de Série:\s*([^\n\r]+)/i);
+        const matchNota = t.descricao.match(/Nota Fiscal:\s*([^\n\r]+)/i);
+        if (matchSerie) t.numero_serie = matchSerie[1].trim();
+        if (matchNota) t.nota_fiscal = matchNota[1].trim();
+        t.descricao = t.descricao.split('\n\n--- Detalhes da Garantia ---')[0];
+      }
+    }
+    return data;
   } catch (err) {
     return { error: err.message };
   }

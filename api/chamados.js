@@ -39,6 +39,20 @@ export default async function handler(req, res) {
 
   const customEndpoint = '/api/x_2014456_servicef/chamados';
 
+  let finalDescricao = data.descricao;
+  if (data.tipo === 'Garantia') {
+    const extraInfo = [];
+    if (data.numero_serie) {
+      extraInfo.push(`Número de Série: ${data.numero_serie}`);
+    }
+    if (data.nota_fiscal) {
+      extraInfo.push(`Nota Fiscal: ${data.nota_fiscal}`);
+    }
+    if (extraInfo.length > 0) {
+      finalDescricao = `${finalDescricao}\n\n--- Detalhes da Garantia ---\n${extraInfo.join('\n')}`;
+    }
+  }
+
   try {
     const response = await fetch(`${instance}${customEndpoint}`, {
       method: 'POST',
@@ -52,7 +66,7 @@ export default async function handler(req, res) {
         numero_pedido: data.numero_pedido,
         produto: data.produto,
         tipo: data.tipo,
-        descricao: data.descricao,
+        descricao: finalDescricao,
         nps: data.nps || '',
         foto: (data.arquivos && data.arquivos.length > 0) ? 'true' : 'false',
         arquivos: data.arquivos || []

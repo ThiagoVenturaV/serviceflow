@@ -30,7 +30,33 @@ export default async function handler(req, res) {
 
       if (response.ok) {
         const result = await response.json();
-        return res.status(200).json(result);
+        
+        let tickets = [];
+        let isWrapped = false;
+        if (result && Array.isArray(result)) {
+          tickets = result;
+        } else if (result && result.result && Array.isArray(result.result)) {
+          tickets = result.result;
+          isWrapped = true;
+        }
+
+        const mappedTickets = tickets.map(t => {
+          if (t && t.tipo === 'Garantia' && t.descricao) {
+            const matchSerie = t.descricao.match(/Número de Série:\s*([^\n\r]+)/i);
+            const matchNota = t.descricao.match(/Nota Fiscal:\s*([^\n\r]+)/i);
+            if (matchSerie) t.numero_serie = matchSerie[1].trim();
+            if (matchNota) t.nota_fiscal = matchNota[1].trim();
+            t.descricao = t.descricao.split('\n\n--- Detalhes da Garantia ---')[0];
+          }
+          return t;
+        });
+
+        if (isWrapped) {
+          result.result = mappedTickets;
+          return res.status(200).json(result);
+        } else {
+          return res.status(200).json(mappedTickets);
+        }
       }
     } catch (error) {
       console.warn('Falha ao conectar com o ServiceNow, usando fallback de chamados locais:', error.message);
