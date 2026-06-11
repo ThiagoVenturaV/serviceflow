@@ -225,6 +225,8 @@ export default function App() {
     setUser(null);
     try {
       localStorage.removeItem(SESSION_KEY);
+      localStorage.removeItem('sf_chat_messages');
+      localStorage.removeItem('sf_client_vars');
     } catch { /* ignora */ }
     navigateTo('landing');
   };
@@ -244,6 +246,10 @@ export default function App() {
           onLogin={handleLogin}
           onContinueAsGuest={() => {
             setUser(null);
+            try {
+              localStorage.removeItem('sf_chat_messages');
+              localStorage.removeItem('sf_client_vars');
+            } catch {}
             navigateTo('chat');
           }}
           onNavigate={navigateTo}

@@ -114,6 +114,6 @@ export default async function handler(req, res) {
     return res.status(200).json(mockTickets);
   } else {
     const filtered = mockTickets.filter(t => t.email === normalizedEmail);
-    return res.status(200).json(filtered.length > 0 ? filtered : mockTickets.filter(t => t.email === 'cliente.pedro@gmail.com'));
+    return res.status(200).json(filtered);
   }
 }
