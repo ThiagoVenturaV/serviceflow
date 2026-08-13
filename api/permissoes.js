@@ -1,3 +1,10 @@
+import {
+  getServiceNowConfig,
+  isDemoMode,
+  isValidEmail,
+  logUpstreamFailure,
+} from './_security.js'
+
 // GET /api/permissoes?email=user@email.com
 export default async function handler(req, res) {
   if (req.method !== 'GET') {
@@ -6,26 +13,24 @@ export default async function handler(req, res) {
 
   const { email } = req.query;
 
-  if (!email) {
+  if (!isValidEmail(email)) {
     return res.status(400).json({ error: 'Parâmetro "email" obrigatório.' });
   }
 
   const normalizedEmail = email.trim().toLowerCase();
 
   // 1. Tenta obter do ServiceNow real se as credenciais estiverem configuradas
-  const instance = process.env.SERVICENOW_INSTANCE || process.env.VITE_SERVICENOW_INSTANCE;
-  const user     = process.env.SERVICENOW_USER     || process.env.VITE_SERVICENOW_USER;
-  const password = process.env.SERVICENOW_PASSWORD || process.env.VITE_SERVICENOW_PASSWORD;
+  const serviceNow = getServiceNowConfig();
 
-  if (instance && user && password) {
+  if (serviceNow) {
     try {
       // Endpoint customizado Scripted REST API no ServiceNow
       const endpoint = `/api/x_2014456_servicef/chamados/chamados/permissoes?email=${encodeURIComponent(normalizedEmail)}`;
-      const response = await fetch(`${instance}${endpoint}`, {
+      const response = await fetch(`${serviceNow.instance}${endpoint}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Basic ' + Buffer.from(`${user}:${password}`).toString('base64'),
+          'Authorization': serviceNow.authorization,
         },
       });
 
@@ -35,11 +40,16 @@ export default async function handler(req, res) {
         const permissions = body && body.result !== undefined ? body.result : body;
         return res.status(200).json(permissions);
       } else {
-        console.warn(`Falha na resposta do ServiceNow: ${response.status} - usando fallback.`);
+        return res.status(502).json({ error: 'Falha na integração externa.' });
       }
     } catch (error) {
-      console.warn('Falha ao conectar com o ServiceNow, usando fallback de permissões locais:', error.message);
+      logUpstreamFailure('permissoes', error);
+      return res.status(502).json({ error: 'Falha na integração externa.' });
     }
+  }
+
+  if (!isDemoMode()) {
+    return res.status(503).json({ error: 'Integração indisponível.' });
   }
 
   // 2. Fallback de regras locais para desenvolvimento e testes automatizados offline

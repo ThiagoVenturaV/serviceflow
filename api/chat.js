@@ -1,15 +1,22 @@
 import Groq from 'groq-sdk';
+import {
+  getGroqApiKey,
+  getServiceNowConfig,
+  isValidEmail,
+  logUpstreamFailure,
+  requestBodyWithinLimit,
+  validateChatPayload,
+} from './_security.js';
 
 async function callListarChamados(email) {
-  const instance = process.env.SERVICENOW_INSTANCE || process.env.VITE_SERVICENOW_INSTANCE;
-  const user     = process.env.SERVICENOW_USER     || process.env.VITE_SERVICENOW_USER;
-  const password = process.env.SERVICENOW_PASSWORD || process.env.VITE_SERVICENOW_PASSWORD;
+  const serviceNow = getServiceNowConfig();
+  if (!serviceNow || !isValidEmail(email)) return { error: 'Consulta indisponível.' };
 
   const endpoint = `/api/x_2014456_servicef/chamados/chamados?email=${encodeURIComponent(email)}`;
   try {
-    const res = await fetch(`${instance}${endpoint}`, {
+    const res = await fetch(`${serviceNow.instance}${endpoint}`, {
       headers: {
-        'Authorization': 'Basic ' + Buffer.from(`${user}:${password}`).toString('base64'),
+        'Authorization': serviceNow.authorization,
         'Accept': 'application/json'
       }
     });
@@ -29,20 +36,22 @@ async function callListarChamados(email) {
     }
     return data;
   } catch (err) {
-    return { error: err.message };
+    logUpstreamFailure('chat:listar_chamados', err);
+    return { error: 'Consulta indisponível.' };
   }
 }
 
 async function callBuscarChamado(protocolo) {
-  const instance = process.env.SERVICENOW_INSTANCE || process.env.VITE_SERVICENOW_INSTANCE;
-  const user     = process.env.SERVICENOW_USER     || process.env.VITE_SERVICENOW_USER;
-  const password = process.env.SERVICENOW_PASSWORD || process.env.VITE_SERVICENOW_PASSWORD;
+  const serviceNow = getServiceNowConfig();
+  if (!serviceNow || typeof protocolo !== 'string' || protocolo.length > 100) {
+    return { error: 'Consulta indisponível.' };
+  }
 
   const endpoint = `/api/x_2014456_servicef/chamados/chamados/${encodeURIComponent(protocolo)}`;
   try {
-    const res = await fetch(`${instance}${endpoint}`, {
+    const res = await fetch(`${serviceNow.instance}${endpoint}`, {
       headers: {
-        'Authorization': 'Basic ' + Buffer.from(`${user}:${password}`).toString('base64'),
+        'Authorization': serviceNow.authorization,
         'Accept': 'application/json'
       }
     });
@@ -60,7 +69,8 @@ async function callBuscarChamado(protocolo) {
     }
     return data;
   } catch (err) {
-    return { error: err.message };
+    logUpstreamFailure('chat:buscar_chamado', err);
+    return { error: 'Consulta indisponível.' };
   }
 }
 
@@ -69,10 +79,20 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
+  if (!requestBodyWithinLimit(req)) {
+    return res.status(413).json({ error: 'Request body too large' });
+  }
+  if (!validateChatPayload(req.body)) {
+    return res.status(400).json({ error: 'Mensagens inválidas.' });
+  }
   const { messages, variables = {} } = req.body;
+  const apiKey = getGroqApiKey();
+  if (!apiKey) {
+    return res.status(503).json({ error: 'Integração de IA indisponível.' });
+  }
 
   const groq = new Groq({
-    apiKey: process.env.GROQ_API_KEY || process.env.VITE_GROQ_API_KEY || 'YOUR_GROQ_API_KEY',
+    apiKey,
   });
 
   const SYSTEM_PROMPT = `Você é Sofia, uma assistente virtual de atendimento da ServiceFlow.
@@ -203,7 +223,7 @@ CONSULTA DE CHAMADOS EXISTENTES (TICKET LOOKUP):
         let toolResult;
 
         if (functionName === 'listar_chamados_por_email') {
-          let email = functionArgs.email;
+          let email = isValidEmail(variables.email) ? variables.email : functionArgs.email;
           if (email && (email === '{email}' || email.includes('{email}'))) {
             email = variables.email || email;
           }
@@ -237,6 +257,7 @@ CONSULTA DE CHAMADOS EXISTENTES (TICKET LOOKUP):
     const content = responseMessage?.content || 'Desculpe, não consegui processar sua mensagem.';
     return res.status(200).json({ content });
   } catch (error) {
-    return res.status(500).json({ error: error.message });
+    logUpstreamFailure('chat', error);
+    return res.status(502).json({ error: 'Falha na integração de IA.' });
   }
 }

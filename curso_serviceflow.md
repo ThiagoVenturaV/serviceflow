@@ -44,15 +44,13 @@ export const CONFIG = {
     aiName: 'Sofia',
     primaryColor: '#8B5CF6',
   },
-  groq: {
-    apiKey: import.meta.env.VITE_GROQ_API_KEY || 'YOUR_GROQ_API_KEY',
-    model: 'llama-3.3-70b-versatile',
+  api: {
+    chat: '/api/chat',
+    chamados: '/api/chamados',
   },
   serviceNow: {
-    instance: import.meta.env.VITE_SERVICENOW_INSTANCE || 'https://SUA_INSTANCIA.service-now.com',
-    endpoint: '/api/serviceflow/chamados',
-    user: import.meta.env.VITE_SERVICENOW_USER || 'usuario',
-    password: import.meta.env.VITE_SERVICENOW_PASSWORD || 'senha',
+    endpoint: '/api/chamados',
+    // Instância e credenciais existem somente nas funções server-side.
   },
 };
 ```
