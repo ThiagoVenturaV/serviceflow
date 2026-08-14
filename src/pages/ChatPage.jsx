@@ -10,6 +10,7 @@ import NPSModal from '../components/NPSModal.jsx';
 import HelpPage from './HelpPage.jsx';
 import MyCasesPage from './MyCasesPage.jsx';
 import './ChatPage.css';
+import { renderSafeBoldText } from '../utils/safeMessage.jsx';
 
 const INITIAL_MESSAGE = {
   id: 1,
@@ -310,10 +311,16 @@ export default function ChatPage({ onBack, user }) {
         continue;
       }
 
-      // Basic size check (roughly 2MB per file to stay safe with Vercel 4.5MB limit)
-      if (file.size > 2 * 1024 * 1024) {
+      const allowedImageTypes = ['image/jpeg', 'image/png', 'image/webp'];
+      if (!allowedImageTypes.includes(file.type)) {
+        alert(`O formato de ${file.name} não é permitido. Use JPEG, PNG ou WebP.`);
+        continue;
+      }
+
+      // Keeps at most three encoded images below Vercel's aggregate body limit.
+      if (file.size > 900 * 1024) {
         alert(
-          `A imagem ${file.name} é muito grande. Limite de 2MB por arquivo.`,
+          `A imagem ${file.name} é muito grande. Limite de 900KB por arquivo.`,
         );
         continue;
       }
@@ -549,9 +556,8 @@ export default function ChatPage({ onBack, user }) {
   const renderText = (text) => {
     const rehydrated = rehydrateText(text);
     return rehydrated.split('\n').map((line, i) => {
-      const boldLine = line.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
       return (
-        <p key={i} dangerouslySetInnerHTML={{ __html: boldLine || '&nbsp;' }} />
+        <p key={i}>{renderSafeBoldText(line)}</p>
       );
     });
   };
@@ -1413,7 +1419,7 @@ export default function ChatPage({ onBack, user }) {
                   ref={fileInputRef}
                   onChange={handleFileChange}
                   multiple
-                  accept="image/*"
+                  accept="image/jpeg,image/png,image/webp"
                   style={{ display: 'none' }}
                 />
                 <button

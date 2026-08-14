@@ -22,7 +22,7 @@ O **ServiceFlow** é uma interface White-Label de Suporte ao Cliente de próxima
 
 1. Clone o repositório na sua máquina.
 2. Acesse a pasta do projeto e rode \`npm install\`.
-3. Renomeie o arquivo \`.env.example\` para \`.env\` e adicione suas chaves (Principalmente \`VITE_GROQ_API_KEY\` e credenciais do **ServiceNow**).
+3. Renomeie o arquivo \`.env.example\` para \`.env\` e configure \`GROQ_API_KEY\` e as credenciais server-side do **ServiceNow**. Nunca use o prefixo \`VITE_\` para segredos.
 4. Inicialize o laboratório: \`npm run dev\`.
 
 ## 🧠 Fluxo de Arquitetura da Informação
@@ -33,8 +33,8 @@ Cliente no Frontend (React)
 Groq LLaMA Inference extrai a intenção do usuário no formato de JSON Contextualizado
         ↓ (Dados Estruturados prontos: nome, email, ticket, defeito)
 Frontend (React) processa o manifesto e finaliza coleta
-        ↓ (HTTPS POST Axios/Fetch com Token Basic)
-Instância ServiceNow (Tabela customizada de pós-venda) / Outros ERPs
+        ↓ (HTTPS para funções serverless; sem credenciais no navegador)
+API server-side usa uma conta ServiceNow de menor privilégio
 \`\`\`
 
 <br>

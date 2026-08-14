@@ -1,3 +1,10 @@
+import {
+  getServiceNowConfig,
+  isDemoMode,
+  isValidEmail,
+  logUpstreamFailure,
+} from './_security.js'
+
 // GET /api/meus-chamados?email=cliente@email.com
 export default async function handler(req, res) {
   if (req.method !== 'GET') {
@@ -6,25 +13,23 @@ export default async function handler(req, res) {
 
   const { email } = req.query;
 
-  if (!email) {
+  if (!isValidEmail(email)) {
     return res.status(400).json({ error: 'Parâmetro "email" obrigatório.' });
   }
 
   const normalizedEmail = email.trim().toLowerCase();
 
-  const instance = process.env.SERVICENOW_INSTANCE || process.env.VITE_SERVICENOW_INSTANCE;
-  const user     = process.env.SERVICENOW_USER     || process.env.VITE_SERVICENOW_USER;
-  const password = process.env.SERVICENOW_PASSWORD || process.env.VITE_SERVICENOW_PASSWORD;
+  const serviceNow = getServiceNowConfig();
 
-  const endpoint = `/api/x_2014456_servicef/chamados/chamados?email=${encodeURIComponent(email)}`;
+  const endpoint = `/api/x_2014456_servicef/chamados/chamados?email=${encodeURIComponent(normalizedEmail)}`;
 
-  if (instance && user && password && !instance.includes('sua-instancia')) {
+  if (serviceNow) {
     try {
-      const response = await fetch(`${instance}${endpoint}`, {
+      const response = await fetch(`${serviceNow.instance}${endpoint}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Basic ' + Buffer.from(`${user}:${password}`).toString('base64'),
+          'Authorization': serviceNow.authorization,
         },
       });
 
@@ -67,13 +72,19 @@ export default async function handler(req, res) {
           return res.status(200).json(result);
         }
       }
+      return res.status(502).json({ error: 'Falha na integração externa.' });
     } catch (error) {
-      console.warn('Falha ao conectar com o ServiceNow, usando fallback de chamados locais:', error.message);
+      logUpstreamFailure('meus_chamados', error);
+      return res.status(502).json({ error: 'Falha na integração externa.' });
     }
   }
 
+  if (!isDemoMode()) {
+    return res.status(503).json({ error: 'Integração indisponível.' });
+  }
+
   // Fallback de dados para desenvolvimento offline e suíte de testes
-  const isAgent = email.includes('atendente') || email.includes('admin') || email.includes('supervisor');
+  const isAgent = normalizedEmail.includes('atendente') || normalizedEmail.includes('admin') || normalizedEmail.includes('supervisor');
 
   const mockTickets = [
     {

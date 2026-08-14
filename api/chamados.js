@@ -1,24 +1,36 @@
+import {
+  getServiceNowConfig,
+  logUpstreamFailure,
+  requestBodyWithinLimit,
+  validateTicketPayload,
+} from './_security.js'
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
+  if (!requestBodyWithinLimit(req)) {
+    return res.status(413).json({ error: 'Request body too large' });
+  }
   const data = req.body;
-
-  const instance = process.env.SERVICENOW_INSTANCE || process.env.VITE_SERVICENOW_INSTANCE || 'https://sua-instancia.service-now.com';
-  const user = process.env.SERVICENOW_USER || process.env.VITE_SERVICENOW_USER || 'usuario';
-  const password = process.env.SERVICENOW_PASSWORD || process.env.VITE_SERVICENOW_PASSWORD || 'senha';
+  if (!validateTicketPayload(data)) {
+    return res.status(400).json({ error: 'Dados do chamado inválidos.' });
+  }
+  const serviceNow = getServiceNowConfig();
+  if (!serviceNow) {
+    return res.status(503).json({ error: 'Integração indisponível.' });
+  }
 
   // Trata atualizações de chamados (ações do Atendente/Agente)
   if (data.isUpdate) {
-    if (instance && user && password && !instance.includes('sua-instancia')) {
-      try {
+    try {
         const updateEndpoint = `/api/x_2014456_servicef/chamados/chamados/${encodeURIComponent(data.protocolo)}`;
-        const response = await fetch(`${instance}${updateEndpoint}`, {
+        const response = await fetch(`${serviceNow.instance}${updateEndpoint}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Basic ' + Buffer.from(`${user}:${password}`).toString('base64'),
+            'Authorization': serviceNow.authorization,
           },
           body: JSON.stringify({
             status: data.status,
@@ -30,11 +42,11 @@ export default async function handler(req, res) {
           const result = await response.json();
           return res.status(200).json(result);
         }
-      } catch (error) {
-        console.warn('Falha ao atualizar no ServiceNow, usando fallback de atualização local:', error.message);
-      }
+        return res.status(502).json({ error: 'Falha na integração externa.' });
+    } catch (error) {
+      logUpstreamFailure('chamados:update', error);
+      return res.status(502).json({ error: 'Falha na integração externa.' });
     }
-    return res.status(200).json({ success: true, protocolo: data.protocolo, status: data.status });
   }
 
   const customEndpoint = '/api/x_2014456_servicef/chamados';
@@ -54,11 +66,11 @@ export default async function handler(req, res) {
   }
 
   try {
-    const response = await fetch(`${instance}${customEndpoint}`, {
+    const response = await fetch(`${serviceNow.instance}${customEndpoint}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Basic ' + Buffer.from(`${user}:${password}`).toString('base64'),
+        'Authorization': serviceNow.authorization,
       },
       body: JSON.stringify({
         nome: data.nome,
@@ -69,18 +81,22 @@ export default async function handler(req, res) {
         descricao: finalDescricao,
         nps: data.nps || '',
         foto: (data.arquivos && data.arquivos.length > 0) ? 'true' : 'false',
-        arquivos: data.arquivos || []
+        arquivos: (data.arquivos || []).map(({ name, contentType, base64 }) => ({
+          name,
+          contentType,
+          base64,
+        }))
       }),
     });
 
     if (!response.ok) {
-      const errorText = await response.text();
-      return res.status(response.status).json({ error: `ServiceNow error ${response.status}: ${errorText}` });
+      return res.status(502).json({ error: 'Falha na integração externa.' });
     }
 
     const result = await response.json();
     return res.status(201).json(result);
   } catch (error) {
-    return res.status(500).json({ error: error.message });
+    logUpstreamFailure('chamados:create', error);
+    return res.status(502).json({ error: 'Falha na integração externa.' });
   }
 }
