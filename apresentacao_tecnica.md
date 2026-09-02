@@ -47,7 +47,7 @@ graph TD
     classDef servicenow fill:#0284C7,stroke:#0369A1,stroke-width:2px,color:#fff;
 
     A["Cliente (React PWA)"] :::frontend -->|1. Entrada de Texto| B["Filtro PII (Mascara Dados)"] :::frontend
-    B -->|2. Prompt Ofuscado| C["Groq AI (LLaMA 3.3 70B)"] :::ai
+    B -->|2. Prompt Ofuscado| C["Groq AI (GPT-OSS 120B)"] :::ai
     C -->|3. Resposta Natural + JSON| B
     B -->|4. Validação & Confirmação| D["Middleware API (Node.js)"] :::middleware
     D -->|5. HTTPS/Basic Auth| E["ServiceNow (Instância Dev)"] :::servicenow
