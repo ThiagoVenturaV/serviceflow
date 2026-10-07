@@ -23,7 +23,7 @@ O ServiceFlow baseia-se em uma arquitetura moderna dividida em camadas, permitin
 ```mermaid
 graph TD
     A[Cliente: UI React + PWA] -->|1. Entrada de Texto/Voz| B(Redux / React State & PII Masking)
-    B -->|2. Prompt Ofuscado - Sem Dados Pessoais| C[Groq AI: LLaMA 3.3 70B]
+    B -->|2. Prompt Ofuscado - Sem Dados Pessoais| C[Groq AI: GPT-OSS 120B]
     C -->|3. Resposta Natural + JSON estruturado| B
     B -->|4. Confirmação do Usuário| D[API do Portal: Node.js/Vercel Serverless]
     D -->|5. HTTPS Basic Auth| E[ServiceNow Instância Real]

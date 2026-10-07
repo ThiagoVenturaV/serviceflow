@@ -4,7 +4,7 @@ O **ServiceFlow** é uma interface White-Label de Suporte ao Cliente de próxima
 
 ## ✨ Features
 
-- **IA Conversacional Intuitiva**: Utiliza **Groq (LLaMA 3.3 70B)** para conversar com o cliente de forma fluída e extrair os dados estruturados do problema sem depender de formulários chatos e engessados.
+- **IA Conversacional Intuitiva**: Utiliza **Groq (GPT-OSS 120B)** para conversar com o cliente de forma fluída e extrair os dados estruturados do problema sem depender de formulários chatos e engessados.
 - **Integração com ServiceNow**: Ao finalizar a coleta, o sistema dispara requisições POST automatizadas direto para a REST API do ServiceNow, gerando o ticket e devolvendo o protocolo em menos de 2 segundos.
 - **Branding Dinâmico (White-Label Real)**: O frontend carrega dinamicamente a identidade visual (cor primária, logotipo e nome da IA) direto de System Properties (`sys_properties`) do ServiceNow através de uma API segura. Alterações no ServiceNow se refletem ao vivo no app.
 - **Dashboard de Gestão no ServiceNow**: Painel administrativo corporativo ("ServiceFlow — Visão do Gestor") com widgets de contagem de status, tipos de chamados, TMA, NPS e triagem visual separando chamados com imagens anexadas.

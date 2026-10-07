@@ -204,7 +204,7 @@ CONSULTA DE CHAMADOS EXISTENTES (TICKET LOOKUP):
     ];
 
     let response = await groq.chat.completions.create({
-      model: 'llama-3.3-70b-versatile',
+      model: 'openai/gpt-oss-120b',
       messages: formattedMessages,
       tools,
       tool_choice: 'auto',
@@ -245,7 +245,7 @@ CONSULTA DE CHAMADOS EXISTENTES (TICKET LOOKUP):
       }
 
       response = await groq.chat.completions.create({
-        model: 'llama-3.3-70b-versatile',
+        model: 'openai/gpt-oss-120b',
         messages: formattedMessages,
         temperature: 0.7,
         max_tokens: 1024,
